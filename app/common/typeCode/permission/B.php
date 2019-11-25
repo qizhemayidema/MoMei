@@ -8,11 +8,13 @@
 namespace app\common\typeCode\permission;
 
 use app\common\typeCode\CacheImpl;
+use app\common\typeCode\Permissionlmpl;
 
-class B implements CacheImpl
+class B implements CacheImpl,Permissionlmpl
 {
-    public $where = [];
-    public $cacheName = 'platform_type';
+    private $where = [];
+    private $cacheName = 'platform_type';
+    private $type = 1;
 
     public function getCacheName(): string
     {
@@ -20,25 +22,9 @@ class B implements CacheImpl
         return $this->cacheName;
     }
 
-    public function getCache()
+    public function getPermissionType(): int
     {
-        // TODO: Implement getCache() method.
-    }
-
-    public function setCache($data)
-    {
-        // TODO: Implement setCache() method.
-    }
-
-    public function exists(string $key): bool
-    {
-        return true;
-        // TODO: Implement exists() method.
-    }
-
-    public function clear(string $key): string
-    {
-        return '1';
-        // TODO: Implement clear() method.
+        // TODO: Implement getPermissionType() method.
+        return $this->type;
     }
 }

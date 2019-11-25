@@ -18,35 +18,40 @@ class Login extends BaseController
     }
 
     public function check(Request $request){
-        if(request()->isPost()){
-            $data =$request->post();
-            $rules = [
-                'username'  => 'require',
-                'password'  => 'require',
-                'captcha'   => 'require|captcha',
-            ];
-            $messages = [
-                'username.require'      => '用户名必须填写',
-                'password.require'      => '密码必须填写',
-                'captcha.require'       => '验证码必须填写',
-                'captcha.captcha'       => '验证码不正确',
-            ];
-            $validate = new Validate($rules,$messages);
-            $result = $validate->check($data);
-            if (!$result) {
-                return json(['code' => 0, 'msg'=>$validate->getError()], 256);
+        try{
+            if(request()->isPost()){
+                $data =$request->post();
+                $rules = [
+                    'username'  => 'require',
+                    'password'  => 'require',
+                    'captcha'   => 'require|captcha',
+                ];
+                $messages = [
+                    'username.require'      => '用户名必须填写',
+                    'password.require'      => '密码必须填写',
+                    'captcha.require'       => '验证码必须填写',
+                    'captcha.captcha'       => '验证码不正确',
+                ];
+                $validate = new Validate($rules,$messages);
+                $result = $validate->check($data);
+                if (!$result) {
+                    return json(['code' => 0, 'msg'=>$validate->getError()], 256);
+                }
+
+                //查询登录的用户
+                $res = (new Manager())->where(['username'=>$data['username'],'password'=>md5($data['password'])])->find();
+                if (!$res){
+                    return json(['code' => 0, 'msg'=>'账号或密码不正确'], 256);
+                }
+                //登陆成功
+                \think\facade\Session::set('admin',$res);
+
+                return json(['code' => 1, 'msg'=>'success'], 256);
+
             }
-
-            //查询登录的用户
-            $res = (new Manager())->where(['username'=>$data['username'],'password'=>md5($data['password'])])->find();
-            if (!$res){
-                return json(['code' => 0, 'msg'=>'账号或密码不正确'], 256);
-            }
-            //登陆成功
-            \think\facade\Session::set('admin',$res);
-
-            return json(['code' => 1, 'msg'=>'success'], 256);
-
+        }
+        catch (\Exception $e){
+            return $e->getMessage();
         }
     }
 }

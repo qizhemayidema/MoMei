@@ -5,12 +5,18 @@
  * Date: 2019/11/25
  * Time: 12:14
  */
+namespace app\common\service;
 
+use app\common\typeCode\permission\B;
 
 class Permission
 {
-    public function test($uid)
+    /**
+     * 查询全部的权限
+     * $data 2019/11/25 17:36
+     */
+    public function getRuleList()
     {
-       $res =  (new \app\common\model\Permission())->getList((new \app\common\typeCode\permission\B()),0,20);
+       $res =  (new \app\common\model\Permission())->getList((new B()));
     }
 }
