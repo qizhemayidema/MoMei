@@ -9,9 +9,8 @@
 
 class Permission
 {
-    public function test()
+    public function test($uid)
     {
-       $res =  (new \app\common\model\Permission())->get((new \app\common\typeCode\permission\B()),0,20);
-
+       $res =  (new \app\common\model\Permission())->getList((new \app\common\typeCode\permission\B()),0,20);
     }
 }

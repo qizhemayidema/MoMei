@@ -1,6 +1,6 @@
 <?php
 
-namespace app\common\lib;
+namespace app\common\tool;
 
 use think\Request;
 

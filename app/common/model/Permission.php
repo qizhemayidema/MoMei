@@ -9,8 +9,8 @@ class Permission extends Model
 {
     public function getList(\app\common\typeCode\Base $base)
     {
+
         // TODO: Implement getList() method.
-        return $base->getName();
     }
 
     public function backgroundShowData(string $alias)

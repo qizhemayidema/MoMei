@@ -15,4 +15,8 @@ interface CateImpl extends Base
 
     public function getLevelType(): int;     //返回层级数量 如果无限则为0
 
+    public function setMasterId($id);       //设置 所属用户 id
+
+    public function getMasterId() : int;    //获取 所属影院用户id
+
 }

@@ -19,6 +19,7 @@ return [
     // 默认时区
     'default_timezone' => 'Asia/Shanghai',
 
+
     // 应用映射（自动多应用模式有效）
     'app_map'          => [
         'admin' => 'bAdmin',

@@ -16,11 +16,11 @@ interface BasicImpl
 
     public function getList(\app\common\typeCode\Base $base,$start,$length);  // 获取list
 
-    public function insert(array $data) : int;    //插入一条数据 返回自增主键id
+    public function add(array $data) : int;    //插入一条数据 返回自增主键id
 
-    public function update($id,$data);      //更新一条数据
+    public function modify($id,$data);      //更新一条数据
 
-    public function delete($id);            //删除一条数据
+    public function rm($id);            //删除一条数据
 
     public function softDelete($id);        //软删除
 
