@@ -10,6 +10,5 @@ use think\Model;
 
 class Category extends Model implements BasicImpl
 {
-
-
+    
 }
