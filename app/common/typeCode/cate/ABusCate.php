@@ -45,23 +45,4 @@ class ABusCate implements \app\common\typeCode\CateImpl,\app\common\typeCode\Cac
         return $this->masterId;
     }
 
-    public function setCache($data)
-    {
-        Cache::set($this->getCacheName(),$data);
-    }
-
-    public function getCache()
-    {
-        return Cache::get($this->getCacheName());
-    }
-
-    public function exists(): bool
-    {
-        return Cache::get($this->getCacheName()) ? true : false;
-    }
-
-    public function clear(): string
-    {
-        Cache::set($this->getCacheName(),null);
-    }
 }

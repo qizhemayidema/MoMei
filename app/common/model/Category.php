@@ -4,6 +4,7 @@ declare (strict_types = 1);
 namespace app\common\model;
 
 use app\common\model\impl\BasicImpl;
+use app\common\tool\Cache;
 use app\common\typeCode\CacheImpl;
 use app\common\typeCode\CateImpl;
 use think\Model;
@@ -28,20 +29,29 @@ class Category extends Model implements BasicImpl
         $masterId = $base->getMasterId();
 
         if ($base instanceof CacheImpl){
-            if ($res =$base->getCache()){
+            $cache = (new Cache($base));
+            if ($res = $cache->getCache()){
                 return $res;
+            }else{
+                $data = $this->where(['type'=>$type,'master_id' => $masterId])->order('order_num','desc')
+                    ->select()->toArray();
+
+                $result = $this->getMoreList($data,$level);
+
+                $cache->setCache($result);
+
+                return $result;
             }
+        }else{
+            $data = $this->where(['type'=>$type,'master_id' => $masterId])->order('order_num','desc')
+                ->select()->toArray();
+
+            $result = $this->getMoreList($data,$level);
+
+            return $result;
         }
-        $data = $this->where(['type'=>$type,'master_id' => $masterId])->order('order_num','desc')
-            ->select()->toArray();
 
-        $result = $this->getMoreList($data,$level);
 
-        if ($base instanceof CacheImpl){
-            $base->setCache($result);
-        }
-
-        return $result;
     }
 
     public function add(array $data): int
