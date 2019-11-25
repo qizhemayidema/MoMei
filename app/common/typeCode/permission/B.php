@@ -10,7 +10,7 @@ namespace app\common\typeCode\permission;
 use app\common\typeCode\CacheImpl;
 use app\common\typeCode\Permissionlmpl;
 
-class B implements CacheImpl,Permissionlmpl
+class B implements CacheImpl,PermissionImpl
 {
     private $where = [];
     private $cacheName = 'platform_type';
