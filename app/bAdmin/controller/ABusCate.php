@@ -25,6 +25,6 @@ class ABusCate extends Base
 
     public function add()
     {
-
+        return view();
     }
 }
