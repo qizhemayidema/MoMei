@@ -16,7 +16,7 @@ interface BasicImpl
 
     public function getList(\app\common\typeCode\Base $base,$start,$length);  // 获取list
 
-    public function add(array $data) : int;    //添加一条数据 返回自增主键id
+    public function add(array $data) : int;    //插入一条数据 返回自增主键id
 
     public function modify($id,$data);      //更新一条数据
 
