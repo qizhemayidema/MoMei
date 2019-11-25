@@ -4,7 +4,7 @@ declare (strict_types = 1);
 namespace app\bAdmin\controller;
 
 use app\common\service\Category;
-use app\common\typeCode\cate\ABusCate;
+use app\common\typeCode\cate\ABus;
 use think\Request;
 
 class Config extends Base

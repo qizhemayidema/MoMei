@@ -9,7 +9,7 @@ namespace app\common\typeCode\cate;
 
 use think\facade\Cache;
 
-class ABusCate implements \app\common\typeCode\CateImpl,\app\common\typeCode\CacheImpl
+class ABus implements \app\common\typeCode\CateImpl,\app\common\typeCode\CacheImpl
 {
     private $type = 1;
 

@@ -36,7 +36,7 @@ class Cache
         return CacheObj::get($this->obj->getCacheName()) ? true : false;
     }
 
-    public function clear(): string
+    public function clear()
     {
         CacheObj::set($this->obj->getCacheName(),null);
     }

@@ -11,9 +11,9 @@ use think\Model;
 
 class Category extends Model implements BasicImpl
 {
-    public function get(\app\common\typeCode\Base $base)
+    public function get($id)
     {
-
+        return $this->find($id)->toArray();
     }
 
     public function getList(\app\common\typeCode\Base $base, $start = 0, $length = 10)
@@ -56,10 +56,16 @@ class Category extends Model implements BasicImpl
 
     public function add(array $data): int
     {
+        $this->insert($data);
+
+
+
+        return (int)$this->getLastInsID();
     }
 
     public function modify($id, $data)
     {
+        $this->where(['id'=>$id])->update($data);
     }
 
     public function softDelete($id)
@@ -68,6 +74,7 @@ class Category extends Model implements BasicImpl
 
     public function rm($id)
     {
+
     }
 
     private function getMoreList($categorys,$max = 1,$pId = 0,$l = 0)

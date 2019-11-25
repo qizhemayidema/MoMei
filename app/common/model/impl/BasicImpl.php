@@ -12,7 +12,7 @@ namespace app\common\model\impl;
 interface BasicImpl
 {
 
-    public function get(\app\common\typeCode\Base $base); // 获取一条
+    public function get($id); // 获取一条
 
     public function getList(\app\common\typeCode\Base $base,$start,$length);  // 获取list
 
