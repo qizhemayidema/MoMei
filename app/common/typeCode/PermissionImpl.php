@@ -9,7 +9,7 @@
 namespace app\common\typeCode;
 
 
-interface PermissionImpl extends  Base
+interface PermissionImpl extends  BaseImpl
 {
     public function getPermissionType():int;  //获取类型分类
 }

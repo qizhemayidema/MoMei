@@ -9,7 +9,7 @@
 namespace app\common\typeCode;
 
 
-interface CacheImpl extends Base
+interface CacheImpl extends BaseImpl
 {
     public function getCacheName() : string;     //获取缓存名称
 }

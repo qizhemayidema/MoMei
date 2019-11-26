@@ -10,7 +10,7 @@ use think\Model;
 
 class Permission extends Model implements BasicImpl
 {
-    public function getList(\app\common\typeCode\Base $base,$start = 0,$length = 10)
+    public function getList(\app\common\typeCode\BaseImpl $base,$start = 0,$length = 10)
     {
         // TODO: Implement getList() method.
         if ($base instanceof PermissionImpl){}
@@ -31,22 +31,22 @@ class Permission extends Model implements BasicImpl
 
     public function get($id) // 获取一条
     {
-
+        return $this->find($id)->toArray();
     }
 
     public function add(array $data) : int   //插入一条数据 返回自增主键id
     {
-        return 1;
+        return $this->insert($data);
     }
 
     public function modify($id,$data)      //更新一条数据
     {
-
+        return $this->where(['id'=>$id])->update($data);
     }
 
     public function rm($id)            //删除一条数据
     {
-
+        return $this->where(['id'=>$id])->delete();
     }
 
     public function softDelete($id)        //软删除

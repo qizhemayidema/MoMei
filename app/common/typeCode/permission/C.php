@@ -10,10 +10,10 @@ namespace app\common\typeCode\permission;
 use app\common\typeCode\CacheImpl;
 use app\common\typeCode\PermissionImpl;
 
-class B implements CacheImpl,PermissionImpl
+class C implements CacheImpl,PermissionImpl
 {
-    private $cacheName = 'platform_permission_type';
-    private $type = 1;
+    private $cacheName = 'cinema_chain_permission_type';
+    private $type = 2;
 
     public function getCacheName(): string
     {
