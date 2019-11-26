@@ -7,13 +7,13 @@
             <input type="hidden" name="id" value="{$cate.id}">
 
             <div class="form-group">
-                <label class="col-sm-2 control-label">分类名称</label>
+                <label class="col-sm-2 control-label">级别名称</label>
                 <div class="col-sm-8">
                     <input name="name" value="{$cate.name}" required  type="text" class="form-control">
                 </div>
             </div>
             <div class="form-group">
-                <label class="col-sm-2 control-label">排序数字</label>
+                <label class="col-sm-2 control-label">判断标识</label>
                 <div class="col-sm-8">
                     <input name="order_num" value="{$cate.order_num}" required placeholder="从0开始,越大顺序越靠前,最大999" type="text" class="form-control">
                 </div>
@@ -35,7 +35,7 @@
         var formData = new FormData($('form')[0]);
 
         $.ajax({
-            url: "{:url('A_bus_cate/update')}",
+            url: "{:url('update')}",
             type: 'post',
             dataType: 'json',
             data: formData,
@@ -47,7 +47,7 @@
                 } else {
                     layer.msg('修改成功', {icon: 1});
                     setTimeout(function () {
-                        window.location.href = "{:url('A_bus_cate/index')}";
+                        window.location.href = "{:url('index')}";
                     }, 600)
                 }
             }

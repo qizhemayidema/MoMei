@@ -10,7 +10,7 @@ use think\Model;
 
 class Permission extends Model implements BasicImpl
 {
-    public function getList(\app\common\typeCode\Base $base,$start = 0,$length = 10)
+    public function getList(\app\common\typeCode\BaseImpl $base, $start = 0, $length = 10)
     {
         // TODO: Implement getList() method.
         if ($base instanceof PermissionImpl){}

@@ -13,17 +13,35 @@ use app\common\tool\Cache;
 use app\common\typeCode\CacheImpl;
 use app\common\typeCode\cate\ABus;
 use app\common\typeCode\CateImpl;
+use app\common\model\Category as CateModel;
 
 class Category
 {
-    public function getABusList()
+    //获取列表
+    public function getList(CateImpl $cateImpl)
     {
-        return (new \app\common\model\Category())->getList(new ABus());
+        $cateModel = new CateModel();
+
+        if ($cateImpl instanceof CacheImpl){
+
+            $cache = (new Cache($cateImpl));
+
+            if ($cache->exists()) return $cateModel->getList($cateImpl);
+
+            $result = $cateModel->getList($cateImpl);
+
+            $cache->setCache($result);
+
+            return $result;
+        }
+
+        return (new CateModel())->getList($cateImpl);
     }
 
+    //获取一条数据通过id
     public function getOneById($id)
     {
-        return (new \app\common\model\Category())->get($id);
+        return (new CateModel())->get($id);
     }
 
     //添加一个分类
@@ -39,11 +57,11 @@ class Category
         ];
 
         if($cateImpl instanceof CacheImpl){
+
             (new Cache($cateImpl))->clear();
+
         }
-        return (new \app\common\model\Category())->add($result);
-
-
+        return (new CateModel())->add($result);
     }
 
     //修改一个分类
@@ -56,7 +74,7 @@ class Category
             'is_show' => $data['is_show'] ?? 1,
         ];
 
-        (new \app\common\model\Category())->modify($data['id'],$result);
+        (new CateModel())->modify($data['id'],$result);
 
         if($cateImpl instanceof CacheImpl){
             (new Cache($cateImpl))->clear();
@@ -66,7 +84,7 @@ class Category
     //删除一个分类
     public function delete(CateImpl $cateImpl,$id)
     {
-        (new \app\common\model\Category())->where(['id'=>$id])->delete();
+        (new CateModel())->where(['id'=>$id])->delete();
 
         if($cateImpl instanceof CacheImpl){
             (new Cache($cateImpl))->clear();

@@ -7,17 +7,15 @@
  */
 namespace app\common\typeCode\cate;
 
-use think\facade\Cache;
-
 class ABus implements \app\common\typeCode\CateImpl,\app\common\typeCode\CacheImpl
 {
     private $type = 1;
 
-    private $cacheName = 'a_bus_cate';
-
     private $Level = 1;
 
     private $masterId = 0;
+
+    private $cacheName = 'cate_a_bus';
 
     public function getCateType(): int
     {

@@ -16,7 +16,7 @@ class Category extends Model implements BasicImpl
         return $this->find($id)->toArray();
     }
 
-    public function getList(\app\common\typeCode\Base $base, $start = 0, $length = 10)
+    public function getList(\app\common\typeCode\BaseImpl $base, $start = 0, $length = 10)
     {
         if ($base instanceof CateImpl){
 
@@ -28,37 +28,17 @@ class Category extends Model implements BasicImpl
 
         $masterId = $base->getMasterId();
 
-        if ($base instanceof CacheImpl){
-            $cache = (new Cache($base));
-            if ($res = $cache->getCache()){
-                return $res;
-            }else{
-                $data = $this->where(['type'=>$type,'master_id' => $masterId])->order('order_num','desc')
-                    ->select()->toArray();
+        $data = $this->where(['type'=>$type,'master_id' => $masterId])->order('order_num','desc')
+            ->select()->toArray();
 
-                $result = $this->getMoreList($data,$level);
+        $return = $this->getMoreList($data,$level);
 
-                $cache->setCache($result);
-
-                return $result;
-            }
-        }else{
-            $data = $this->where(['type'=>$type,'master_id' => $masterId])->order('order_num','desc')
-                ->select()->toArray();
-
-            $result = $this->getMoreList($data,$level);
-
-            return $result;
-        }
-
-
+        return $return;
     }
 
     public function add(array $data): int
     {
         $this->insert($data);
-
-
 
         return (int)$this->getLastInsID();
     }

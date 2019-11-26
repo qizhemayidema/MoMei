@@ -4,21 +4,22 @@ declare (strict_types = 1);
 namespace app\bAdmin\controller;
 
 use app\common\service\Category;
+use app\common\typeCode\cate\ABus as TypeDesc;
 use think\exception\ValidateException;
 use think\facade\Validate;
 use think\facade\View;
 use think\Request;
 
-class ABusCate extends Base
+class ACateBus extends Base
 {
     public function index()
     {
         try{
-            $data = (new Category())->getABusList();
+            $data = (new Category())->getList((new TypeDesc()));
 
             View::assign('cate',$data);
 
-            return view('a_bus_cate/index');
+            return view();
 
         }catch(\Exception $e){
             return $e->getMessage();
@@ -43,7 +44,7 @@ class ABusCate extends Base
 
             if (!$validate->check($post)) throw new \Exception($validate->getError());
 
-            (new Category())->insert((new \app\common\typeCode\cate\ABus()),$post);
+            (new Category())->insert((new TypeDesc()),$post);
 
             return json(['code'=>1,'msg'=>'success']);
 
@@ -76,7 +77,7 @@ class ABusCate extends Base
 
             if (!$validate->check($post)) throw new \Exception($validate->getError());
 
-            (new Category())->update((new \app\common\typeCode\cate\ABus()),$post);
+            (new Category())->update((new TypeDesc()),$post);
 
             return json(['code'=>1,'msg'=>'success']);
 
@@ -89,7 +90,7 @@ class ABusCate extends Base
     {
         $cate_id = $request->post('cate_id');
 
-        (new Category())->delete((new \app\common\typeCode\cate\ABus()),$cate_id);
+        (new Category())->delete((new TypeDesc()),$cate_id);
 
         return json(['code'=>1,'msg'=>'success']);
     }

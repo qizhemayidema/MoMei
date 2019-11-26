@@ -9,7 +9,7 @@
 namespace app\common\typeCode;
 
 
-interface Base
+interface BaseImpl
 {
 
 }

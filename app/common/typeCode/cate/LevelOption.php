@@ -2,22 +2,22 @@
 /**
  * Created by PhpStorm.
  * User: 刘彪
- * Date: 2019/11/25
- * Time: 18:54
+ * Date: 2019/11/26
+ * Time: 13:35
  */
 
 namespace app\common\typeCode\cate;
 
 
-class CBus implements \app\common\typeCode\CateImpl,\app\common\typeCode\CacheImpl
+class LevelOption implements \app\common\typeCode\CateImpl,\app\common\typeCode\CacheImpl
 {
-    private $type = 2;
-
-    private $cacheName = 'cate_c_bus';
+    private $type = 3;
 
     private $Level = 1;
 
     private $masterId = 0;
+
+    private $cacheName = 'cate_level_option';
 
     public function getCateType(): int
     {

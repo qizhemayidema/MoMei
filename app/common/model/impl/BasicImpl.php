@@ -14,7 +14,7 @@ interface BasicImpl
 
     public function get($id); // 获取一条
 
-    public function getList(\app\common\typeCode\Base $base,$start,$length);  // 获取list
+    public function getList(\app\common\typeCode\BaseImpl $base, $start, $length);  // 获取list
 
     public function add(array $data) : int;    //插入一条数据 返回自增主键id
 
