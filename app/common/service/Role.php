@@ -52,7 +52,7 @@ class Role
     }
 
 
-    public function updataRes(\app\common\typeCode\Role $Role,$data)
+    public function updateRes(\app\common\typeCode\Role $Role,$data)
     {
         $type = $Role->getRoleType();
         $updata = [
