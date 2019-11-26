@@ -99,7 +99,7 @@ class MRuleGroup extends Base
                 throw new \Exception($valiatde->getError());
             }
 
-            $res = (new Role())->updataRes(new TypeDesc(),$post);
+            $res = (new Role())->updateRes(new TypeDesc(),$post);
             if(!$res) throw new \Exception('修改失败');
             return json(['code'=>1,'msg'=>'success']);
         }catch (\Exception $e){
