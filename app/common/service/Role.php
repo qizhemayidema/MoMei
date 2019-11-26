@@ -75,4 +75,20 @@ class Role
         }
         return (new \app\common\model\Role())->rm($id);
     }
+
+    /**
+     * 查询用户权限
+     * @param \app\common\typeCode\Role $Role
+     * @param $uid
+     * $data 2019/11/26 16:30
+     */
+    public function getUserRoleAuth(\app\common\typeCode\Role $Role,$roleId)
+    {
+        //查询用户所在的权限组
+        $getUserRoleAuthRes = (new \app\common\model\Role())->getUserRoleAuthRes($Role,$roleId);
+        //查询该权限组所拥有的具体权限
+        $authArrIds = explode(',',rtrim($getUserRoleAuthRes['permission_ids'],','));
+        $userAuthAllRes = (new \app\common\model\Permission())->userAuthAll($authArrIds);
+        return $userAuthAllRes;
+    }
 }
