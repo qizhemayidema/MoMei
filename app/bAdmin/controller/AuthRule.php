@@ -17,6 +17,9 @@ class AuthRule extends Base
         try{
             //查询全部的权限
             $ruleArr = (new Permission())->getRuleList();
+            echo "<pre>";
+            print_r($ruleArr);
+            echo "</pre>";
         }catch (\Exception $e){
             return $e->getMessage();
         }
