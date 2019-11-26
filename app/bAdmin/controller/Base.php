@@ -4,6 +4,8 @@ declare (strict_types = 1);
 namespace app\bAdmin\controller;
 
 use app\BaseController;
+use app\common\service\Role;
+use app\common\typeCode\role\B;
 use app\middleware\BAdminCheck;
 use think\facade\Session;
 
@@ -23,5 +25,11 @@ class Base extends BaseController
         $action = Request()->action();//方法名
         //查询当前用户的权限
         $adminRes = Session::get('bAdmin_admin');
+        $authAll = (new Role())->getUserRoleAuth(new B(),$adminRes['role_id']);
+        $authAllRes = array_column($authAll,'urls');
+        $url = strtolower($controller.'/'.$action);
+        if(!in_array($url,$authAllRes)){
+//                exit('no_rule');
+        }
     }
 }

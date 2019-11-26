@@ -54,6 +54,17 @@ class Permission extends Model implements BasicImpl
 
     }
 
+    /**
+     * 查询出这些的权限 将控制器方法组合到一起
+     * @param $authArrIds   array  ids集合
+     * $data times
+     */
+    public function userAuthAll($authArrIds)
+    {
+        $where[] = ['id','in',$authArrIds];
+        return $this->field("lower(concat(controller,'/',action)) as urls")->where($where)->select()->toArray();
+    }
+
     private function getMoreList($categorys,$max = 2,$pId = 0,$l = 0)
     {
         $list = [];

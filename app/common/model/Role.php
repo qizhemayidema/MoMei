@@ -54,4 +54,17 @@ class Role extends Model implements BasicImpl
     {
 
     }
+
+    /**
+     * 查询用户所在组的权限
+     * @param \app\common\typeCode\Role $role
+     * @param $uid
+     * $data 2019/11/26 16:32
+     */
+    public function getUserRoleAuthRes(\app\common\typeCode\Role $role,$roleId){
+        $type = $role->getRoleType();
+        $where['type'] = $type;
+        $where['id'] = $roleId;
+        return $this->where($where)->find();
+    }
 }
