@@ -21,18 +21,14 @@ class Login extends BaseController
         try{
             if(request()->isPost()){
                 $data =$request->post();
+
+                $validate = new Validate();
                 $rules = [
-                    'username'  => 'require',
-                    'password'  => 'require',
-                    'captcha'   => 'require|captcha',
+                    'username|用户名'  => 'require',
+                    'password|密码'  => 'require',
+                    'captcha|验证码'   => 'require|captcha',
                 ];
-                $messages = [
-                    'username.require'      => '用户名必须填写',
-                    'password.require'      => '密码必须填写',
-                    'captcha.require'       => '验证码必须填写',
-                    'captcha.captcha'       => '验证码不正确',
-                ];
-                $validate = new Validate($rules,$messages);
+                $validate->rule($rules);
                 $result = $validate->check($data);
                 if (!$result) {
                     return json(['code' => 0, 'msg'=>$validate->getError()], 256);
@@ -44,7 +40,7 @@ class Login extends BaseController
                     return json(['code' => 0, 'msg'=>'账号或密码不正确'], 256);
                 }
                 //登陆成功
-                \think\facade\Session::set('admin',$res);
+                \think\facade\Session::set('bAdmin_admin',$res);
 
                 return json(['code' => 1, 'msg'=>'success'], 256);
 
@@ -54,4 +50,5 @@ class Login extends BaseController
             return $e->getMessage();
         }
     }
+
 }

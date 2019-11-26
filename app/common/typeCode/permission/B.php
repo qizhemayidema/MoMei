@@ -8,7 +8,7 @@
 namespace app\common\typeCode\permission;
 
 use app\common\typeCode\CacheImpl;
-use app\common\typeCode\Permissionlmpl;
+use app\common\typeCode\PermissionImpl;
 
 class B implements CacheImpl,PermissionImpl
 {

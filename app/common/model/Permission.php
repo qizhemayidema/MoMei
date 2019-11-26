@@ -15,11 +15,18 @@ class Permission extends Model implements BasicImpl
         // TODO: Implement getList() method.
         if ($base instanceof PermissionImpl){}
         $type = $base->getPermissionType();
-        //查询对应类型的数据全部的
-        $data  = $this->where(['type'=>$type])->select()->toArray();
-        $res = $this->getMoreList($data);
         //进行缓存
         $cache = new Cache($base);
+        if($res = $cache->getCache()){
+            return $res;
+        }else{
+            //查询对应类型的数据全部的
+            $data  = $this->where(['type'=>$type])->select()->toArray();
+            $res = $this->getMoreList($data);
+            $cache->setCache($res);
+            return $res;
+        }
+
     }
 
     public function get($id) // 获取一条
@@ -27,9 +34,9 @@ class Permission extends Model implements BasicImpl
 
     }
 
-    public function add(array $data)    //插入一条数据 返回自增主键id
+    public function add(array $data) : int   //插入一条数据 返回自增主键id
     {
-
+        return 1;
     }
 
     public function modify($id,$data)      //更新一条数据
@@ -47,7 +54,7 @@ class Permission extends Model implements BasicImpl
 
     }
 
-    private function getMoreList($categorys,$max = 1,$pId = 0,$l = 0)
+    private function getMoreList($categorys,$max = 2,$pId = 0,$l = 0)
     {
         $list = [];
 

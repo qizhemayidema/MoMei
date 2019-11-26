@@ -17,6 +17,6 @@ class Permission
      */
     public function getRuleList()
     {
-       $res =  (new \app\common\model\Permission())->getList((new B()));
+       return  (new \app\common\model\Permission())->getList((new B()));
     }
 }
