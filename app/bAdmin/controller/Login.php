@@ -33,23 +33,23 @@ class Login extends BaseController
                 $validate->rule($rules);
                 $result = $validate->check($data);
                 if (!$result) {
-                    return json(['code' => 0, 'msg'=>$validate->getError()], 256);
+                    return json_encode(['code' => 0, 'msg'=>$validate->getError()]);
                 }
 
                 //查询登录的用户
                 $res = (new Manager())->where(['username'=>$data['username'],'password'=>md5($data['password'])])->find();
                 if (!$res){
-                    return json(['code' => 0, 'msg'=>'账号或密码不正确'], 256);
+                    return json_encode(['code' => 0, 'msg'=>'账号或密码不正确']);
                 }
                 //登陆成功
                 \think\facade\Session::set('bAdmin_admin',$res);
 
-                return json(['code' => 1, 'msg'=>'success'], 256);
+                return json_encode(['code' => 1, 'msg'=>'success']);
 
             }
         }
         catch (\Exception $e){
-            return $e->getMessage();
+            return json_encode(['code' => 0, 'msg'=>$e->getMessage()]);
         }
     }
 
