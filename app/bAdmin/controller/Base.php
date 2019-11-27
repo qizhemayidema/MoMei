@@ -8,6 +8,7 @@ use app\common\service\Role;
 use app\common\typeCode\role\B;
 use app\middleware\BAdminCheck;
 use think\facade\Session;
+use think\facade\View;
 
 
 class Base extends BaseController
@@ -20,6 +21,7 @@ class Base extends BaseController
 
     public function initialize()
     {
+
         //获取访问地址
         $controller = Request()->controller(); //获取控制器名
 
@@ -37,5 +39,15 @@ class Base extends BaseController
         if(!in_array($url,$authAllRes)){
 //                exit('no_rule');
         }
+
+        $this->setMenu();
+    }
+
+
+    protected function setMenu()
+    {
+        $menu = (new \app\common\service\Menu((new \app\common\typeCode\menu\B())))->getList();
+
+        View::assign('menu',$menu);
     }
 }
