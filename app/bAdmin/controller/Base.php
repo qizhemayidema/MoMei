@@ -21,9 +21,18 @@ class Base extends BaseController
 
     public function initialize()
     {
+        if (!$this->checkPermission()) {
+            if (request()->isAjax() || request()->isPost()) {
+                header('Content-type: application/json');
+                exit(json_encode(['code' => 0, 'msg' => '操作越权'], 256));
+
+            } else {
+                return redirect("/Index/index");
+            }
+        }
+
         $this->setMenu();
 
-        $this->checkPermission();
     }
 
 
@@ -36,7 +45,8 @@ class Base extends BaseController
 
     protected function checkPermission()
     {
-        //获取访问地址
+        if(request()->isGet()) return true;
+
         $controller = Request()->controller(); //获取控制器名
 
         $action = Request()->action();//方法名
@@ -54,8 +64,9 @@ class Base extends BaseController
 
         $ignorePermission = ['index/index'];
 
-        if(!in_array($url,$ignorePermission) && !in_array($url,$authAllRes)){
-//            return redirect('/index/index');
-        }
+        if (in_array($url,$ignorePermission)) return true;
+
+        if(!in_array($url,$authAllRes)) return false;
+        return true;
     }
 }

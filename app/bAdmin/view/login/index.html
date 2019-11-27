@@ -57,7 +57,7 @@
                 processData:false,
                 contentType:false,
                 success:function(data){
-                    if (data.code == 0){
+                    if(data.code==0){
                         layer.msg(data.msg);
                     } else{
                         location.href="{:url('Index/index')}";

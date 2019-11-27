@@ -34,13 +34,13 @@ class Login extends BaseController
                 $validate->rule($rules);
                 $result = $validate->check($data);
                 if (!$result) {
-                    return json_encode(['code' => 0, 'msg'=>$validate->getError()]);
+                    return json(['code' => 0, 'msg'=>$validate->getError()]);
                 }
 
                 //查询登录的用户
-                $res = (new Manager())->where(['username'=>$data['username'],'password'=>md5($data['password'])])->find()->toArray();
+                $res = (new Manager())->where(['username'=>$data['username'],'password'=>md5($data['password'])])->find();
                 if (!$res){
-                    return json_encode(['code' => 0, 'msg'=>'账号或密码不正确']);
+                    return json(['code' => 0, 'msg'=>'账号或密码不正确']);
                 }
                 if ($res['role_id']){
                     $res['role_name'] = (new Role())->getFindRes($res['role_id'])['role_name'];
@@ -50,13 +50,19 @@ class Login extends BaseController
                 //登陆成功
                 \think\facade\Session::set('bAdmin_admin',$res);
 
-                return json_encode(['code' => 1, 'msg'=>'success']);
+                return json(['code' => 1, 'msg'=>'success']);
 
             }
         }
         catch (\Exception $e){
-            return json_encode(['code' => 0, 'msg'=>$e->getMessage()]);
+            return json(['code' => 0, 'msg'=>$e->getMessage()]);
         }
+    }
+
+    public function logout()
+    {
+        \think\facade\Session::set('bAdmin_admin',null);
+        return redirect('index');
     }
 
 }

@@ -13,10 +13,6 @@ class Area extends Model implements BasicImpl
         return $this->where(['id'=>$id])->find();
     }
 
-    public function getList(\app\common\typeCode\BaseImpl $base, $start, $length)
-    {
-    }
-
     public function add(Array $data): int
     {
     }
