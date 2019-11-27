@@ -1,16 +1,21 @@
 {include file="common/source"}
 <div class="col-sm-12">
     <div class="ibox float-e-margins">
-        <div class="ibox-title">
-            <h5>
-                <button type="button" onclick="window.location.href='{:url('add')}'"
-                        class="btn btn-w-m btn-primary">添加权限
-                </button>
-            </h5>
-        </div>
         <div class="ibox-content">
             <div class="example">
-
+                <div class="ibox-title">
+                    <h5>
+                        {if condition="$pidResult[0]['level'] eq 3"}
+                        <button type="button" onclick="window.location.href='{:url('index',['pid'=>$threePid])}'"
+                                class="btn btn-w-m btn-primary">返回上一级
+                        </button>
+                        {elseif condition="$pidResult[0]['level'] eq 2"}
+                        <button type="button" onclick="window.location.href='{:url('index')}'"
+                                class="btn btn-w-m btn-primary">返回上一级
+                        </button>
+                        {/if}
+                    </h5>
+                </div>
                 <table class="table table-bordered table-hover text-center" >
                     <thead>
                     <tr class="text-center">
@@ -22,26 +27,17 @@
                     </thead>
                     <tbody>
                     {foreach $pidResult as $key => $value}
-                    <tr onclick="oneClick();">
+                    <tr onclick="oneClick({$value.id});">
                         <td style="text-align: left;">{$value.name}</td>
                         <td>{$value.level_value}</td>
                         <td>{if $value.is_hot}是{else}否{/if}</td>
                         <td>
-                            <button onclick="window.location.href='{:url('edit',['rule_id'=>$value.id])}'" class="btn btn-info" type="button"><i class="fa fa-paste"></i> 编辑</button>
-                            <button onclick="removeArticle(this,'{$value.id}')" class="btn btn-danger" type="button"><i class="fa fa-remove"></i> <span class="bold">删除</span></button>
+                            {if condition="$value.level neq 3"}
+                            <button onclick="window.location.href='{:url('index',['pid'=>$value.id])}'" class="btn btn-info" type="button"><i class="fa fa-paste"></i> 查看下级</button>
+                            {/if}
+                            <button onclick="window.location.href='{:url('edit',['city_id'=>$value.id])}'" class="btn btn-info" type="button"><i class="fa fa-paste"></i> 编辑</button>
                         </td>
                     </tr>
-                    <div>
-                        <tr onclick="twoClick();">
-                            <td style="text-align: left;">111</td>
-                            <td>111</td>
-                            <td>222</td>
-                            <td>
-                                <button onclick="window.location.href='{:url('edit',['rule_id'=>$value.id])}'" class="btn btn-info" type="button"><i class="fa fa-paste"></i> 编辑</button>
-                                <button onclick="removeArticle(this,'{$value.id}')" class="btn btn-danger" type="button"><i class="fa fa-remove"></i> <span class="bold">删除</span></button>
-                            </td>
-                        </tr>
-                    </div>
                     {/foreach}
                     </tbody>
                 </table>
@@ -51,9 +47,35 @@
     </div>
 </div>
 <script>
-    function oneClick(obj) {
-        $.ajax(function () {
-            
+    function oneClick(article_id) {
+        $.ajax({
+            url: "{:url('index')}",
+            type: 'post',
+            dataType: 'json',
+            data: {
+                pid: article_id,
+            },
+            success: function (result) {
+                if (result.code == 1) {
+                    var fill_data = "<div>";
+                    for (i = 0;i<result.data.length;i++){
+                        var name = result.data[i]['name'];
+                        var id = result.data[i]['id'];
+                        var val = result.data[i]['lavel_value'];
+                        if(result.data[i]['is_hot']){
+                            var hot = '是';
+                        }else {
+                            var hot = '否';
+                        }
+                        fill_data+="<tr onclick='twoClick("+id+")'><td>--"+name+"</td><td style='text-align: center'>"+val+"</td><td style='text-align: center'>"+hot+"</td>" +
+                            "<button onclick=\"window.location.href='{:url('edit',['rule_id'=>1])}'\" class=\"btn btn-info\" type=\"button\"><i class=\"fa fa-paste\"></i> 编辑</button>";
+                    }
+                    console.log(fill_data);
+                } else {
+
+                }
+
+            }
         })
     }
 </script>
