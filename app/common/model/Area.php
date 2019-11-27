@@ -10,7 +10,7 @@ class Area extends Model implements BasicImpl
 {
     public function get($id)
     {
-
+        return $this->where(['id'=>$id])->find();
     }
 
     public function getList(\app\common\typeCode\BaseImpl $base, $start, $length)
@@ -23,6 +23,7 @@ class Area extends Model implements BasicImpl
 
     public function modify($id, $data)
     {
+        return $this->where(['id'=>$id])->update($data);
     }
 
     public function rm($id)

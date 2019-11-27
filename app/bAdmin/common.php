@@ -7,6 +7,9 @@ function checkPermission($controller,$action)
 {
     //查询当前用户的权限
     $adminRes = Session::get('bAdmin_admin');
+    if($adminRes['role_id']==0){
+        return true;
+    }
     $authAll = (new Role())->getUserRoleAuth(new B(),$adminRes['role_id']);
     $authAllRes = array_column($authAll,'urls');
     $url = strtolower($controller.'/'.$action);

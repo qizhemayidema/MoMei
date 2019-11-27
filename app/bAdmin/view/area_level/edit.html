@@ -5,38 +5,42 @@
             {:token_field()}
             <input type="hidden" name="id" value="{$data.id}">
             <div class="form-group">
-                <label class="col-sm-2 control-label">所属权限类目</label>
+                <label class="col-sm-2 control-label">地区</label>
                 <div class="col-sm-8">
-                    <select class="form-control m-b" name="p_id" id="">
-                        <option value="0">顶级</option>
-                        {foreach $ruleArr as $key => $value}
-                        <option value="{$value.id}" {if condition="$data.p_id eq $value.id"}selected{/if}>{$value.name}</option>
+                    <input name="name" required  readonly value="{$data.name}" type="text" class="form-control" >
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">级别</label>
+                <div class="col-sm-8">
+                    <select class="form-control m-b" name="level_id" id="">
+                        {foreach $cateList as $key => $value}
+                        <option value="{$value.id}" {if condition="$data.level_id eq $value.id"}selected{/if}>{$value.name}</option>
                         {/foreach}
                     </select>
                 </div>
             </div>
             <div class="form-group">
-                <label class="col-sm-2 control-label">权限名称</label>
+                <label class="col-sm-2 control-label">排序</label>
                 <div class="col-sm-8">
-                    <input name="name" required  value="{$data.name}" type="text" class="form-control">
+                    <input name="level_sort" required placeholder="从0开始,越大级别越高,最大999"  value="{$data.level_sort}" type="text" class="form-control" >
                 </div>
             </div>
-            <div class="form-group">
-                <label class="col-sm-2 control-label">控制器</label>
+            <div class="form-group draggable">
+                <label class="col-sm-2 control-label">热门</label>
                 <div class="col-sm-8">
-                    <input name="controller" required value="{$data.controller}"  type="text" class="form-control">
+                    <label class="radio-inline">
+                        <input type="radio" checked="" value="1" {if condition="$data['is_hot'] eq 1"}checked{/if} id="optionsRadios1" name="is_hot">是</label>
+                    <label class="radio-inline">
+                        <input type="radio" value="0" {if condition="$data['is_hot'] eq 0"}checked{/if} id="optionsRadios2" name="is_hot">否</label>
+
                 </div>
             </div>
-            <div class="form-group">
-                <label class="col-sm-2 control-label">方法</label>
-                <div class="col-sm-8">
-                    <input name="action" required value="{$data.action}" type="text" class="form-control">
-                </div>
-            </div>
+
             <div class="form-group">
                 <label class="col-sm-3 control-label"></label>
                 <div class="col-sm-5">
-                    <button type="button" class="btn btn-w-m btn-success" onclick="save()">修改</button>
+                    <button type="button" class="btn btn-w-m btn-success" onclick="save()">保存</button>
                 </div>
             </div>
         </form>
@@ -59,7 +63,7 @@
                 if (data.code == 0) {
                     layer.msg(data.msg, {icon: 5})
                 } else {
-                    layer.msg('修改成功', {icon: 1});
+                    layer.msg('添加成功', {icon: 1});
                     setTimeout(function () {
                         window.location.href = "{:url('index')}";
                     }, 600)
