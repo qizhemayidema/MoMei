@@ -16,18 +16,14 @@ class Category extends Model implements BasicImpl
         return $this->find($id)->toArray();
     }
 
-    public function getList(\app\common\typeCode\BaseImpl $base, $start = 0, $length = 10)
+    /**
+     * @param $type int 类型
+     * @param int $level 层级
+     * @param int $masterId 所属用户id
+     * @return array
+     */
+    public function getList($type,$level = 1,$masterId = 0)
     {
-        if ($base instanceof CateImpl){
-
-        }
-
-        $type = $base->getCateType();
-
-        $level = $base->getLevelType();
-
-        $masterId = $base->getMasterId();
-
         $data = $this->where(['type'=>$type,'master_id' => $masterId])->order('order_num','desc')
             ->select()->toArray();
 

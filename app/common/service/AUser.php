@@ -29,7 +29,7 @@ class AUser
             $handler = $handler->receptionShowData();
         }
 
-        return  $handler->getList($AUserImpl);
+        return  $handler->getListByType($AUserImpl->getUserType());
     }
 
     public function getListPage(AUserImpl $AUserImpl,$showType = false)

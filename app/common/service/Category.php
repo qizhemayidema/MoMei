@@ -22,20 +22,26 @@ class Category
     {
         $cateModel = new CateModel();
 
+        $masterId = $cateImpl->getMasterId();
+
+        $level = $cateImpl->getLevelType();
+
+        $type = $cateImpl->getCateType();
+
         if ($cateImpl instanceof CacheImpl){
 
             $cache = (new Cache($cateImpl));
 
-            if ($cache->exists()) return $cateModel->getList($cateImpl);
+            if ($cache->exists()) return $cateModel->getList($type,$level,$masterId);
 
-            $result = $cateModel->getList($cateImpl);
+            $result = $cateModel->getList($type,$level,$masterId);
 
             $cache->setCache($result);
 
             return $result;
         }
 
-        return (new CateModel())->getList($cateImpl);
+        return (new CateModel())->getList($type,$level,$masterId);
     }
 
     //获取一条数据通过id

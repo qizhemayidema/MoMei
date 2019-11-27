@@ -28,5 +28,6 @@ class Area
         $handler = $areaModel->where(['p_id'=>$pId]);
 
         return $page ? $handler->paginate($this->pageLength) : $handler->select();
+
     }
 }

@@ -14,6 +14,7 @@ class CateLevelName extends Base
     public function index()
     {
         try{
+
             $data = (new Category())->getList((new TypeDesc()));
 
             View::assign('cate',$data);

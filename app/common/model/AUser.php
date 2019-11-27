@@ -15,14 +15,14 @@ class AUser extends Model implements BasicImpl,ShowImpl
         return $this->find($id);
     }
 
-    public function getList(\app\common\typeCode\BaseImpl $base, $start = 0,$length = 10)
+    /**
+     * 获取列表
+     * @param bool $page 是否分页  如果是 则传数量
+     * @return array|\think\Paginator
+     */
+    public function getList($page = false)
     {
-        if ($base instanceof AUserImpl){}
-
-        $userType = $base->getUserType();
-
-        return $this->where(['type'=>$userType])->limit($start,$length);
-
+        return $page ? $this->paginate($page) : $this->select()->toArray();
     }
 
     public function add(Array $data): int
@@ -63,4 +63,17 @@ class AUser extends Model implements BasicImpl,ShowImpl
         return $this;
     }
 
+    /**
+     * 获取列表根据类型
+     * @param $type
+     * @param bool $page
+     * @return array|\think\Paginator
+     */
+    public function getListByType($type,$page = false)
+    {
+        $handler = $this->where(['type'=>$type]);
+
+        return $page ? $handler->paginate($page) : $handler->select()->toArray();
+
+    }
 }
