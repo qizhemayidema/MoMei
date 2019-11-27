@@ -19,20 +19,9 @@ class Role extends Model implements BasicImpl
         return $this->where(['id'=>$id])->find();
     }
 
-    public function getList(\app\common\typeCode\BaseImpl $base,$start=0,$length=10)  // 获取list
+    public function getList($type)  // 获取list
     {
-        if($base instanceof \app\common\typeCode\Role)
-        $type = $base->getRoleType();
-        //缓存
-        $Cache = new Cache($base);
-        if($res = $Cache->getCache()) {
-            return $res;
-        }else{
-            //查询全部的权限组
-            $res = $this->where(['type'=>$type])->select()->toArray();
-            $Cache->setCache($res);
-            return $res;
-        }
+        return $this->where(['type'=>$type])->select()->toArray();
     }
 
     public function add(Array $data) : int    //插入一条数据 返回自增主键id
