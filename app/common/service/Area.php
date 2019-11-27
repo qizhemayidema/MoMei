@@ -60,6 +60,6 @@ class Area
         ];
 
         return (new \app\common\model\Area())->modify($data['id'],$updateArr);
-    public function getListByPId($pId = 0,$page = Null)
+
     }
 }
