@@ -11,11 +11,9 @@ namespace app\common\service;
 
 class Area
 {
-    private $pageLength = 15;
-
     /**
      * @param int $pId  父级id
-     * @param bool $page    是否分页 true 分 false 否
+     * @param bool $page    是否分页 传数字 分 false 否
      * @return \think\Collection|\think\Paginator
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
@@ -25,9 +23,9 @@ class Area
     {
         $areaModel = new \app\common\model\Area();
 
-        $handler = $areaModel->where(['p_id'=>$pId]);
+        $handler = $areaModel->where(['pid'=>$pId]);
 
-        return $page ? $handler->paginate($this->pageLength) : $handler->select();
+        return $page ? $handler->paginate($page) : $handler->select();
 
     }
 }
