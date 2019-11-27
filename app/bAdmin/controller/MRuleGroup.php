@@ -5,12 +5,13 @@
  * Date: 2019/11/26
  * Time: 11:55
  */
+declare (strict_types = 1);
 
 namespace app\bAdmin\controller;
 
 use app\common\service\Permission;
 use app\common\service\Role;
-use app\common\typeCode\role\C as TypeDesc;
+use app\common\typeCode\role\M as TypeDesc;
 use app\common\typeCode\permission\M as RuleTypeDesc;
 use app\Request;
 use think\facade\View;
@@ -21,7 +22,7 @@ class MRuleGroup extends Base
     public function index()
     {
         try{
-            //查询平台的全部权限组
+            //查询影院的全部权限组
             $roleList = (new Role())->getRoleList(new TypeDesc());
 
             View::assign('roleList',$roleList);

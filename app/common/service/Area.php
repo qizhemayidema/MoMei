@@ -25,7 +25,7 @@ class Area
     {
         $areaModel = new \app\common\model\Area();
 
-        $handler = $areaModel->where(['p_id'=>$pId]);
+        $handler = $areaModel->where(['pid'=>$pId]);
 
         return $page ? $handler->paginate($this->pageLength) : $handler->select();
     }

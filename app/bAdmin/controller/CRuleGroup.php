@@ -5,6 +5,7 @@
  * Date: 2019/11/26
  * Time: 11:55
  */
+declare (strict_types = 1);
 
 namespace app\bAdmin\controller;
 

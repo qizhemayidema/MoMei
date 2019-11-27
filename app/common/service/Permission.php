@@ -18,9 +18,21 @@ class Permission
      * 查询全部的权限
      * $data 2019/11/25 17:36
      */
-    public function getRuleList(BaseImpl $obj)
+    public function getRuleList(PermissionImpl $obj)
     {
-       return  (new \app\common\model\Permission())->getList($obj);
+
+        $type = $obj->getPermissionType();
+        if($obj instanceof CacheImpl)
+        $cache = new Cache($obj);
+        if($res = $cache->getCache()){
+            return $res;
+        }else{
+            //查询对应类型的数据全部的
+            $data  = (new \app\common\model\Permission())->getList($type);
+            $res = $this->getMoreList($data);
+            $cache->setCache($res);
+            return $res;
+        }
     }
 
     /**
@@ -83,5 +95,21 @@ class Permission
             (new Cache($CacheImpl))->clear();
         }
         return (new \app\common\model\Permission())->rm($id);
+    }
+
+    private function getMoreList($categorys,$max = 2,$pId = 0,$l = 0)
+    {
+        $list = [];
+        foreach ($categorys as $k=>$v){
+            if ($v['p_id'] == $pId){
+                unset($categorys[$k]);
+                if ($l < $max){
+                    //小于三级
+                    $v['children'] = $this->getMoreList($categorys,$max,$v['id'],$l+1);
+                }
+                $list[] = $v;
+            }
+        }
+        return $list;
     }
 }

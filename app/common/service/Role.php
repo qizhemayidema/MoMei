@@ -9,7 +9,6 @@
 namespace app\common\service;
 
 use app\common\tool\Cache;
-use app\common\typeCode\BaseImpl;
 use app\common\typeCode\CacheImpl;
 
 class Role
@@ -18,9 +17,20 @@ class Role
      * 查询全部的权限组(角色)
      * $data 2019/11/26 12:00
      */
-    public function getRoleList(BaseImpl $obj)
+    public function getRoleList(\app\common\typeCode\Role $obj)
     {
-        return (new \app\common\model\Role())->getList($obj);
+        $type = $obj->getRoleType();
+        //缓存
+        if($obj instanceof CacheImpl)
+        $cache = new Cache($obj);
+        if($res = $cache->getCache()) {
+            return $res;
+        }else{
+            //查询全部的权限组
+            $res = (new \app\common\model\Role())->getList($type);
+            $cache->setCache($res);
+            return $res;
+        }
     }
 
     public function insert(\app\common\typeCode\Role $Role,$data)
