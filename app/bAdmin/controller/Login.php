@@ -11,6 +11,7 @@ namespace app\bAdmin\controller;
 
 use app\BaseController;
 use app\common\model\Manager;
+use app\common\service\Role;
 use app\Request;
 use think\Validate;
 class Login extends BaseController
@@ -37,9 +38,14 @@ class Login extends BaseController
                 }
 
                 //查询登录的用户
-                $res = (new Manager())->where(['username'=>$data['username'],'password'=>md5($data['password'])])->find();
+                $res = (new Manager())->where(['username'=>$data['username'],'password'=>md5($data['password'])])->find()->toArray();
                 if (!$res){
                     return json_encode(['code' => 0, 'msg'=>'账号或密码不正确']);
+                }
+                if ($res['role_id']){
+                    $res['role_name'] = (new Role())->getFindRes($res['role_id'])['role_name'];
+                }else{
+                    $res['role_name'] = '超级管理员';
                 }
                 //登陆成功
                 \think\facade\Session::set('bAdmin_admin',$res);

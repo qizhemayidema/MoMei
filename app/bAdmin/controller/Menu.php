@@ -10,7 +10,7 @@ use think\facade\View;
 use think\Request;
 use think\Validate;
 
-class Menu extends BaseController
+class Menu extends Base
 {
     public function index()
     {

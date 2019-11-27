@@ -9,6 +9,11 @@ class Index extends Base
 {
     public function index()
     {
-        
+        return view();
+    }
+
+    public function firstPage()
+    {
+
     }
 }
