@@ -13,6 +13,7 @@ use app\common\service\Permission;
 use app\common\service\Role;
 use app\common\typeCode\role\M as TypeDesc;
 use app\common\typeCode\permission\M as RuleTypeDesc;
+use app\common\typeCode\roleGroup\M as RoleGroupDesc;
 use app\Request;
 use think\facade\View;
 use think\Validate;
@@ -59,7 +60,7 @@ class MRole extends Base
                 throw new \Exception($valiatde->getError());
             }
 
-            $res = (new Role())->insert(new TypeDesc(),$post);
+            $res = (new Role())->insert(new TypeDesc(),new RoleGroupDesc(),$post);
             if(!$res) throw new \Exception('添加失败');
             return json(['code'=>1,'msg'=>'success']);
         }catch (\Exception $e){

@@ -10,6 +10,7 @@ namespace app\common\service;
 
 use app\common\tool\Cache;
 use app\common\typeCode\CacheImpl;
+use app\common\typeCode\RoleGroupImpl;
 
 class Role
 {
@@ -39,7 +40,7 @@ class Role
 
     }
 
-    public function insert(\app\common\typeCode\RoleImpl $Role,$data)
+    public function insert(\app\common\typeCode\RoleImpl $Role,RoleGroupImpl $RoleGroupImpl,$data)
     {
         $type = $Role->getRoleType();
         $dataRes = [
@@ -48,6 +49,11 @@ class Role
             'role_desc'=>$data['role_desc'],
             'permission_ids'=>implode(',',$data['rules']).',',
         ];
+
+        if($RoleGroupImpl->getRoleGroupType()){
+            $roleGroupResult = (new \app\common\model\RoleGroup())->getFindByType($RoleGroupImpl->getRoleGroupType());
+            $dataRes['group_code'] = $roleGroupResult['group_code'];
+        }
 
         if($Role instanceof CacheImpl){
             (new Cache($Role))->clear();
