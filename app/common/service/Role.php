@@ -21,16 +21,22 @@ class Role
     {
         $type = $obj->getRoleType();
         //缓存
-        if($obj instanceof CacheImpl)
-        $cache = new Cache($obj);
-        if($res = $cache->getCache()) {
-            return $res;
+        if($obj instanceof CacheImpl){
+            $cache = new Cache($obj);
+            if($res = $cache->getCache()) {
+                return $res;
+            }else{
+                //查询全部的权限组
+                $res = (new \app\common\model\Role())->getList($type);
+                $cache->setCache($res);
+                return $res;
+            }
         }else{
             //查询全部的权限组
             $res = (new \app\common\model\Role())->getList($type);
-            $cache->setCache($res);
             return $res;
         }
+
     }
 
     public function insert(\app\common\typeCode\Role $Role,$data)
