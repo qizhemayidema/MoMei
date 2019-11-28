@@ -3,12 +3,14 @@ declare (strict_types = 1);
 
 namespace app\bAdmin\controller;
 
+use app\BaseController;
 use app\common\service\Category as CateService;
+use app\common\tool\Upload;
 use app\common\typeCode\cate\ABus as TypeDesc;
 use think\facade\View;
 use think\Request;
 
-class AUser extends Base
+class AUser extends BaseController
 {
     public function index()
     {
@@ -33,8 +35,9 @@ class AUser extends Base
         return view();
     }
 
-    public function getAreaByPId()
+    public function uploadPic()
     {
-
+        $path = 'bus/';
+        return json((new Upload())->uploadOnePic($path));
     }
 }
