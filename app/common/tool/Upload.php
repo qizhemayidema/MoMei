@@ -3,9 +3,6 @@
 namespace app\common\tool;
 
 use think\facade\Filesystem;
-use think\File;
-use think\file\UploadedFile;
-use think\Request;
 
 class Upload
 {
@@ -40,8 +37,6 @@ class Upload
         } catch (\Exception $e) {
             return ['code' => 0, 'msg' => '操作失误,请稍后重试'];
         }
-
-
     }
 
     /**

@@ -15,6 +15,23 @@ use app\common\model\AUser as AUserModel;
 class AUser
 {
     private $pageLength = 15;
+
+    private $showType = false;
+
+    private $aUserImpl = null;
+
+
+
+    public function __construct(AUserImpl $aUserImpl)
+    {
+        $this->aUserImpl = $aUserImpl;
+    }
+
+    public function setShowType($showType = false)
+    {
+        $this->showType = $showType;
+    }
+
     /**
      * @param AUserImpl $AUserImpl
      * @param bool $showType 是否显示全部数据(冻结 等等) true 显示  false 不显示
@@ -32,7 +49,12 @@ class AUser
         return  $handler->getListByType($AUserImpl->getUserType());
     }
 
-    public function getListPage(AUserImpl $AUserImpl,$showType = false)
+    /**
+     * @param AUserImpl $AUserImpl
+     * @param null $showType
+     * @return \think\Paginator
+     */
+    public function getListPage(AUserImpl $AUserImpl,$showType = null)
     {
         $handler = new AUserModel();
 
