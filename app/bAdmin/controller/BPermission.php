@@ -2,27 +2,28 @@
 /**
  * Created by PhpStorm.
  * User: fk
- * Date: 2019/11/26
- * Time: 11:36
+ * Date: 2019/11/25
+ * Time: 17:29
  */
 declare (strict_types = 1);
 
 namespace app\bAdmin\controller;
 
 use app\common\service\Permission;
-use app\common\typeCode\permission\M as TypeDesc;
+use app\common\typeCode\permission\B as TypeDesc;
 use app\Request;
 use think\facade\View;
 use think\Validate;
-class MAuthRule extends Base
+
+class BPermission extends Base
 {
     public function index()
     {
         try{
-            //查询影院的全部的权限
+            //查询平台的全部的权限
             $ruleArr = (new Permission())->getRuleList(new TypeDesc());
             View::assign('ruleArr',$ruleArr);
-            return view('m_auth_rule/index');
+            return view();
         }catch (\Exception $e){
             return $e->getMessage();
         }
@@ -30,10 +31,10 @@ class MAuthRule extends Base
 
     public function add()
     {
-        //查询影院的全部的权限
+        //查询平台的全部的权限
         $ruleArr = (new Permission())->getRuleList(new TypeDesc());
         View::assign('ruleArr',$ruleArr);
-        return view('m_auth_rule/add');
+        return view();
     }
 
     public function save(Request $request)
@@ -69,11 +70,11 @@ class MAuthRule extends Base
         $res = (new Permission())->getFindRes($id);
         View::assign('data',$res);
 
-        //查询影院的全部的权限
+        //查询平台的全部的权限
         $ruleArr = (new Permission())->getRuleList(new TypeDesc());
         View::assign('ruleArr',$ruleArr);
 
-        return view('m_auth_rule/edit');
+        return view();
     }
 
     public function update(Request $request)

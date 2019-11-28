@@ -22,17 +22,24 @@ class Permission
     {
 
         $type = $obj->getPermissionType();
-        if($obj instanceof CacheImpl)
-        $cache = new Cache($obj);
-        if($res = $cache->getCache()){
-            return $res;
+        if($obj instanceof CacheImpl){
+            $cache = new Cache($obj);
+            if($res = $cache->getCache()){
+                return $res;
+            }else{
+                //查询对应类型的数据全部的
+                $data  = (new \app\common\model\Permission())->getList($type);
+                $res = $this->getMoreList($data);
+                $cache->setCache($res);
+                return $res;
+            }
         }else{
             //查询对应类型的数据全部的
             $data  = (new \app\common\model\Permission())->getList($type);
             $res = $this->getMoreList($data);
-            $cache->setCache($res);
             return $res;
         }
+
     }
 
     /**
