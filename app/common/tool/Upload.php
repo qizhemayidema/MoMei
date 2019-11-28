@@ -132,6 +132,9 @@ class Upload
 
         }
 
-        return Filesystem::disk('public')->putFile($file_path, $file, 'uniqid');
+        $path = Filesystem::disk('public')->putFile($file_path, $file, 'uniqid');
+
+        return Filesystem::getDiskConfig('public', 'url') . '/' . str_replace('\\', '/', $path);
+
     }
 }
