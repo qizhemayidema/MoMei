@@ -17,6 +17,14 @@ use app\common\model\Category as CateModel;
 
 class Category
 {
+    //获取一条数据
+    public function get($id)
+    {
+        $cateModel = new CateModel();
+
+       return $cateModel->find($id)->toArray();
+    }
+
     //获取列表
     public function getList(CateImpl $cateImpl)
     {
@@ -48,6 +56,11 @@ class Category
     public function getOneById($id)
     {
         return (new CateModel())->get($id);
+    }
+
+    public function getListByType($type)
+    {
+        return (new CateModel())->getList($type);
     }
 
     //添加一个分类

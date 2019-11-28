@@ -11,73 +11,117 @@ namespace app\common\service;
 
 use app\common\typeCode\AUserImpl;
 use app\common\model\AUser as AUserModel;
+use app\Request;
 
 class AUser
 {
-    private $pageLength = 15;
+    //查询分页长度 如果 null则全取
+    private $pageLength = null;
 
+    //查询展示类型 如果false 被冻结的一些数据都不展示
     private $showType = false;
 
+    //描述类
     private $aUserImpl = null;
 
-
-
-    public function __construct(AUserImpl $aUserImpl)
+    public function __construct(?AUserImpl $aUserImpl = null)
     {
         $this->aUserImpl = $aUserImpl;
     }
 
-    public function setShowType($showType = false)
+    public function showType($showType = false)
     {
         $this->showType = $showType;
+
+        return $this;
     }
 
-    /**
-     * @param AUserImpl $AUserImpl
-     * @param bool $showType 是否显示全部数据(冻结 等等) true 显示  false 不显示
-     */
-    public function getList(AUserImpl $AUserImpl,$showType = false)
+    public function pageLength($pageLength = 15)
+    {
+        $this->pageLength = $pageLength;
+
+        return $this;
+    }
+
+
+    public function getList()
     {
         $handler = new AUserModel();
 
-        if($showType){
-            $handler = $handler->backgroundShowData();
-        }else{
-            $handler = $handler->receptionShowData();
-        }
+        $handler = $this->showType ? $handler->backgroundShowData() : $handler->receptionShowData();
 
-        return  $handler->getListByType($AUserImpl->getUserType());
+        $handler = $this->aUserImpl ? $handler->where(['type'=>$this->aUserImpl->getUserType()]) : $handler;
+
+        return $this->pageLength ? $handler->paginate($this->pageLength) : $handler->select();
     }
 
-    /**
-     * @param AUserImpl $AUserImpl
-     * @param null $showType
-     * @return \think\Paginator
-     */
-    public function getListPage(AUserImpl $AUserImpl,$showType = null)
+    public function existsUsername($username,$type = null)
     {
-        $handler = new AUserModel();
+        if (!$type) $type = $this->aUserImpl->getUserType();
 
-        if($showType){
-            $handler = $handler->backgroundShowData();
-        }else{
-            $handler = $handler->receptionShowData();
+        return (new AUserModel())->where(['type'=>$type,'username'=> $username])->find() ? true : false;
+    }
+
+    public function insert($data)
+    {
+        $aUserModel = (new AUserModel());
+
+        //查询行业名称
+        $proName = (new \app\common\model\Category())->get($data['pro_id'])['name'];
+
+        //创建盐值
+        $salt = md5(mt_rand(10000000000,99999999999));
+
+        $insert = [
+            'username'  => $data['username'],
+            'slat'      => $salt,
+            'password'  => md5($data['password'] . $salt),
+            'address'  => $data['address'],
+            'bus_license'  => $data['bus_license'],
+            'bus_license_code'  => $data['bus_license_code'],
+            'province'  => $data['province'],
+            'city'  => $data['city'],
+            'county'  => $data['county'],
+            'contact'  => $data['contact'],
+            'tel'       => $data['tel'],
+            'contact_license_code'  => $data['contact_license_code'],
+            'contact_license_pic'  => $data['contact_license_pic'],
+            'contact_sex'  => $data['contact_sex'],
+            'contact_tel'  => $data['contact_tel'],
+            'contact_wechat'  => $data['contact_wechat'],
+            'credit_code'  => $data['credit_code'],
+            'email'  => $data['email'],
+            'name'  => $data['name'],
+            'pro_id'  => $data['pro_id'],
+            'type'  => $data['type'],
+            'role_id'  => $data['role_id'] ?? 0,
+            'pro_name' => $proName,
+            'create_time' => time(),
+        ];
+
+        isset($data['group_code']) && $insert['group_code'] = $data['group_code'];
+
+        $aUserModel->insert($insert);
+
+        $id = $aUserModel->getLastInsID();
+
+        if (!isset($data['group_code'])){
+            $data['group_code'] = $id;
+            $aUserModel->where(['id'=>$id])->update(['group_code'=>$id]);
         }
+//        $userName = mb_substr(uniqid(true) . time() . md5(mt_rand(10000000000,99999999999) . $salt),0,23);
 
-        return $handler->where(['type'=>$AUserImpl->getUserType()])->order('id','desc')->paginate($this->pageLength);
+        return $data;
 
     }
 
-    public function getAList($showType = false)
+    public function changeStatus($id,$status)
     {
-        $handler = new AUserModel();
+        (new AUserModel())->modify($id,['status'=>$status]);
+    }
 
-        if($showType){
-            $handler = $handler->backgroundShowData();
-        }else{
-            $handler = $handler->receptionShowData();
-        }
-
-        return $handler->order('id','desc')->paginate($this->pageLength);
+    public function get($id)
+    {
+        return (new AUserModel())->get($id);
     }
 }

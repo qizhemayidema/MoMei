@@ -16,8 +16,11 @@ class BAdminCheck
     public function handle($request, \Closure $next)
     {
         if(!Session::get('bAdmin_admin')){
+
             return redirect('/admin/Login/index');
+
         }
+
         return $next($request);
     }
 }

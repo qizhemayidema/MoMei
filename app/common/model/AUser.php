@@ -32,6 +32,7 @@ class AUser extends Model implements BasicImpl,ShowImpl
 
     public function modify($id, $data)
     {
+        $this->where(['id'=>$id])->update($data);
     }
 
     public function rm($id)
