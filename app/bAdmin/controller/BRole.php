@@ -60,7 +60,7 @@ class BRole extends Base
                 throw new \Exception($valiatde->getError());
             }
 
-            $res = (new Role())->insert(new TypeDesc(),(new RoleGroupDesc()),$post);
+            $res = (new Role())->insert(new TypeDesc(),false,$post);
             if(!$res) throw new \Exception('添加失败');
             return json(['code'=>1,'msg'=>'success']);
         }catch (\Exception $e){

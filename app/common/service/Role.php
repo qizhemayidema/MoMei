@@ -40,7 +40,7 @@ class Role
 
     }
 
-    public function insert(\app\common\typeCode\RoleImpl $Role,RoleGroupImpl $RoleGroupImpl,$data)
+    public function insert(\app\common\typeCode\RoleImpl $Role,$groupCode,$data)
     {
         $type = $Role->getRoleType();
         $dataRes = [
@@ -50,10 +50,7 @@ class Role
             'permission_ids'=>implode(',',$data['rules']).',',
         ];
 
-        if($RoleGroupImpl->getRoleGroupType()){
-            $roleGroupResult = (new \app\common\model\RoleGroup())->getFindByType($RoleGroupImpl->getRoleGroupType());
-            $dataRes['group_code'] = $roleGroupResult['group_code'];
-        }
+        if($groupCode) $dataRes['group_code'] = $groupCode;
 
         if($Role instanceof CacheImpl){
             (new Cache($Role))->clear();

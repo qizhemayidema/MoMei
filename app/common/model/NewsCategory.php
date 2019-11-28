@@ -3,7 +3,7 @@
  * Created by PhpStorm.
  * User: fk
  * Date: 2019/11/28
- * Time: 13:03
+ * Time: 14:29
  */
 
 namespace app\common\model;
@@ -11,8 +11,7 @@ namespace app\common\model;
 
 use app\common\model\impl\BasicImpl;
 use think\Model;
-
-class RoleGroup extends Model implements BasicImpl
+class NewsCategory extends Model implements BasicImpl
 {
     public function get($id)
     {
@@ -39,8 +38,8 @@ class RoleGroup extends Model implements BasicImpl
         // TODO: Implement softDelete() method.
     }
 
-    public function getFindByType($type)
+    public function getList($page=false)
     {
-        return $this->where(['type'=>$type])->find();
+
     }
 }

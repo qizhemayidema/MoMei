@@ -16,6 +16,7 @@ use app\common\typeCode\permission\M as RuleTypeDesc;
 use app\common\typeCode\roleGroup\M as RoleGroupDesc;
 use app\Request;
 use think\facade\View;
+use think\facade\Session;
 use think\Validate;
 
 class MRole extends Base
@@ -60,8 +61,14 @@ class MRole extends Base
                 throw new \Exception($valiatde->getError());
             }
 
-            $res = (new Role())->insert(new TypeDesc(),new RoleGroupDesc(),$post);
+            $userInfo = Session::get('bAdmin_admin');
+
+            if(!$userInfo['group_code']) throw new \Exception('添加失败');
+
+            $res = (new Role())->insert(new TypeDesc(),$userInfo['group_code'],$post);
+
             if(!$res) throw new \Exception('添加失败');
+
             return json(['code'=>1,'msg'=>'success']);
         }catch (\Exception $e){
             return json(['code'=>0,'msg'=>$e->getMessage()]);
