@@ -79,7 +79,7 @@ class MRole extends Base
         $ruleArr = (new Permission())->getRuleList(new RuleTypeDesc());
         view::assign('ruleArr',$ruleArr);
 
-        return View('b_role_group/edit');
+        return View();
     }
 
     public function update(Request $request)

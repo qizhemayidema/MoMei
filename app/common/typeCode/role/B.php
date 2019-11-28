@@ -9,9 +9,9 @@
 namespace app\common\typeCode\role;
 
 use app\common\typeCode\CacheImpl;
-use app\common\typeCode\Role;
+use app\common\typeCode\RoleImpl;
 
-class B implements CacheImpl,Role
+class B implements CacheImpl,RoleImpl
 {
     private $cacheName = 'platform_role_type';
     private $type = 1;
