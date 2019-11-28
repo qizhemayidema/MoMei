@@ -81,9 +81,9 @@ class AreaLevel extends Base
 
             $result = (new Area())->update($post);
             if(!$result) throw new \Exception('修改失败');
-            return json_encode(['code'=>1,'msg'=>'success']);
+            return json(['code'=>1,'msg'=>'success']);
         }catch (\Exception $e){
-            return json_encode(['code'=>0,'msg'=>$e->getMessage()]);
+            return json(['code'=>0,'msg'=>$e->getMessage()]);
         }
     }
 }
