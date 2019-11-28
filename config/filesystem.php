@@ -4,7 +4,8 @@ use think\facade\Env;
 
 return [
     // 默认磁盘
-    'default' => Env::get('filesystem.driver', 'public'),
+    'default' => 'public',
+//    'default' => Env::get('filesystem.driver', 'public'),
     // 磁盘列表
     'disks'   => [
         'local'  => [
@@ -18,7 +19,7 @@ return [
             'root'       => app()->getRootPath() . 'public/storage',
             // 磁盘路径对应的外部URL路径
             'url'        => '/storage',
-            // 可见性
+            // 可见性：public=公共，private=私有
             'visibility' => 'public',
         ],
         // 更多的磁盘配置信息
