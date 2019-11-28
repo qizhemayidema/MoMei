@@ -14,7 +14,7 @@ use app\common\typeCode\permission\C as TypeDesc;
 use app\Request;
 use think\facade\View;
 use think\Validate;
-class CAuthRule extends Base
+class CPermission extends Base
 {
     public function index()
     {
@@ -22,7 +22,7 @@ class CAuthRule extends Base
             //查询院线的全部的权限
             $ruleArr = (new Permission())->getRuleList(new TypeDesc());
             View::assign('ruleArr',$ruleArr);
-            return view('c_auth_rule/index');
+            return view();
         }catch (\Exception $e){
             return $e->getMessage();
         }
@@ -33,7 +33,7 @@ class CAuthRule extends Base
         //查询院线的全部的权限
         $ruleArr = (new Permission())->getRuleList(new TypeDesc());
         View::assign('ruleArr',$ruleArr);
-        return view('c_auth_rule/add');
+        return view();
     }
 
     public function save(Request $request)
@@ -73,7 +73,7 @@ class CAuthRule extends Base
         $ruleArr = (new Permission())->getRuleList(new TypeDesc());
         View::assign('ruleArr',$ruleArr);
 
-        return view('c_auth_rule/edit');
+        return view();
     }
 
     public function update(Request $request)

@@ -17,7 +17,7 @@ use app\Request;
 use think\facade\View;
 use think\Validate;
 
-class MRuleGroup extends Base
+class MRole extends Base
 {
     public function index()
     {
@@ -26,7 +26,7 @@ class MRuleGroup extends Base
             $roleList = (new Role())->getRoleList(new TypeDesc());
 
             View::assign('roleList',$roleList);
-            return view('b_role_group/index');
+            return view();
         }catch (\Exception $e){
             return $e->getMessage();
         }
@@ -38,7 +38,7 @@ class MRuleGroup extends Base
         $ruleArr = (new Permission())->getRuleList(new RuleTypeDesc());
 
         view::assign('ruleArr',$ruleArr);
-        return view('b_role_group/add');
+        return view();
     }
 
     public function save(Request $request)

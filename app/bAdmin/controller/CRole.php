@@ -11,13 +11,13 @@ namespace app\bAdmin\controller;
 
 use app\common\service\Permission;
 use app\common\service\Role;
-use app\common\typeCode\role\B as TypeDesc;
-use app\common\typeCode\permission\B as RuleTypeDesc;
+use app\common\typeCode\role\C as TypeDesc;
+use app\common\typeCode\permission\C as RuleTypeDesc;
 use app\Request;
 use think\facade\View;
 use think\Validate;
 
-class BRuleGroup extends Base
+class CRole extends Base
 {
     public function index()
     {
@@ -26,7 +26,7 @@ class BRuleGroup extends Base
             $roleList = (new Role())->getRoleList(new TypeDesc());
 
             View::assign('roleList',$roleList);
-            return view('b_role_group/index');
+            return view();
         }catch (\Exception $e){
             return $e->getMessage();
         }
@@ -38,7 +38,7 @@ class BRuleGroup extends Base
         $ruleArr = (new Permission())->getRuleList(new RuleTypeDesc());
 
         view::assign('ruleArr',$ruleArr);
-        return view('b_role_group/add');
+        return view();
     }
 
     public function save(Request $request)
