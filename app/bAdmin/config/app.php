@@ -10,4 +10,5 @@
 return [
     'upload_root_path'  => '/static/uploads/',
 
+    'session_path' => 'bAdminAdmin',
 ];
