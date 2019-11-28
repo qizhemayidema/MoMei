@@ -9,7 +9,7 @@
 namespace app\common\typeCode;
 
 
-interface Role extends BaseImpl
+interface RoleImpl extends BaseImpl
 {
     public function getRoleType():int ; //获取类型
 }

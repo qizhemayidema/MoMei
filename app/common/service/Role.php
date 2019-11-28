@@ -17,7 +17,7 @@ class Role
      * 查询全部的权限组(角色)
      * $data 2019/11/26 12:00
      */
-    public function getRoleList(\app\common\typeCode\Role $obj)
+    public function getRoleList(\app\common\typeCode\RoleImpl $obj)
     {
         $type = $obj->getRoleType();
         //缓存
@@ -39,7 +39,7 @@ class Role
 
     }
 
-    public function insert(\app\common\typeCode\Role $Role,$data)
+    public function insert(\app\common\typeCode\RoleImpl $Role,$data)
     {
         $type = $Role->getRoleType();
         $dataRes = [
@@ -68,7 +68,7 @@ class Role
     }
 
 
-    public function updateRes(\app\common\typeCode\Role $Role,$data)
+    public function updateRes(\app\common\typeCode\RoleImpl $Role,$data)
     {
         $type = $Role->getRoleType();
         $updata = [
@@ -94,11 +94,11 @@ class Role
 
     /**
      * 查询用户权限
-     * @param \app\common\typeCode\Role $Role
+     * @param \app\common\typeCode\RoleImpl $Role
      * @param $uid
      * $data 2019/11/26 16:30
      */
-    public function getUserRoleAuth(\app\common\typeCode\Role $Role,$roleId)
+    public function getUserRoleAuth(\app\common\typeCode\RoleImpl $Role,$roleId)
     {
         //查询用户所在的权限组
         $getUserRoleAuthRes = (new \app\common\model\Role())->getUserRoleAuthRes($Role,$roleId);
