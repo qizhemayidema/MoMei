@@ -12,6 +12,7 @@ namespace app\bAdmin\controller;
 use app\BaseController;
 use app\common\model\Manager;
 use app\common\service\Role;
+use app\common\tool\Session;
 use app\Request;
 use think\Validate;
 class Login extends BaseController
@@ -48,7 +49,7 @@ class Login extends BaseController
                     $res['role_name'] = '超级管理员';
                 }
                 //登陆成功
-                \think\facade\Session::set('bAdmin_admin',$res);
+                (new Session())->setData($res);
 
                 return json(['code' => 1, 'msg'=>'success']);
 
@@ -61,7 +62,7 @@ class Login extends BaseController
 
     public function logout()
     {
-        \think\facade\Session::set('bAdmin_admin',null);
+        (new Session())->setData(NULL);
         return redirect('index');
     }
 

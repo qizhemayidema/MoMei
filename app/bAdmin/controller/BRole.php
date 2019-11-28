@@ -13,7 +13,6 @@ use app\common\service\Permission;
 use app\common\service\Role;
 use app\common\typeCode\role\B as TypeDesc;
 use app\common\typeCode\permission\B as RuleTypeDesc;
-use app\common\typeCode\roleGroup\B as RoleGroupDesc;
 use app\Request;
 use think\facade\View;
 use think\Validate;
@@ -60,7 +59,7 @@ class BRole extends Base
                 throw new \Exception($valiatde->getError());
             }
 
-            $res = (new Role())->insert(new TypeDesc(),(new RoleGroupDesc()),$post);
+            $res = (new Role())->insert(new TypeDesc(),false,$post);
             if(!$res) throw new \Exception('添加失败');
             return json(['code'=>1,'msg'=>'success']);
         }catch (\Exception $e){
