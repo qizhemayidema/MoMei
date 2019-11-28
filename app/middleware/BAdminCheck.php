@@ -3,7 +3,8 @@ declare (strict_types = 1);
 
 namespace app\middleware;
 
-use think\facade\Session;
+use app\common\tool\Session;
+
 class BAdminCheck
 {
     /**
@@ -15,7 +16,7 @@ class BAdminCheck
      */
     public function handle($request, \Closure $next)
     {
-        if(!Session::get('bAdmin_admin')){
+        if(!(new Session())->getData()){
             return redirect('/admin/Login/index');
         }
         return $next($request);

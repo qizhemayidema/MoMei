@@ -16,16 +16,19 @@ class NewsCategory extends Model implements BasicImpl
     public function get($id)
     {
         // TODO: Implement get() method.
+        return $this->where(['id'=>$id])->find();
     }
 
     public function add(Array $data): int
     {
         // TODO: Implement add() method.
+        return $this->insert($data);
     }
 
     public function modify($id, $data)
     {
         // TODO: Implement modify() method.
+        return $this->where(['id'=>$id])->update($data);
     }
 
     public function rm($id)
@@ -36,6 +39,7 @@ class NewsCategory extends Model implements BasicImpl
     public function softDelete($id)
     {
         // TODO: Implement softDelete() method.
+        return $this->where(['id'=>$id])->update(['delete_time'=>time()]);
     }
 
     public function getList($page=false)

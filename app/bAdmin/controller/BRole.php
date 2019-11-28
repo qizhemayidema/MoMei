@@ -13,7 +13,6 @@ use app\common\service\Permission;
 use app\common\service\Role;
 use app\common\typeCode\role\B as TypeDesc;
 use app\common\typeCode\permission\B as RuleTypeDesc;
-use app\common\typeCode\roleGroup\B as RoleGroupDesc;
 use app\Request;
 use think\facade\View;
 use think\Validate;

@@ -10,6 +10,7 @@ namespace app\common\service;
 
 
 use app\common\tool\Cache;
+use app\common\typeCode\CacheImpl;
 
 class NewsCategory
 {
@@ -24,31 +25,108 @@ class NewsCategory
 
         $level = $obj->getLevelType();
 
-        $handler = $del?$newsCategoryModel->where(['delete_time'=>0]):$newsCategoryModel->where(['delete_time','>',0]);
+        $handler = $del?$newsCategoryModel->where(['delete_time'=>0])->order('order_num desc'):$newsCategoryModel->where(['delete_time','>',0])->order('order_num desc');
 
-        if($obj instanceof Cache && !$page){
+        if($obj instanceof CacheImpl && !$page){
             $cache = new Cache($obj);
             if($result = $cache->getCache()){
                 return $result;
             }else{
                 //查询对应类型的数据全部的
-                $data  = $handler->select();;
+                $data  = $handler->select()->toArray();
                 $result = $this->getMoreList($data,$level);
                 $cache->setCache($result);
                 return $result;
             }
         }else{
-            return $page?$handler->paginate($page):$handler->select();
+            return $page?$handler->paginate($page):$handler->select()->toArray();
         }
     }
 
+    /**
+     * 根据类别查询
+     * @param int $pId
+     * @param null $page    null不分页
+     * @return \think\Collection|\think\Paginator
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     * $data 2019/11/28 16:50
+     */
+    public function getListByPId($pId = 0,$page = Null)
+    {
+        $areaModel = new \app\common\model\NewsCategory();
+
+        $handler = $areaModel->where(['pid'=>$pId]);
+
+        return $page ? $handler->paginate($page) : $handler->select();
+
+    }
+
+    public function insert(CacheImpl $cacheImpl,$data)
+    {
+        $updateData = [
+            'name'=>$data['name'],
+            'pid'=>$data['pid'],
+            'order_num'=>$data['order_num'],
+        ];
+
+        $result = (new \app\common\model\NewsCategory())->add($updateData);
+
+        if(!$result) return false;
+
+        if($cacheImpl instanceof  CacheImpl){
+            (new Cache($cacheImpl))->clear();
+        }
+
+        return true;
+    }
+
+    public function getFindRes($id)
+    {
+        return (new \app\common\model\NewsCategory())->get($id);
+    }
+
+    public function updateRes(CacheImpl $cacheImpl,$data)
+    {
+        $updateData = [
+            'name'=>$data['name'],
+            'pid'=>$data['pid'],
+            'order_num'=>$data['order_num'],
+        ];
+
+        $result = (new \app\common\model\NewsCategory())->modify($data['id'],$updateData);
+
+        if(!$result) return false;
+
+        if($cacheImpl instanceof CacheImpl){
+            (new Cache($cacheImpl))->clear();
+        }
+
+        return true;
+    }
+
+    public function softDelete(CacheImpl $cacheImpl,$id)
+    {
+        $result = (new \app\common\model\NewsCategory())->softDelete($id);
+
+        if(!$result) return false;
+
+        if($cacheImpl instanceof CacheImpl){
+            (new Cache($cacheImpl))->clear();
+        }
+
+        return true;
+    }
+
+    //递归放入下级
     private function getMoreList($categorys,$max = 1,$pId = 0,$l = 0)
     {
         $list = [];
 
         foreach ($categorys as $k=>$v){
 
-            if ($v['p_id'] == $pId){
+            if ($v['pid'] == $pId){
                 unset($categorys[$k]);
                 if ($l < $max){
                     //小于三级

@@ -10,7 +10,9 @@
                     <select class="form-control m-b" name="p_id" id="">
                         <option value="0">顶级</option>
                         {foreach $ruleArr as $key => $value}
+                        {if condition="$data.id neq $value.id"}
                         <option value="{$value.id}" {if condition="$data.p_id eq $value.id"}selected{/if}>{$value.name}</option>
+                        {/if}
                         {/foreach}
                     </select>
                 </div>

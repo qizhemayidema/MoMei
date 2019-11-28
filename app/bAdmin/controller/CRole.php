@@ -11,12 +11,11 @@ namespace app\bAdmin\controller;
 
 use app\common\service\Permission;
 use app\common\service\Role;
+use app\common\tool\Session;
 use app\common\typeCode\role\C as TypeDesc;
 use app\common\typeCode\permission\C as RuleTypeDesc;
-use app\common\typeCode\roleGroup\C as RoleGroupDesc;
 use app\Request;
 use think\facade\View;
-use think\facade\Session;
 use think\Validate;
 
 class CRole extends Base
@@ -61,7 +60,7 @@ class CRole extends Base
                 throw new \Exception($valiatde->getError());
             }
 
-            $userInfo = Session::get('bAdmin_admin');
+            $userInfo = (new Session())->getData();
 
             if(!$userInfo['group_code']) throw new \Exception('添加失败');
 
