@@ -9,7 +9,7 @@
 namespace app\common\typeCode\cate;
 
 
-class CinemaProduct implements \app\common\typeCode\CateImpl,\app\common\typeCode\CacheImpl
+class Product implements \app\common\typeCode\CateImpl,\app\common\typeCode\CacheImpl
 {
     private $type = 6;
 
