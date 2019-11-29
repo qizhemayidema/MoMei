@@ -1,0 +1,192 @@
+{include file="common/source"}
+<script src="__STATIC__/js/plugins/summernote/summernote.min.js"></script>
+<script src="__STATIC__/js/plugins/summernote/summernote-zh-CN.js"></script>
+<link rel="stylesheet" href="__STATIC__/css/plugins/summernote/summernote.css">
+<link rel="stylesheet" href="__STATIC__/css/plugins/summernote/summernote-bs3.css">
+<style type="text/css">
+    /*上传按钮样式*/
+    .file {
+        position: relative;
+        display: inline-block;
+        background: #D0EEFF;
+        border: 1px solid #99D3F5;
+        border-radius: 4px;
+        padding: 4px 12px;
+        overflow: hidden;
+        color: #1E88C7;
+        text-decoration: none;
+        text-indent: 0;
+        line-height: 20px;
+    }
+    .file input {
+        position: absolute;
+        font-size: 100px;
+        right: 0;
+        top: 0;
+        opacity: 0;
+    }
+    .file:hover {
+        background: #AADFFD;
+        border-color: #78C3F3;
+        color: #004974;
+        text-decoration: none;
+    }
+</style>
+<div class="col-sm-12">
+    <div class="ibox float-e-margins">
+        <div class="ibox-content">
+            <div class="example">
+                <form action="" class="form-horizontal">
+                    <input type="hidden" name="id" value="{$data.id}">
+                    {:token_field()}
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">所属类别</label>
+                        <div class="col-sm-8">
+                            <select class="form-control m-b" name="cate_id" id="">
+                                {foreach $cateData as $key => $value}
+                                <option value="{$value.id}" {if condition="$data.cate_id eq $value.id"}selected{/if}>{$value.name}</option>
+                                {/foreach}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">新闻标题</label>
+                        <div class="col-sm-8">
+                            <input name="title" required  type="text" value="{$data.title}" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">上传封面图</label>
+                        <div class="col-sm-8">
+                            <a href="javascript:;" class="file" >选择图片
+                                <input type="file"  id="pic" class="btn btn-w-m btn-primary" >
+                                <input type="hidden" name="pic" id="coverPic" value="{$data.pic}" >
+                            </a>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">封面缩略图</label>
+                        <div class="col-sm-8">
+                            <img style="width: 100px;height: 100px;" id="look" src="{$data.pic}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">内容</label>
+                        <div class="col-sm-8">
+                            <div class="summernote" style="width: 700px;">
+                                {$data.content|raw}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">排序</label>
+                        <div class="col-sm-8">
+                            <input name="sort" required  placeholder="从0开始,越大顺序越靠前,最大999" value="{$data.sort}" type="text" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label"></label>
+                        <div class="col-sm-5">
+                            <button type="button" class="btn btn-w-m btn-success" onclick="save()">修改</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+<script>
+    // 头像缩略图
+    $('#pic').change(function() {
+        //获取到file的文件
+        var docObj = document.getElementById("pic");
+        //获取到预览框的文件
+        var imgObjPreview = document.getElementById("look");
+        //获取到文件名和类型
+        if(docObj.files && docObj.files[0]) {
+            //console.log(docObj.files)
+            //火狐7以上版本不能用上面的getAsDataURL()方式获取，需要一下方式
+            imgObjPreview.src = window.URL.createObjectURL(docObj.files[0]);
+            uploadCoverPid(docObj.files[0]);
+        }
+        return true;
+    });
+    function uploadCoverPid(file){
+        var data = new FormData();
+        data.append("file", file);
+        $.ajax({
+            type:"POST",
+            url:"{:url('uploadPic')}",
+            data: data,
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: function (data) {
+                $("#coverPic").val(data.msg);
+            },
+            error:function(){
+                layer.alert('上传失败!');
+                return;
+            }
+        });
+    }
+
+
+    //文本编辑器的
+    $(document).ready(function () {
+        $('.summernote').summernote({
+            lang: 'zh-CN',
+            onImageUpload: function(files, editor, welEditable) {
+                uploadSummerPic(files[0], editor, welEditable);
+            }
+        });
+
+    });
+
+    function uploadSummerPic(file, editor, welEditable) {
+        var data = new FormData();
+        data.append("file", file);
+        $.ajax({
+            type:"POST",
+            url:"{:url('uploadPic')}",
+            data: data,
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: function (data) {
+
+                editor.insertImage(welEditable,data.msg);//回显到框内很重要
+            },
+            error:function(){
+                layer.alert('上传失败!');
+                return;
+            }
+        });
+    }
+
+    //提交表单的
+    var save = function () {
+        var formData = new FormData($('form')[0]);
+        formData.append('content',$(".summernote").code())
+        $.ajax({
+            url: "{:url('update')}",
+            type: 'post',
+            dataType: 'json',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (data) {
+                if (data.code == 0) {
+                    layer.msg(data.msg, {icon: 5})
+                } else {
+                    layer.msg('修改成功', {icon: 1});
+                    setTimeout(function () {
+                        window.location.href = "{:url('index')}";
+                    }, 600)
+                }
+            }
+        })
+    }
+
+</script>

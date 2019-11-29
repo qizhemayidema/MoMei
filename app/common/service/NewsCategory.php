@@ -27,7 +27,7 @@ class NewsCategory
 
         $handler = $del?$newsCategoryModel->where(['delete_time'=>0])->order('order_num desc'):$newsCategoryModel->where(['delete_time','>',0])->order('order_num desc');
 
-        if($obj instanceof CacheImpl && !$page){
+        if($obj instanceof CacheImpl && !$page && $del){
             $cache = new Cache($obj);
             if($result = $cache->getCache()){
                 return $result;
