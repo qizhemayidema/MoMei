@@ -11,11 +11,11 @@
                         <div class="col-sm-8">
                             <select class="form-control m-b" name="pid" id="">
                                 <option value="0">顶级</option>
-                                {foreach $data as $key => $value}
-                                {if condition="$findCateResult.id neq $value.id"}
-                                <option value="{$value.id}" {if condition="$value.id eq $findCateResult.pid"}selected{/if}>{$value.name}</option>
-                                {/if}
-                                {/foreach}
+                                <!--{foreach $data as $key => $value}-->
+                                <!--{if condition="$findCateResult.id neq $value.id"}-->
+                                <!--<option value="{$value.id}" {if condition="$value.id eq $findCateResult.pid"}selected{/if}>{$value.name}</option>-->
+                                <!--{/if}-->
+                                <!--{/foreach}-->
                             </select>
                         </div>
                     </div>
