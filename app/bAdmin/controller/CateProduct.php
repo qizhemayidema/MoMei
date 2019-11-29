@@ -29,7 +29,7 @@ class CateProduct extends Base
 
     public function add()
     {
-        $list = (new Category())->getList((new \app\common\typeCode\cate\Product()));
+        $list = (new Category())->getListByPId((new \app\common\typeCode\cate\Product()),0);
 
         View::assign('list',$list);
 
@@ -60,7 +60,7 @@ class CateProduct extends Base
 
     public function edit(Request $request)
     {
-        $list = (new Category())->getList((new \app\common\typeCode\cate\Product()));
+        $list = (new Category())->getListByPId((new \app\common\typeCode\cate\Product()),0);
 
         View::assign('list',$list);
 

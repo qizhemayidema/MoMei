@@ -63,6 +63,11 @@ class Category
         return (new CateModel())->getList($type);
     }
 
+    public function getListByPId(CateImpl $cateImpl,$pId = 0)
+    {
+        return (new CateModel())->where(['p_id'=>$pId,'type'=>$cateImpl->getCateType()])->select();
+    }
+
     //添加一个分类
     public function insert(CateImpl $cateImpl,$data)
     {
@@ -80,6 +85,7 @@ class Category
             (new Cache($cateImpl))->clear();
 
         }
+
         return (new CateModel())->add($result);
     }
 

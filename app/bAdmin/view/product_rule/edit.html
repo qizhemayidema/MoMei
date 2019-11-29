@@ -1,0 +1,100 @@
+
+<style>
+    body{padding:10px;}
+    .pick-area{display: inline-block;}
+    .a{float:left;width:100%;margin:10px;}
+    .a a{float:left;margin:10px;}
+    .a input{float:left;width:400px;padding:10px;margin:10px;outline-color: gold;}
+    h1{text-align: center;}
+    h3{margin:5px;color:#333;}
+    h4{margin:5px;color:#666;padding:0 20px;font-weight: 100;}
+    .blank{float:left;width:50%;height:400px;background:cyan;border-top:1px solid #333;margin-top:50px;}
+    .blank2{float:left;width:50%;height:400px;background:lightpink;border-top:1px solid #333;padding-top:50px;}
+    .box{width:100%;overflow: hidden;background:lightgreen;}
+</style>
+<div class="col-sm-12">
+    <div class="ibox-content">
+        <form action="" class="form-horizontal">
+            {:token_field()}
+            <input type="hidden" name="cate_id" value="{$id}">
+            <div class="form-group">
+                <label class="col-sm-2 control-label">产品数量</label>
+                <div class="col-sm-8">
+                    <input name="sum" required value="{$data.sum ?? ''}"  type="text" class="form-control">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">最多选择数量</label>
+                <div class="col-sm-8">
+                    <input name="select_max_sum" value="{$data.select_max_sum ?? 1}" placeholder="请不要超过产品数量" required  type="text" class="form-control">
+
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">产品是否影厅内的</label>
+                <div class="col-sm-8">
+                    <select class="form-control m-b" name="type">
+                        <option value="0" {if isset($data.type) && $data.type == 0} selected {/if}>否</option>
+                        <option value="1" {if isset($data.type) && $data.type == 1} selected {/if}>是</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">是否开启级别</label>
+                <div class="col-sm-8">
+                    <select class="form-control m-b" name="is_level">
+                        <option value="0" {if isset($data.is_level) && $data.is_level == 0} selected {/if}>否</option>
+                        <option value="1" {if isset($data.is_level) && $data.is_level == 1} selected {/if}>是</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-3 control-label"></label>
+                <div class="col-sm-5">
+                    <button type="button" class="btn btn-w-m btn-success" onclick="save()">提交</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+</div>
+
+<script>
+
+
+
+
+    var save = function(){
+
+        var formData = new FormData($('form')[0]);
+
+        address_ss=$('.pick-area-hidden').val().split(' ')
+        if (address_ss.length != 3){
+            layer.msg('请选择地址');
+            return false;
+        }
+        formData.append('province',address_ss[0])
+        formData.append('city',address_ss[1])
+        formData.append('county',address_ss[2])
+        // formData.append('desc',$(".summernote").code())
+        $.ajax({
+            url: "{:url('save')}",
+            type: 'post',
+            dataType: 'json',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (data) {
+                if (data.code == 0) {
+                    layer.msg(data.msg, {icon: 5})
+                } else {
+                    layer.msg('提交成功', {icon: 1});
+                    setTimeout(function () {
+                        window.location.href = "{:url('index')}";
+                    }, 600)
+                }
+            }
+        })
+    }
+</script>

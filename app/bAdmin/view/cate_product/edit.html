@@ -11,7 +11,9 @@
                     <select class="form-control m-b" name="p_id" id="">
                         <option value="0">顶级节点</option>
                         {foreach $list as $key => $value}
+                        {if $value.id != $cate.id}
                         <option value="{$value.id}" {if $value.id == $cate.p_id} selected {/if}>{$value.name}</option>
+                        {/if}
                         {/foreach}
                     </select>
                 </div>
