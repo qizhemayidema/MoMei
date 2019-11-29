@@ -18,7 +18,7 @@ class AUser extends BaseController
 {
     public function index()
     {
-        $list = (new Service())->showType(true)->getList();
+        $list = (new Service())->showType(true)->order('id','desc')->pageLength(1)->getList();
 
         View::assign('list',$list);
 
@@ -204,7 +204,7 @@ class AUser extends BaseController
     public function delete(Request $request)
     {
         $id = $request->post('id');
-        
+
         (new Service())->delete($id);
 
         return json(['code'=>1,'msg'=>'success']);
