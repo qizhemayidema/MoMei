@@ -21,8 +21,12 @@ class AUser
     //查询展示类型 如果false 被冻结的一些数据都不展示
     private $showType = false;
 
+    //排序
+    private $order = [];
+
     //描述类
     private $aUserImpl = null;
+
 
     public function __construct(?AUserImpl $aUserImpl = null)
     {
@@ -43,6 +47,14 @@ class AUser
         return $this;
     }
 
+    public function order($field,$order)
+    {
+        $this->order[0] = $field;
+        $this->order[1] = $order;
+
+        return $this;
+    }
+
 
     public function getList()
     {
@@ -51,6 +63,8 @@ class AUser
         $handler = $this->showType ? $handler->backgroundShowData() : $handler->receptionShowData();
 
         $handler = $this->aUserImpl ? $handler->where(['type'=>$this->aUserImpl->getUserType()]) : $handler;
+
+        $handler = $this->order ? $handler->order($this->order[0],$this->order[1]) : $handler;
 
         return $this->pageLength ? $handler->paginate($this->pageLength) : $handler->select();
     }
