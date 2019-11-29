@@ -15,6 +15,7 @@ use app\common\typeCode\CacheImpl;
 class NewsCategory
 {
     /**
+     * 查询出来全部未删除的才进行花奴才能
      * @param \app\common\typeCode\NewsCategory\NewsCateGory $obj
      * @param bool $del     查询删除的还是未删除的   true 未删除的   false删除的
      * @param bool $page    false 不分页   传值过来进行分页
@@ -25,7 +26,7 @@ class NewsCategory
 
         $level = $obj->getLevelType();
 
-        $handler = $del?$newsCategoryModel->where(['delete_time'=>0])->order('order_num desc'):$newsCategoryModel->where(['delete_time','>',0])->order('order_num desc');
+        $handler = $del?$newsCategoryModel->where(['delete_time'=>0])->order('order_num desc'):$newsCategoryModel->where([['delete_time','>',0]])->order('order_num desc');
 
         if($obj instanceof CacheImpl && !$page && $del){
             $cache = new Cache($obj);
@@ -43,9 +44,16 @@ class NewsCategory
         }
     }
 
+    public function getNewsCategoryAllLists()
+    {
+        $newsCategoryModel = new \app\common\model\NewsCategory();
+        return $newsCategoryModel->select()->toArray();
+    }
+
     /**
      * 根据类别查询
      * @param int $pId
+     * * @param bool $del     查询删除的还是未删除的   true 未删除的   false删除的
      * @param null $page    null不分页
      * @return \think\Collection|\think\Paginator
      * @throws \think\db\exception\DataNotFoundException
@@ -53,11 +61,13 @@ class NewsCategory
      * @throws \think\db\exception\ModelNotFoundException
      * $data 2019/11/28 16:50
      */
-    public function getListByPId($pId = 0,$page = Null)
+    public function getListByPId($pId = 0,$del=true,$page = Null)
     {
         $areaModel = new \app\common\model\NewsCategory();
 
         $handler = $areaModel->where(['pid'=>$pId]);
+
+        $handler = $del ? $handler->where(['delete_time'=>0]) : $handler->where([['delete_time','>',0]]);
 
         return $page ? $handler->paginate($page) : $handler->select();
 

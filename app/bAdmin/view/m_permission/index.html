@@ -67,7 +67,9 @@
                     layer.msg(data.msg,{icon: 5})
                 } else {
                     layer.msg('删除成功',{icon : 1})
-                    $(_this).parents('tr').remove();
+                    setTimeout(function () {
+                        window.location.href = "{:url('index')}";
+                    }, 600)
                 }
 
             }

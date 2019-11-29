@@ -91,7 +91,7 @@ class Manager extends Base
     {
         try{
             $post = $request->post();
-            $valiatde = new Validate();
+            $validate = new Validate();
             if(!empty($post['password'])){
                 $rules = Array(
                     'id'=>'require',
@@ -110,11 +110,11 @@ class Manager extends Base
                 );
             }
 
-            $valiatde->rule($rules);
-            $checkRes  = $valiatde->check($post);
-            if(!$checkRes)  throw new \Exception($valiatde->getError());
+            $validate->rule($rules);
+            $checkRes  = $validate->check($post);
+            if(!$checkRes)  throw new \Exception($validate->getError());
 
-            $managerInfo = (new \app\common\service\Manager())->getManagerByUsername($post['username']);
+            $managerInfo = (new \app\common\service\Manager())->getManagerByUsername($post['username'],$post['id']);
             if(!empty($managerInfo)) throw new \Exception('用户名已存在');
 
             $updateResult = (new \app\common\service\Manager())->updateRes($post);

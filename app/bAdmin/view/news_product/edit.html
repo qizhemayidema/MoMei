@@ -3,20 +3,14 @@
 <script src="__STATIC__/js/plugins/summernote/summernote-zh-CN.js"></script>
 <link rel="stylesheet" href="__STATIC__/css/plugins/summernote/summernote.css">
 <link rel="stylesheet" href="__STATIC__/css/plugins/summernote/summernote-bs3.css">
+
+<link rel="stylesheet" type="text/css" href="__STATIC__/css/plugins/webuploader/webuploader.css">
 <style type="text/css">
     /*上传按钮样式*/
     .file {
         position: relative;
         display: inline-block;
-        background: #D0EEFF;
-        border: 1px solid #99D3F5;
-        border-radius: 4px;
-        padding: 4px 12px;
-        overflow: hidden;
-        color: #1E88C7;
-        text-decoration: none;
-        text-indent: 0;
-        line-height: 20px;
+        border-radius: 3px;
     }
     .file input {
         position: absolute;
@@ -26,10 +20,8 @@
         opacity: 0;
     }
     .file:hover {
-        background: #AADFFD;
-        border-color: #78C3F3;
-        color: #004974;
-        text-decoration: none;
+        color: white;
+        background: #00a2d4;
     }
 </style>
 <div class="col-sm-12">
@@ -58,9 +50,8 @@
                     <div class="form-group">
                         <label class="col-sm-2 control-label">上传封面图</label>
                         <div class="col-sm-8">
-                            <a href="javascript:;" class="file" >选择图片
+                            <a href="javascript:;" class="file webuploader-pick" >选择图片
                                 <input type="file"  id="pic" class="btn btn-w-m btn-primary" >
-                                <input type="hidden" name="pic" id="coverPic" value="{$data.pic}" >
                             </a>
                         </div>
                     </div>
@@ -108,30 +99,9 @@
             //console.log(docObj.files)
             //火狐7以上版本不能用上面的getAsDataURL()方式获取，需要一下方式
             imgObjPreview.src = window.URL.createObjectURL(docObj.files[0]);
-            uploadCoverPid(docObj.files[0]);
         }
         return true;
     });
-    function uploadCoverPid(file){
-        var data = new FormData();
-        data.append("file", file);
-        $.ajax({
-            type:"POST",
-            url:"{:url('uploadPic')}",
-            data: data,
-            cache: false,
-            contentType: false,
-            processData: false,
-            success: function (data) {
-                $("#coverPic").val(data.msg);
-            },
-            error:function(){
-                layer.alert('上传失败!');
-                return;
-            }
-        });
-    }
-
 
     //文本编辑器的
     $(document).ready(function () {
@@ -168,7 +138,9 @@
     //提交表单的
     var save = function () {
         var formData = new FormData($('form')[0]);
-        formData.append('content',$(".summernote").code())
+        formData.append('content',$(".summernote").code());
+        var  pic = document.getElementById("pic").files[0];
+        formData.append('pic',pic);
         $.ajax({
             url: "{:url('update')}",
             type: 'post',
@@ -177,6 +149,7 @@
             processData: false,
             contentType: false,
             success: function (data) {
+                // console.log(data);
                 if (data.code == 0) {
                     layer.msg(data.msg, {icon: 5})
                 } else {

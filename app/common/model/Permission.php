@@ -50,4 +50,15 @@ class Permission extends Model implements BasicImpl
         $where[] = ['id','in',$authArrIds];
         return $this->field("lower(concat(controller,'/',action)) as urls")->where($where)->select()->toArray();
     }
+
+    public function getPermissionByPId($pid)
+    {
+        return $this->where(['p_id'=>$pid])->select()->toArray();
+    }
+
+    public function deleteIds($ids)
+    {
+        $where[] = ['id','in',$ids];
+        return $this->where($where)->delete();
+    }
 }

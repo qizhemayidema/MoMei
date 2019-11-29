@@ -17,9 +17,11 @@ class Manager
         return $page ? $manager->alias('a')->join('role b','a.role_id=b.id','left')->field('a.*,b.role_name')->order('id asc')->paginate($page) : $manager->alias('a')->join('role b','a.role_id=b.id','left')->order('id asc')->field('a.*,b.role_name')->select();
     }
 
-    public function getManagerByUsername($username)
+    public function getManagerByUsername($username,$id=false)
     {
-        return (new \app\common\model\Manager())->where(['username'=>$username])->find();
+        if($id) return (new \app\common\model\Manager())->where('id','<>',$id)->where('username',$username)->find();
+
+        return (new \app\common\model\Manager())->where('username',$username)->find();
     }
 
     public function insert($data)

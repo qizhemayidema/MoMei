@@ -98,10 +98,24 @@ class Permission
 
     public function delete(CacheImpl $CacheImpl,$id)
     {
+        $permissionAll = (new \app\common\model\Permission())->getPermissionByPId($id);
+
+        if(!empty($permissionAll)){
+            $ids = array_column($permissionAll,'id');
+            $ids[] = $id;
+            $result = (new \app\common\model\Permission())->deleteIds($ids);
+        }else{
+            $result = (new \app\common\model\Permission())->rm($id);
+        }
+
+        if(!$result) return false;
+
+
         if($CacheImpl instanceof CacheImpl){
             (new Cache($CacheImpl))->clear();
         }
-        return (new \app\common\model\Permission())->rm($id);
+
+        return true;
     }
 
     private function getMoreList($categorys,$max = 2,$pId = 0,$l = 0)
