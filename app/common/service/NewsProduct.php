@@ -26,7 +26,7 @@ class NewsProduct
 
         if($cateId) $newsProductModel = $newsProductModel->where(['cate_id'=>$cateId]);
 
-        $newsProductModel = $del ? $newsProductModel->where(['delete_time'=>0])->order('sort desc') : $newsProductModel->where(['delete_time','>',0])->order('sort desc');
+        $newsProductModel = $del ? $newsProductModel->where(['delete_time'=>0])->order('sort desc') : $newsProductModel->where([['delete_time','>',0]])->order('sort desc');
 
         return $page ? $newsProductModel->paginate($page) : $newsProductModel->select()->toArray();
     }
@@ -76,10 +76,10 @@ class NewsProduct
         $updateData = [
             'title'=>$data['title'],
             'cate_id'=>$data['cate_id'],
-            'pic'=>$data['pic'],
             'content'=>$data['content'],
             'sort'=>$data['sort'],
         ];
+        if(!empty($data['pic']!="undefined"))  $updateData['pic']=$data['pic'];
         return (new \app\common\model\NewsProduct())->modify($data['id'],$updateData);
     }
 

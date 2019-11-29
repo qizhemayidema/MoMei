@@ -51,7 +51,6 @@
                         <div class="col-sm-8">
                             <a href="javascript:;" class="file webuploader-pick" >选择图片
                                 <input type="file"  id="pic" class="btn btn-w-m btn-primary" >
-                                <input type="hidden" name="pic" id="coverPic" >
                             </a>
                         </div>
                     </div>
@@ -99,29 +98,9 @@
             //console.log(docObj.files)
             //火狐7以上版本不能用上面的getAsDataURL()方式获取，需要一下方式
             imgObjPreview.src = window.URL.createObjectURL(docObj.files[0]);
-            uploadCoverPid(docObj.files[0]);
         }
         return true;
     });
-    function uploadCoverPid(file){
-        var data = new FormData();
-        data.append("file", file);
-        $.ajax({
-            type:"POST",
-            url:"{:url('uploadPic')}",
-            data: data,
-            cache: false,
-            contentType: false,
-            processData: false,
-            success: function (data) {
-                $("#coverPic").val(data.msg);
-            },
-            error:function(){
-                layer.alert('上传失败!');
-                return;
-            }
-        });
-    }
 
 
     //文本编辑器的
@@ -160,8 +139,8 @@
     var save = function () {
         var formData = new FormData($('form')[0]);
         formData.append('content',$(".summernote").code());
-        // var  pic = document.getElementById("pic").files[0];
-        // formData.append('pic',pic);
+        var  pic = document.getElementById("pic").files[0];
+        formData.append('pic',pic);
         $.ajax({
             url: "{:url('save')}",
             type: 'post',

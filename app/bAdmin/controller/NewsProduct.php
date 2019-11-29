@@ -50,12 +50,20 @@ class NewsProduct extends Base
     {
         try{
             $post = $request->post();
+
+            if(!isset($_FILES['pic'])) throw new \Exception('请先上传封面图');
+
+            $picUrl = (new Upload())->uploadOnePic('newsProduct/','pic');
+
+            if($picUrl['code']==0) throw new \Exception($picUrl['msg']);
+
+            $post['pic'] = $picUrl['msg'];
+
             $validate = new Validate();
             $rules = [
                 'cate_id|所属类别'=>'require',
                 'title|新闻标题'=>'require|max:60',
                 'content|内容'=>'require',
-                'pic|封面图'=>'require',
                 'sort|排序'=>'require|between:0,999',
             ];
             $validate->rule($rules);
@@ -106,13 +114,20 @@ class NewsProduct extends Base
         try{
             $post = $request->post();
 
+            if(isset($_FILES['pic'])){
+                $picUrl = (new Upload())->uploadOnePic('newsProduct/','pic');
+
+                if($picUrl['code']==0) throw new \Exception($picUrl['msg']);
+
+                $post['pic'] = $picUrl['msg'];
+            }
+
             $validate = new Validate();
             $rules = [
                 'id'=>'require',
                 'cate_id|所属类别'=>'require',
                 'title|新闻标题'=>'require|max:60',
                 'content|内容'=>'require',
-                'pic|封面图'=>'require',
                 'sort|排序'=>'require|between:0,999',
             ];
             $validate->rule($rules);
