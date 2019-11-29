@@ -33,7 +33,7 @@ class NewsProduct
 
     /**
      * 查询新闻
-     * @param $id
+     * @param $id  int   通过主键id取查询
      * @param bool $show    fasle就是删除与没删除的都可以查到    true只查未删除的
      * @return array|null|\think\Model
      * $data times
@@ -41,8 +41,20 @@ class NewsProduct
     public function getProductById($id,$show=false)
     {
         $newsProductModel = new \app\common\model\NewsProduct();
-        if($show) $newsProductModel->where(['delete_time','>',0]);
+        if($show) $newsProductModel = $newsProductModel->where(['delete_time'=>0]);
         return $newsProductModel->where(['id'=>$id])->find()->toArray();
+    }
+
+    /**
+     * @param $cateId   int   类别id
+     * @param bool $show   fasle就是删除与没删除的都可以查到    true只查未删除的
+     * $data 2019/11/29 14:22
+     */
+    public function getProductByCateId($cateId,$show=false)
+    {
+        $newsProductModel = new \app\common\model\NewsProduct();
+        if($show) $newsProductModel = $newsProductModel->where(['delete_time'=>0]);
+        return $newsProductModel->where(['cate_id'=>$cateId])->find()->toArray();
     }
 
     public function insertRes($data)

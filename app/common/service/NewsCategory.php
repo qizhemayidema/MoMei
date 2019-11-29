@@ -67,6 +67,7 @@ class NewsCategory
     {
         $updateData = [
             'name'=>$data['name'],
+            'type'=>$data['type'],
             'pid'=>$data['pid'],
             'order_num'=>$data['order_num'],
         ];
@@ -91,6 +92,7 @@ class NewsCategory
     {
         $updateData = [
             'name'=>$data['name'],
+            'type'=>$data['type'],
             'pid'=>$data['pid'],
             'order_num'=>$data['order_num'],
         ];

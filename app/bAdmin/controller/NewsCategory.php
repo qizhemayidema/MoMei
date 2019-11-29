@@ -49,6 +49,7 @@ class NewsCategory extends Base
             $validate = new Validate();
             $rules = [
                 'pid|所属类别'=>'require',
+                'type|类型'=>'require',
                 'name|类别名称'=>'require|max:60',
                 'order_num|排序'=>'require|between:0,999',
                 '__token__'=>'token',
@@ -95,6 +96,7 @@ class NewsCategory extends Base
             $rules = [
                 'id'=>'require',
                 'pid|所属类别'=>'require',
+                'type|类型'=>'require',
                 'name|类别名称'=>'require|max:60',
                 'order_num|排序'=>'require|between:0,999',
                 '__token__'=>'token',
@@ -103,6 +105,12 @@ class NewsCategory extends Base
             $validate->rule($rules);
 
             if(!$validate->check($post)) throw new \Exception($validate->getError());
+
+            $productList = [];
+
+            if($post['type']==1) $productList = (new \app\common\service\NewsProduct())->getProductList($post['id']);
+
+            if(count($productList)>1) throw new \Exception('该类别中有多条新闻');
 
             $updateResult = (new \app\common\service\NewsCategory())->updateRes((new CateDesc()),$post);
 
