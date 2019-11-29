@@ -13,7 +13,7 @@ class Category extends Model implements BasicImpl
 {
     public function get($id)
     {
-        return $this->find($id)->toArray();
+        return $this->find($id);
     }
 
     /**
