@@ -17,7 +17,7 @@ class Permission extends Model implements BasicImpl
 
     public function get($id) // 获取一条
     {
-        return $this->find($id)->toArray();
+        return $this->find($id);
     }
 
     public function add(array $data) : int   //插入一条数据 返回自增主键id

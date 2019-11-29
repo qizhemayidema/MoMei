@@ -42,7 +42,7 @@ class NewsProduct
     {
         $newsProductModel = new \app\common\model\NewsProduct();
         if($show) $newsProductModel = $newsProductModel->where(['delete_time'=>0]);
-        return $newsProductModel->where(['id'=>$id])->find()->toArray();
+        return $newsProductModel->where(['id'=>$id])->find();
     }
 
     /**
@@ -54,7 +54,7 @@ class NewsProduct
     {
         $newsProductModel = new \app\common\model\NewsProduct();
         if($show) $newsProductModel = $newsProductModel->where(['delete_time'=>0]);
-        return $newsProductModel->where(['cate_id'=>$cateId])->find()->toArray();
+        return $newsProductModel->where(['cate_id'=>$cateId])->find();
     }
 
     public function insertRes($data)

@@ -22,7 +22,7 @@ class Category
     {
         $cateModel = new CateModel();
 
-       return $cateModel->find($id)->toArray();
+       return $cateModel->find($id);
     }
 
     //获取列表
