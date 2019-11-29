@@ -42,26 +42,22 @@ class AUser extends Model implements BasicImpl,ShowImpl
 
     public function softDelete($id)
     {
+        $this->where(['id'=>$id])->update(['delete_time'=>time()]);
     }
 
     public function receptionShowData(string $alias = '')
     {
-        if ($alias){
-            $where = [
-                $alias .'.status' => 1,
-            ];
-        }else{
-            $where = [
-                'status'    => 1,
-            ];
-        }
-
-        return $this->where($where);
+        $alias = $alias ? $alias . '.' : '';
+        return $this->where([
+            $alias.'delete_time'=> 0 ,
+            $alias .'.status' => 1,
+        ]);
     }
 
     public function backgroundShowData(string $alias = '')
     {
-        return $this;
+        $alias = $alias ? $alias . '.' : '';
+        return $this->where([$alias.'delete_time'=>0]);
     }
 
     /**

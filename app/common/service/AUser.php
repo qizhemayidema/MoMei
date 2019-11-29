@@ -55,11 +55,15 @@ class AUser
         return $this->pageLength ? $handler->paginate($this->pageLength) : $handler->select();
     }
 
-    public function existsUsername($username,$type = null)
+    public function existsUsername($username,$type = null,$exceptId = 0)
     {
         if (!$type) $type = $this->aUserImpl->getUserType();
 
-        return (new AUserModel())->where(['type'=>$type,'username'=> $username])->find() ? true : false;
+        $handler = (new AUserModel());
+
+        if ($exceptId) $handler = $handler->where('id','<>',$exceptId);
+
+        return $handler->where(['type'=>$type,'username'=> $username])->find() ? true : false;
     }
 
     public function insert($data)
@@ -115,6 +119,49 @@ class AUser
 
     }
 
+    public function update($id,$data)
+    {
+        $aUserModel = (new AUserModel());
+
+        //查询行业名称
+        $proName = (new \app\common\model\Category())->get($data['pro_id'])['name'];
+
+
+        $update = [
+            'username'  => $data['username'],
+//            'slat'      => $salt,
+//            'password'  => md5($data['password'] . $salt),
+            'address'  => $data['address'],
+            'bus_license'  => $data['bus_license'],
+            'bus_license_code'  => $data['bus_license_code'],
+            'province'  => $data['province'],
+            'city'  => $data['city'],
+            'county'  => $data['county'],
+            'contact'  => $data['contact'],
+            'tel'       => $data['tel'],
+            'contact_license_code'  => $data['contact_license_code'],
+            'contact_license_pic'  => $data['contact_license_pic'],
+            'contact_sex'  => $data['contact_sex'],
+            'contact_tel'  => $data['contact_tel'],
+            'contact_wechat'  => $data['contact_wechat'],
+            'credit_code'  => $data['credit_code'],
+            'email'  => $data['email'],
+            'name'  => $data['name'],
+            'pro_id'  => $data['pro_id'],
+            'type'  => $data['type'],
+            'role_id'  => $data['role_id'] ?? 0,
+            'pro_name' => $proName,
+        ];
+
+        if (isset($data['password']) && $data['password']){
+            $update['slat'] =  md5(mt_rand(10000000000,99999999999));
+            $update['password'] =  md5($data['password'] . $update['slat']);
+        }
+
+
+        $aUserModel->modify($id,$update);
+    }
+
     public function changeStatus($id,$status)
     {
         (new AUserModel())->modify($id,['status'=>$status]);
@@ -123,5 +170,10 @@ class AUser
     public function get($id)
     {
         return (new AUserModel())->get($id);
+    }
+
+    public function delete($id)
+    {
+        (new AUserModel())->softDelete($id);
     }
 }

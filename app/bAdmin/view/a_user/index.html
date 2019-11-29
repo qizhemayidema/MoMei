@@ -4,7 +4,7 @@
         <div class="ibox-title">
             <h5>
                 <button type="button" onclick="window.location.href='{:url('add')}'"
-                        class="btn btn-w-m btn-primary">添加分类
+                        class="btn btn-w-m btn-primary">添加 院线/影投
                 </button>
             </h5>
         </div>
@@ -45,7 +45,7 @@
                             {/if}
                         </td>
                         <td>
-                            <button onclick="window.location.href='{:url('edit',['cate_id'=>$value.id])}'" class="btn btn-info" type="button"><i class="fa fa-paste"></i> 编辑</button>
+                            <button onclick="window.location.href='{:url('edit',['id'=>$value.id])}'" class="btn btn-info" type="button"><i class="fa fa-paste"></i> 编辑</button>
                             <button onclick="removeArticle(this,'{$value.id}')" class="btn btn-danger" type="button"><i class="fa fa-remove"></i> <span class="bold">删除</span></button>
                             <div class="btn-group">
                                 <button data-toggle="dropdown" class="btn btn-primary dropdown-toggle" aria-expanded="false">更多 <span class="caret"></span>
@@ -106,7 +106,7 @@
             type: 'post',
             dataType: 'json',
             data:{
-                cate_id : article_id,
+                id : article_id,
             },
             success: function (data) {
                 console.log(data)
