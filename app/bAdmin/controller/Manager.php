@@ -57,6 +57,9 @@ class Manager extends Base
             $checkRes  = $valiatde->check($post);
             if(!$checkRes)  throw new \Exception($valiatde->getError());
 
+            $managerInfo = (new \app\common\service\Manager())->getManagerByUsername($post['username']);
+            if(!empty($managerInfo)) throw new \Exception('用户名已存在');
+
             $insertResult = (new \app\common\service\Manager())->insert($post);
             if(!$insertResult) throw new \Exception('添加失败');
             return json(['code'=>1,'msg'=>'success']);
@@ -110,6 +113,9 @@ class Manager extends Base
             $valiatde->rule($rules);
             $checkRes  = $valiatde->check($post);
             if(!$checkRes)  throw new \Exception($valiatde->getError());
+
+            $managerInfo = (new \app\common\service\Manager())->getManagerByUsername($post['username']);
+            if(!empty($managerInfo)) throw new \Exception('用户名已存在');
 
             $updateResult = (new \app\common\service\Manager())->updateRes($post);
             if(!$updateResult) throw new \Exception('修改失败');
