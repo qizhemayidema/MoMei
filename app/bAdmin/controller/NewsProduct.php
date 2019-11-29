@@ -21,6 +21,10 @@ class NewsProduct extends Base
         try{
             $data = (new NewsProductService())->getProductList(false,true,15);
 
+            $cateData = (new \app\common\service\NewsCategory())->getNewsCategoryLists((new \app\common\typeCode\NewsCategory\NewsCateGory()));
+
+            View::assign('cateData',array_column($cateData,'name','id'));
+
             View::assign('data',$data);
 
             return View();
@@ -56,6 +60,14 @@ class NewsProduct extends Base
             ];
             $validate->rule($rules);
             if(!$validate->check($post)) throw new \Exception($validate->getError());
+
+            $cateFind = (new \app\common\service\NewsCategory())->getFindRes($post['cate_id']);
+
+            $productFind = [];
+
+            if($cateFind['type']==1) $productFind = (new NewsProductService())->getProductByCateId($post['cate_id'],true);
+
+            if(!empty($productFind)) throw new \Exception('所属类别已经有新闻');
 
             $insertResult = (new NewsProductService())->insertRes($post);
 
@@ -105,6 +117,14 @@ class NewsProduct extends Base
             ];
             $validate->rule($rules);
             if(!$validate->check($post)) throw new \Exception($validate->getError());
+
+            $cateFind = (new \app\common\service\NewsCategory())->getFindRes($post['cate_id']);
+
+            $productFind = [];
+
+            if($cateFind['type']==1) $productFind = (new NewsProductService())->getProductByCateId($post['cate_id'],true);
+
+            if(!empty($productFind)) throw new \Exception('所属类别已经有新闻');
 
             $updateResult =  (new NewsProductService())->updateRes($post);
 

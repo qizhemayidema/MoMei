@@ -16,6 +16,7 @@
                     <tr class="text-center">
                         <th style="text-align: center;">标题</th>
                         <th style="text-align: center;">封面图</th>
+                        <th style="text-align: center;">所属类型</th>
                         <th style="text-align: center;">浏览量</th>
                         <th style="text-align: center;">排序</th>
                         <th style="text-align: center;">操作</th>
@@ -26,6 +27,7 @@
                     <tr>
                         <td style="text-align: center;">{$value.title}</td>
                         <td><img src="{$value.pic}" style="width: 100px;height: 100px;"></td>
+                        <td>{$cateData[$value.cate_id]}</td>
                         <td>{$value.browse}</td>
                         <td>{$value.sort}</td>
                         <td>
