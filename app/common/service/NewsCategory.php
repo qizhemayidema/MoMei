@@ -15,6 +15,7 @@ use app\common\typeCode\CacheImpl;
 class NewsCategory
 {
     /**
+     * 查询出来全部未删除的才进行花奴才能
      * @param \app\common\typeCode\NewsCategory\NewsCateGory $obj
      * @param bool $del     查询删除的还是未删除的   true 未删除的   false删除的
      * @param bool $page    false 不分页   传值过来进行分页
@@ -41,6 +42,12 @@ class NewsCategory
         }else{
             return $page?$handler->paginate($page):$handler->select()->toArray();
         }
+    }
+
+    public function getNewsCategoryAllLists()
+    {
+        $newsCategoryModel = new \app\common\model\NewsCategory();
+        return $newsCategoryModel->select()->toArray();
     }
 
     /**

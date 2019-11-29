@@ -25,7 +25,7 @@ class AreaLevel extends Base
             $pid = $request->param('pid')?$request->param('pid'):0;
 
             //查询全部的省
-            $pidResult = (new Area())->getListByPId($pid,15);
+            $pidResult = (new Area())->getListByPId($pid);
             if($pidResult[0]['level']==3){
                 //单独查询一下上一级的id
                 $getFindResult = (new Area())->getFindById($pidResult[0]['pid']);

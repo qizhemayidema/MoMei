@@ -21,7 +21,7 @@ class NewsProduct extends Base
         try{
             $data = (new NewsProductService())->getProductList(false,true,15);
 
-            $cateData = (new \app\common\service\NewsCategory())->getNewsCategoryLists((new \app\common\typeCode\NewsCategory\NewsCateGory()));
+            $cateData = (new \app\common\service\NewsCategory())->getNewsCategoryAllLists();
 
             View::assign('cateData',array_column($cateData,'name','id'));
 
