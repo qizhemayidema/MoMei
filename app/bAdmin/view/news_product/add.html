@@ -3,20 +3,14 @@
 <script src="__STATIC__/js/plugins/summernote/summernote-zh-CN.js"></script>
 <link rel="stylesheet" href="__STATIC__/css/plugins/summernote/summernote.css">
 <link rel="stylesheet" href="__STATIC__/css/plugins/summernote/summernote-bs3.css">
+
+<link rel="stylesheet" type="text/css" href="__STATIC__/css/plugins/webuploader/webuploader.css">
 <style type="text/css">
     /*上传按钮样式*/
     .file {
         position: relative;
         display: inline-block;
-        background: #D0EEFF;
-        border: 1px solid #99D3F5;
-        border-radius: 4px;
-        padding: 4px 12px;
-        overflow: hidden;
-        color: #1E88C7;
-        text-decoration: none;
-        text-indent: 0;
-        line-height: 20px;
+        border-radius: 3px;
     }
     .file input {
         position: absolute;
@@ -26,10 +20,8 @@
         opacity: 0;
     }
     .file:hover {
-        background: #AADFFD;
-        border-color: #78C3F3;
-        color: #004974;
-        text-decoration: none;
+        color: white;
+        background: #00a2d4;
     }
 </style>
 <div class="col-sm-12">
@@ -57,7 +49,7 @@
                     <div class="form-group">
                         <label class="col-sm-2 control-label">上传封面图</label>
                         <div class="col-sm-8">
-                            <a href="javascript:;" class="file" >选择图片
+                            <a href="javascript:;" class="file webuploader-pick" >选择图片
                                 <input type="file"  id="pic" class="btn btn-w-m btn-primary" >
                                 <input type="hidden" name="pic" id="coverPic" >
                             </a>
