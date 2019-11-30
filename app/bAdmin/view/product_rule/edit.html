@@ -13,7 +13,7 @@
     .box{width:100%;overflow: hidden;background:lightgreen;}
 </style>
 <div class="col-sm-12">
-    <div class="ibox-content">
+    <div class="">
         <form action="" class="form-horizontal">
             {:token_field()}
             <input type="hidden" name="cate_id" value="{$id}">
@@ -33,7 +33,7 @@
             <div class="form-group">
                 <label class="col-sm-2 control-label">产品是否影厅内的</label>
                 <div class="col-sm-8">
-                    <select class="form-control m-b" name="type">
+                    <select class="form-control m-b" name="is_screen">
                         <option value="0" {if isset($data.type) && $data.type == 0} selected {/if}>否</option>
                         <option value="1" {if isset($data.type) && $data.type == 1} selected {/if}>是</option>
                     </select>
@@ -46,6 +46,21 @@
                         <option value="0" {if isset($data.is_level) && $data.is_level == 0} selected {/if}>否</option>
                         <option value="1" {if isset($data.is_level) && $data.is_level == 1} selected {/if}>是</option>
                     </select>
+                </div>
+            </div>
+
+            <div id="level" class="form-group" {if $data.is_level == 0} style="display: none;" {/if}>
+                <label class="col-sm-2 control-label"><a class="btn btn-info" onclick="add_level()">添加级别</a></label>
+                <div class="col-sm-8" id="level_list">
+                    {foreach $level as $k => $v}
+                    <div class="lv">
+                        <input type="hidden" name="old_level_id[]" value="{$v.id}">
+                        <input name="old_level_name[]" placeholder="级别名称" style="display:inline;width:80%;margin-bottom: 20px;" value="{$v.level_name}" required  type="text" class="form-control">
+                        <a href="javascript:void(0);" onclick="close_level(this)">
+                            <i class="glyphicon glyphicon-remove"></i>
+                        </a>
+                    </div>
+                    {/foreach}
                 </div>
             </div>
 
@@ -62,22 +77,36 @@
 
 <script>
 
+    $('select[name=is_level]').change(function(){
+        if ($(this).val() == 1){
+            $('#level').css('display','block')
+        }else{
+            $('#level').css('display','none')
+        }
+    })
 
+    var add_level = function(){
+
+        var html = '<div class="lv">' +
+            '                        <input name="level_name[]" placeholder="级别名称" style="display:inline;width:80%;margin-bottom: 20px;" value="" required  type="text" class="form-control">' +
+            '                        <a href="javascript:void(0);" onclick="close_level(this)">' +
+            '                            <i class="glyphicon glyphicon-remove"></i>' +
+            '                        </a>' +
+            '                    </div>'
+
+        $('#level_list').append(html)
+        return false;
+    }
+
+    var close_level = function(_this){
+        $(_this).parents('.lv').remove();
+    }
 
 
     var save = function(){
 
         var formData = new FormData($('form')[0]);
 
-        address_ss=$('.pick-area-hidden').val().split(' ')
-        if (address_ss.length != 3){
-            layer.msg('请选择地址');
-            return false;
-        }
-        formData.append('province',address_ss[0])
-        formData.append('city',address_ss[1])
-        formData.append('county',address_ss[2])
-        // formData.append('desc',$(".summernote").code())
         $.ajax({
             url: "{:url('save')}",
             type: 'post',
@@ -89,10 +118,8 @@
                 if (data.code == 0) {
                     layer.msg(data.msg, {icon: 5})
                 } else {
-                    layer.msg('提交成功', {icon: 1});
-                    setTimeout(function () {
-                        window.location.href = "{:url('index')}";
-                    }, 600)
+                    layer.msg('提交成功', {icon: 1})
+                    getHtml($('input[name=cate_id]').val())
                 }
             }
         })
