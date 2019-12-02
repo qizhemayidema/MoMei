@@ -190,4 +190,25 @@ class AUser
     {
         (new AUserModel())->softDelete($id);
     }
+
+
+    public function existsUsernameReturnInfo($username,$type = null,$exceptId = 0)
+    {
+        $handler = (new AUserModel());
+
+        if (!$type) $type = $this->aUserImpl->getUserType();
+
+        if ($exceptId) $handler = $handler->where('id','<>',$exceptId);
+
+        return $handler->where(['username'=> $username])->find();
+    }
+
+    public function verifyAccount($username,$password,$slat,$type = null)
+    {
+        if (!$type) $type = $this->aUserImpl->getUserType();
+
+        $passwordSlat = md5($password.$slat);
+
+        return (new AUserModel())->where(['username'=>$username,'password'=>$passwordSlat])->find() ? true : false;
+    }
 }
