@@ -7,23 +7,23 @@
  */
 declare (strict_types = 1);
 
-namespace app\bAdmin\controller;
+namespace app\aAdmin\controller;
 
 use app\common\service\Permission;
 use app\common\service\Role;
 use app\common\tool\Session;
-use app\common\typeCode\role\M as TypeDesc;
-use app\common\typeCode\permission\M as RuleTypeDesc;
+use app\common\typeCode\role\A as TypeDesc;
+use app\common\typeCode\permission\A as RuleTypeDesc;
 use app\Request;
 use think\facade\View;
 use think\Validate;
 
-class MRole extends Base
+class ARole extends Base
 {
     public function index()
     {
         try{
-            //查询影院的全部权限组
+            //查询平台的全部权限组
             $roleList = (new Role())->getRoleList(new TypeDesc());
 
             View::assign('roleList',$roleList);
@@ -61,6 +61,8 @@ class MRole extends Base
             }
 
             $userInfo = (new Session())->getData();
+
+            if(!$userInfo['group_code']) throw new \Exception('添加失败');
 
             if(!$userInfo['group_code']) throw new \Exception('添加失败');
 

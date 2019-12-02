@@ -11,7 +11,7 @@ namespace app\common\typeCode\role;
 use app\common\typeCode\CacheImpl;
 use app\common\typeCode\RoleImpl;
 
-class C implements CacheImpl,RoleImpl
+class A implements CacheImpl,RoleImpl
 {
     private $cacheName = 'cinema_chain_role_type';
     private $type = 2;

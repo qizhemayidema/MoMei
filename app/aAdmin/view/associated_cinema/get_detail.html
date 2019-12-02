@@ -1,0 +1,117 @@
+{include file="common/source"}\
+<div class="col-sm-12">
+    <div class="ibox-content">
+        <form action="" class="form-horizontal">
+            <div class="form-group">
+                <label class="col-sm-2 control-label">影院名称</label>
+                <div class="col-sm-8">
+                    <input  value="{$data.name}"   type="text" disabled class="form-control">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">行业名称</label>
+                <div class="col-sm-8">
+                    <input   value="{$data.pro_name}" type="text" disabled class="form-control">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">影院区域</label>
+                <div class="col-sm-8">
+                    <input   value="{$data.area_value}" type="text" disabled class="form-control">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">统一社会信用代码</label>
+                <div class="col-sm-8">
+                    <input  value="{$data.credit_code}"  type="text" disabled class="form-control">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">营业执照(照片)</label>
+                <div class="col-sm-8">
+                    <!--dom结构部分-->
+                    <div id="uploader-demo2">
+                        <!--用来存放item-->
+                        <div id="fileList2" class="uploader-list">
+                            {foreach :explode(',',$data.bus_license) as $key => $value}
+                            <div class="file-item thumbnail upload-state-done">
+                                <img src="{$value}" style="width: 150px;">
+                            </div>
+                            {/foreach}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">营业执照</label>
+                <div class="col-sm-8">
+                    <input  value="{$data.bus_license_code}"   type="text" disabled class="form-control">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">公司详细地址</label>
+                <div class="col-sm-8">
+                    <input   value="{$data.province} / {$data.city} / {$data.county} /{$data.address}" type="text" disabled class="form-control">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">营业面积</label>
+                <div class="col-sm-8">
+                    <input  value="{$data.bus_area}"  disabled type="text" class="form-control">
+                </div>
+            </div>
+            <hr>
+
+            <div class="form-group">
+                <label class="col-sm-2 control-label">影院负责人姓名</label>
+                <div class="col-sm-8">
+                    <input  value="{$data.duty}" type="text" disabled class="form-control">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-2 control-label">影院负责人电话</label>
+                <div class="col-sm-8">
+                    <input  value="{$data.duty_tel}" disabled type="text" class="form-control">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-2 control-label">联系人姓名</label>
+                <div class="col-sm-8">
+                    <input  value="{$data.contact}"  disabled type="text" class="form-control">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-2 control-label">联系人电话</label>
+                <div class="col-sm-8">
+                    <input   value="{$data.contact_tel}" disabled  type="text" class="form-control">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-2 control-label">联系人微信</label>
+                <div class="col-sm-8">
+                    <input value="{$data.contact_wechat}" disabled type="text" class="form-control">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-2 control-label">荧幕数(厅数量)</label>
+                <div class="col-sm-8">
+                    <input value="{$data.screen_sum}" disabled type="text" class="form-control">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-2 control-label">座位总数</label>
+                <div class="col-sm-8">
+                    <input value="{$data.seat_sum}" disabled type="text" class="form-control">
+                </div>
+            </div>
+
+        </form>
+    </div>
+
+</div>
