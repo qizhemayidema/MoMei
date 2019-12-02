@@ -13,6 +13,7 @@ class Cinema extends Model implements BasicImpl,ShowImpl
     public function get($id)
     {
         // TODO: Implement get() method.
+        return $this->where('id',$id)->find();
     }
 
     public function add(Array $data): int

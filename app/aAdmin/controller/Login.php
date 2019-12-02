@@ -7,7 +7,7 @@
  */
 declare (strict_types = 1);
 
-namespace app\cAdmin\controller;
+namespace app\aAdmin\controller;
 
 use app\BaseController;
 use app\common\service\AUser;

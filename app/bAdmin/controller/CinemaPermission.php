@@ -3,23 +3,23 @@
  * Created by PhpStorm.
  * User: fk
  * Date: 2019/11/26
- * Time: 11:32
+ * Time: 11:36
  */
 declare (strict_types = 1);
 
 namespace app\bAdmin\controller;
 
 use app\common\service\Permission;
-use app\common\typeCode\permission\C as TypeDesc;
+use app\common\typeCode\permission\Cinema as TypeDesc;
 use app\Request;
 use think\facade\View;
 use think\Validate;
-class CPermission extends Base
+class CinemaPermission extends Base
 {
     public function index()
     {
         try{
-            //查询院线的全部的权限
+            //查询影院的全部的权限
             $ruleArr = (new Permission())->getRuleList(new TypeDesc());
             View::assign('ruleArr',$ruleArr);
             return view();
@@ -30,7 +30,7 @@ class CPermission extends Base
 
     public function add()
     {
-        //查询院线的全部的权限
+        //查询影院的全部的权限
         $ruleArr = (new Permission())->getRuleList(new TypeDesc());
         View::assign('ruleArr',$ruleArr);
         return view();
@@ -69,7 +69,7 @@ class CPermission extends Base
         $res = (new Permission())->getFindRes($id);
         View::assign('data',$res);
 
-        //查询院线的全部的权限
+        //查询影院的全部的权限
         $ruleArr = (new Permission())->getRuleList(new TypeDesc());
         View::assign('ruleArr',$ruleArr);
 

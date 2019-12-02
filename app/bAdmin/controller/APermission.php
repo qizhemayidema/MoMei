@@ -7,14 +7,14 @@
  */
 declare (strict_types = 1);
 
-namespace app\cAdmin\controller;
+namespace app\bAdmin\controller;
 
 use app\common\service\Permission;
-use app\common\typeCode\permission\C as TypeDesc;
+use app\common\typeCode\permission\A as TypeDesc;
 use app\Request;
 use think\facade\View;
 use think\Validate;
-class CPermission extends Base
+class APermission extends Base
 {
     public function index()
     {

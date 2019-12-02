@@ -7,18 +7,18 @@
  */
 declare (strict_types = 1);
 
-namespace app\bAdmin\controller;
+namespace app\aAdmin\controller;
 
 use app\common\service\Permission;
 use app\common\service\Role;
 use app\common\tool\Session;
-use app\common\typeCode\role\C as TypeDesc;
-use app\common\typeCode\permission\C as RuleTypeDesc;
+use app\common\typeCode\role\A as TypeDesc;
+use app\common\typeCode\permission\A as RuleTypeDesc;
 use app\Request;
 use think\facade\View;
 use think\Validate;
 
-class CRole extends Base
+class ARole extends Base
 {
     public function index()
     {

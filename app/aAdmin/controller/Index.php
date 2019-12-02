@@ -6,7 +6,7 @@
  * Time: 10:57
  */
 
-namespace app\cAdmin\controller;
+namespace app\aAdmin\controller;
 
 
 class Index extends Base

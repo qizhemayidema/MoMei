@@ -10,7 +10,7 @@ namespace app\common\typeCode\menu;
 
 use app\common\typeCode\CacheImpl;
 use app\common\typeCode\MenuImpl;
-class C implements MenuImpl,CacheImpl
+class A implements MenuImpl,CacheImpl
 {
     private $masterType = 2;
 

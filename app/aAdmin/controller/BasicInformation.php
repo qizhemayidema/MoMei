@@ -6,7 +6,7 @@
  * Time: 13:06
  */
 
-namespace app\cAdmin\controller;
+namespace app\aAdmin\controller;
 
 use app\common\service\AUser as Service;
 use app\common\service\Category as CateService;

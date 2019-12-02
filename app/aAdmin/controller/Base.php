@@ -1,14 +1,14 @@
 <?php
 declare (strict_types = 1);
 
-namespace app\cAdmin\controller;
+namespace app\aAdmin\controller;
 
 use app\BaseController;
 use app\middleware\CAdminCheck;
 use think\facade\View;
 use app\common\tool\Session;
 use app\common\service\Role;
-use app\common\typeCode\role\C;
+use app\common\typeCode\role\A;
 
 class Base extends BaseController
 {
@@ -35,7 +35,7 @@ class Base extends BaseController
 
     protected function setMenu()
     {
-        $menu = (new \app\common\service\Menu((new \app\common\typeCode\menu\C())))->getList();
+        $menu = (new \app\common\service\Menu((new \app\common\typeCode\menu\A())))->getList();
 
         View::assign('menu',$menu);
     }
@@ -53,7 +53,7 @@ class Base extends BaseController
 
         if($adminRes['role_id']==0)  return true;
 
-        $authAll = (new Role())->getUserRoleAuth(new C(),$adminRes['role_id']);
+        $authAll = (new Role())->getUserRoleAuth(new A(),$adminRes['role_id']);
 
         $authAllRes = array_column($authAll,'urls');
 

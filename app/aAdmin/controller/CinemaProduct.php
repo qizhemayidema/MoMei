@@ -6,7 +6,7 @@
  * Time: 15:15
  */
 
-namespace app\cAdmin\controller;
+namespace app\aAdmin\controller;
 
 
 class CinemaProduct extends Base

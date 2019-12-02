@@ -6,7 +6,7 @@
  * Time: 14:01
  */
 
-namespace app\cAdmin\controller;
+namespace app\aAdmin\controller;
 
 
 use app\common\tool\Session;
