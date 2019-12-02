@@ -24,12 +24,15 @@
                         <td>{$value.pro_name}</td>
                         <td>{$value.province}</td>
                         <td>
-                            <button onclick="window.location.href='{:url('getDetail',['rule_id'=>$value.id])}'" class="btn btn-info" type="button"><i class="fa fa-paste"></i> 查看</button>
+                            <button onclick="window.location.href='{:url('getDetail',['cinema_id'=>$value.id])}'" class="btn btn-info" type="button"><i class="fa fa-paste"></i> 查看</button>
                         </td>
                     </tr>
                     {/foreach}
                     </tbody>
                 </table>
+            </div>
+            <div style="text-align: center">
+                {$data|raw}
             </div>
         </div>
     </div>

@@ -5,7 +5,7 @@ namespace app\middleware;
 
 use app\common\tool\Session;
 
-class CAdminCheck
+class AAdminCheck
 {
     /**
      * 处理请求
@@ -17,7 +17,7 @@ class CAdminCheck
     public function handle($request, \Closure $next)
     {
         if(!(new Session())->getData()){
-            return redirect('/cadmin/Login/index');
+            return redirect('/aAdmin/Login/index');
         }
         return $next($request);
     }

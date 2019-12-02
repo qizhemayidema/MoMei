@@ -47,22 +47,20 @@ class CinemaRole extends Base
         $post = $request->post();
 
         try{
-            $valiatde = new Validate();
+            $validate = new Validate();
             $rules = Array(
                 'role_name|角色名称'=>'require|max:30',
                 'role_desc|角色备注'=>'require|max:120',
                 'rules|权限'=>'require',
                 '__token__'     => 'token',
             );
-            $valiatde->rule($rules);
-            $checkres  = $valiatde->check($post);
-            if(!$checkres){
-                throw new \Exception($valiatde->getError());
+            $validate->rule($rules);
+            $checkResult  = $validate->check($post);
+            if(!$checkResult){
+                throw new \Exception($validate->getError());
             }
 
             $userInfo = (new Session())->getData();
-
-            if(!$userInfo['group_code']) throw new \Exception('添加失败');
 
             $res = (new Role())->insert(new TypeDesc(),$userInfo['group_code'],$post);
 
@@ -93,7 +91,7 @@ class CinemaRole extends Base
     {
         $post = $request->post();
         try{
-            $valiatde = new Validate();
+            $validate = new Validate();
             $rules = Array(
                 'id'=>'require',
                 'role_name|角色名称'=>'require|max:30',
@@ -101,10 +99,10 @@ class CinemaRole extends Base
                 'rules|权限'=>'require',
                 '__token__'     => 'token',
             );
-            $valiatde->rule($rules);
-            $checkres  = $valiatde->check($post);
-            if(!$checkres){
-                throw new \Exception($valiatde->getError());
+            $validate->rule($rules);
+            $checkResult  = $validate->check($post);
+            if(!$checkResult){
+                throw new \Exception($validate->getError());
             }
 
             $res = (new Role())->updateRes(new TypeDesc(),$post);
