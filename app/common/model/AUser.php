@@ -48,9 +48,10 @@ class AUser extends Model implements BasicImpl,ShowImpl
     public function receptionShowData(string $alias = '')
     {
         $alias = $alias ? $alias . '.' : '';
+
         return $this->where([
             $alias.'delete_time'=> 0 ,
-            $alias .'.status' => 1,
+            $alias .'status' => 1,
         ]);
     }
 
