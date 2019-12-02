@@ -5,11 +5,15 @@ namespace app\bAdmin\controller;
 
 use app\common\service\Area;
 use app\common\service\Category;
+use app\common\service\CinemaLevel;
 use app\common\tool\Upload;
 use app\common\typeCode\aUser\Ying;
 use app\common\typeCode\aUser\Yuan;
+use app\common\typeCode\cate\ABus;
 use app\common\typeCode\cate\CBus;
 use app\common\typeCode\cate\CinemaNearby;
+use app\common\typeCode\cate\LevelName;
+use app\common\typeCode\cate\LevelOption;
 use think\exception\ValidateException;
 use app\common\service\Cinema as Service;
 use think\Request;
@@ -31,13 +35,13 @@ class Cinema extends Base
     {
         $cateService = new Category();
         //查询行业分类
-        $cate = $cateService->getList((new CBus()));
+        $cate = $cateService->getList((new ABus()));
 
         //从获取城市列表
         $area = (new Area())->getListByPId();
 
         //查询院线列表
-        $yuan = (new \app\common\service\AUser((new Yuan())))->getList();
+        $yuan = (new \app\common\service\AUser((new Yuan())))->showType(true)->getList();
 
         //查询影投列表
         $ying = (new \app\common\service\AUser((new Ying())))->showType(true)->getList();
@@ -45,11 +49,20 @@ class Cinema extends Base
         //获取周边分类列表
         $zhou = $cateService->getList((new CinemaNearby()));
 
+        //获取级别名称
+        $levelName = $cateService->getList((new LevelName()));
+
+        //获取级别选项
+        $levelOption = $cateService->getList((new LevelOption()));
+
         View::assign('area',$area);
         View::assign('yuan',$yuan);
         View::assign('ying',$ying);
         View::assign('bus_cate',$cate);
         View::assign('zhou',$zhou);
+        View::assign('level_name',$levelName);
+        View::assign('level_option',$levelOption);
+
         return view();
     }
 
@@ -133,7 +146,15 @@ class Cinema extends Base
             $post['county_id'] = $county[0] ?? 0;
             $post['county'] = $county[1] ?? '';
 
-            $service->insert($post);
+            $data = $service->insert($post);
+
+            $id = $data['id'];
+
+            //新增影院相关级别
+            $levels = $data['level_name'];
+            $options = $data['level_option'];
+
+            (new CinemaLevel())->insert($id,$levels,$options);
 
             $model->commit();
 
@@ -166,7 +187,7 @@ class Cinema extends Base
         $data = $service->get($id);
 
         //查询行业分类
-        $cate = $cateService->getList((new CBus()));
+        $cate = $cateService->getList((new ABus()));
 
         //获取城市一级列表
         $area1 = $area->getListByPId();
@@ -178,13 +199,23 @@ class Cinema extends Base
         $area3 = $area->getListByPId($data['city_id']);
 
         //查询院线列表
-        $yuan = (new \app\common\service\AUser((new Yuan())))->getList();
+        $yuan = (new \app\common\service\AUser((new Yuan())))->showType(true)->getList();
 
         //查询影投列表
         $ying = (new \app\common\service\AUser((new Ying())))->showType(true)->getList();
 
         //获取周边分类列表
         $zhou = $cateService->getList((new CinemaNearby()));
+
+
+        //获取级别名称
+        $levelName = $cateService->getList((new LevelName()));
+
+        //获取级别选项
+        $levelOption = $cateService->getList((new LevelOption()));
+
+        //获取数据级别选中状态
+        $levelCheck = (new CinemaLevel())->getIdColumns($id);
 
         View::assign('area1',$area1);
         View::assign('area2',$area2);
@@ -194,6 +225,9 @@ class Cinema extends Base
         View::assign('bus_cate',$cate);
         View::assign('zhou',$zhou);
         View::assign('data',$data);
+        View::assign('level_name',$levelName);
+        View::assign('level_option',$levelOption);
+        View::assign('level_check',$levelCheck);
 
         return view();
     }
@@ -281,6 +315,13 @@ class Cinema extends Base
 
 //            return json(['code'=>0]);
             $service->update($post['id'],$post);
+
+            //新增影院相关级别
+            $levels = $post['level_name'];
+            $options = $post['level_option'];
+
+            (new CinemaLevel())->update($post['id'],$levels,$options);
+
 
             $model->commit();
 

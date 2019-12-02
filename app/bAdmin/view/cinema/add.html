@@ -249,6 +249,21 @@
                 </div>
             </div>
 
+            <hr>
+            {foreach $level_name as $key => $value}
+            <div class="form-group">
+                <input type="hidden" name="level_name[{$value.id}]" value="{$value.name}">
+                <label class="col-sm-2 control-label">{$value.name}</label>
+                <div class="col-sm-8">
+                    <select class="form-control m-b" name="level_option[{$value.id}]">
+                        {foreach $level_option as $key1 => $value1}
+                        <option value="{$value1.id}-{$value1.name}">{$value1.name}</option>
+                        {/foreach}
+                    </select>
+                </div>
+            </div>
+
+            {/foreach}
             <div class="form-group">
                 <label class="col-sm-3 control-label"></label>
                 <div class="col-sm-5">
@@ -412,6 +427,8 @@
             processData: false,
             contentType: false,
             success: function (data) {
+                return false;
+
                 if (data.code == 0) {
                     layer.msg(data.msg, {icon: 5})
                 } else {

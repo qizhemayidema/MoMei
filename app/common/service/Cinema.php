@@ -9,6 +9,8 @@
 namespace app\common\service;
 
 
+use app\common\model\CinemaLevel;
+
 class Cinema
 {
     public function getList($isAll = false,$page = null)
@@ -80,17 +82,17 @@ class Cinema
 
         $model->insert($insert);
 
-        $id = $model->getLastInsID();
+        $data['id'] = $model->getLastInsID();
 
         if (!isset($data['group_code'])){
-            $data['group_code'] = $id;
-            $model->where(['id'=>$id])->update(['group_code'=>$id]);
+            $data['group_code'] = $data['id'];
+            $model->where(['id'=>$data['id']])->update(['group_code'=>$data['id']]);
         }
-//        $userName = mb_substr(uniqid(true) . time() . md5(mt_rand(10000000000,99999999999) . $salt),0,23);
 
         return $data;
 
     }
+
 
     public function update($id,$data)
     {
@@ -152,7 +154,6 @@ class Cinema
 
         return $handler->where(['username'=> $username])->find() ? true : false;
     }
-
 
     public function changeStatus($id,$status)
     {
