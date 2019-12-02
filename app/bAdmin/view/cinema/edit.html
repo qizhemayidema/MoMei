@@ -1,0 +1,657 @@
+{include file="common/source"}
+<link rel="stylesheet" href="__STATIC__/js/plugins/layer/laydate/laydate.js">
+<link rel="stylesheet" href="__STATIC__/js/plugins/layer/laydate/need/laydate.css">
+<link rel="stylesheet" href="__STATIC__/js/plugins/layer/laydate/skins/default/laydate.css">
+
+<!--<link rel="stylesheet" type="text/css" href="__STATIC__/lib/Hui-iconfont/1.0.8/iconfont.css"/>-->
+<link rel="stylesheet" href="__STATIC__/js/plugins/webuploader/webuploader.css">
+<script src="__STATIC__/js/plugins/webuploader/webuploader.js"></script>
+
+<script src="__STATIC__/js/plugins/summernote/summernote.min.js"></script>
+<script src="__STATIC__/js/plugins/summernote/summernote-zh-CN.js"></script>
+<link rel="stylesheet" href="__STATIC__/css/plugins/summernote/summernote.css">
+<link rel="stylesheet" href="__STATIC__/css/plugins/summernote/summernote-bs3.css">
+<!--<link href="__STATIC__/js/plugins/layui/2.5.4/css/layui.css" rel="stylesheet" type="text/css"/>-->
+<script type="text/javascript" src="__STATIC__/js/plugins/layui/2.5.4/layui.all.js"></script>
+<script type="text/javascript" src="__STATIC__/js/plugins/layui/2.5.4/layui.js"></script>
+
+<style>
+    body{padding:10px;}
+    .pick-area{display: inline-block;}
+    .a{float:left;width:100%;margin:10px;}
+    .a a{float:left;margin:10px;}
+    .a input{float:left;width:400px;padding:10px;margin:10px;outline-color: gold;}
+    h1{text-align: center;}
+    h3{margin:5px;color:#333;}
+    h4{margin:5px;color:#666;padding:0 20px;font-weight: 100;}
+    .blank{float:left;width:50%;height:400px;background:cyan;border-top:1px solid #333;margin-top:50px;}
+    .blank2{float:left;width:50%;height:400px;background:lightpink;border-top:1px solid #333;padding-top:50px;}
+    .box{width:100%;overflow: hidden;background:lightgreen;}
+</style>
+
+<link href="__STATIC__/plugins/area/pick-pcc.min.1.0.1.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="__STATIC__/plugins/area/pick-pcc.min.1.0.1.js" charset="utf-8"></script>
+
+<div class="col-sm-12">
+    <div class="ibox-content">
+        <form action="" class="form-horizontal">
+            <input type="hidden" name="id" value="{$data.id}">
+            {:token_field()}
+            <input type="hidden" name="contact_license_pic" value="{$data.contact_license_pic}">
+            <input type="hidden" name="bus_license" value="{$data.bus_license}">
+
+            <div class="form-group">
+                <label class="col-sm-2 control-label">所属行业</label>
+                <div class="col-sm-8">
+                    <select class="form-control m-b" name="pro_id" id="pro_id">
+                        {foreach $bus_cate as $key => $value}
+                        <option value="{$value.id}" {if $data.pro_id == $value.id} selected {/if}>{$value.name}</option>
+                        {/foreach}
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">所属院线</label>
+                <div class="col-sm-8">
+                    <select class="form-control m-b" name="yuan_id" >
+                        <option value="0">无</option>
+                        {foreach $yuan as $key => $value}
+                        <option value="{$value.id}" {if $value.id == $data.yuan_id} selected {/if}>{$value.name}</option>
+                        {/foreach}
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">所属影投</label>
+                <div class="col-sm-8">
+                    <select class="form-control m-b" name="tou_id">
+                        <option value="0">无</option>
+                        {foreach $ying as $key => $value}
+                        <option value="{$value.id}" {if $value.id == $data.tou_id} selected {/if}>{$value.name}</option>
+                        {/foreach}
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">周边区域</label>
+                <div class="col-sm-8">
+                    <select class="form-control m-b" name="area_id">
+                        <option value="0">无</option>
+                        {foreach $zhou as $key => $value}
+                        <option value="{$value.id}-{$vlaue.name}" {if $value.id == $data.area_id} selected {/if}>{$value.name}</option>
+                        {/foreach}
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">账号</label>
+                <div class="col-sm-8">
+                    <input name="username" required value="{$data.username}" type="text" class="form-control">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">密码</label>
+                <div class="col-sm-8">
+                    <input name="password" required placeholder="如不填写,则不修改密码"  type="password" class="form-control">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">确认密码</label>
+                <div class="col-sm-8">
+                    <input name="re_password" required placeholder="如不填写,则不修改密码" type="password" class="form-control">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">影院名称</label>
+                <div class="col-sm-8">
+                    <input name="name" required value="{$data.name}" type="text" class="form-control">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">统一社会信用代码</label>
+                <div class="col-sm-8">
+                    <input name="credit_code" required value="{$data.credit_code}"  type="text" class="form-control">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">营业执照(多传)</label>
+                <div class="col-sm-8">
+                    <!--dom结构部分-->
+                    <div id="fileList2" class="uploader-list">
+                        {foreach :explode(',',$data.bus_license) as $key => $value}
+                        <div class="file-item thumbnail upload-state-done">
+                            <img src="{$value}" onclick="removePic(this,'{$value}','bus_license')" style="width: 150px;">
+                        </div>
+                        {/foreach}
+                    </div>
+                    <span class="help-block m-b-none">点击删除旧图片</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">营业执照</label>
+                <div class="col-sm-8">
+                    <input name="bus_license_code" required value="{$data.bus_license_code}" type="text" class="form-control">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">公司地址</label>
+                <div class="col-sm-8">
+                    <div class="col-sm-3">
+                        <select name="province">
+                            {foreach $area1 as $key => $value}
+                            <option value="{$value.id}-{$value.name}" {if $data.province_id == $value.id} selected {/if}>{$value.name}</option>
+                            {/foreach}
+                        </select>
+                    </div>
+                    <div class="col-sm-3">
+                        <select name="city" >
+                            <option value="">请选择</option>
+                            {foreach $area2 as $key => $value}
+                            <option value="city" {if $data.city_id == $value.id} selected {/if}>{$value.name}</option>
+                            {/foreach}
+                        </select>
+
+                    </div>
+                    <div class="col-sm-3">
+                        <select name="county">
+                            <option value="">请选择</option>
+                            {foreach $area3 as $key => $value}
+                            <option value="county" {if $data.county_id == $value.id} selected {/if}>{$value.name}</option>
+                            {/foreach}
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-2 control-label">公司详细地址</label>
+                <div class="col-sm-8">
+                    <input name="address" required value="{$data.address}" type="text" class="form-control">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">公司电话</label>
+                <div class="col-sm-8">
+                    <input name="tel" required value="{$data.tel}" type="text" class="form-control">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">物业公司电话</label>
+                <div class="col-sm-8">
+                    <input name="property_company" required value="{$data.property_company}" type="text" class="form-control">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">营业面积(平方米)</label>
+                <div class="col-sm-8">
+                    <input name="bus_area" value="{$data.bus_area}" required  type="text" class="form-control">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">负责人姓名</label>
+                <div class="col-sm-8">
+                    <input name="duty" required value="{$data.duty}" type="text" class="form-control">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">负责人电话</label>
+                <div class="col-sm-8">
+                    <input name="duty_tel" required value="{$data.duty_tel}" type="text" class="form-control">
+                </div>
+            </div>
+            <hr>
+
+            <div class="form-group">
+                <label class="col-sm-2 control-label">联系人姓名</label>
+                <div class="col-sm-8">
+                    <input name="contact" required value="{$data.contact}" type="text" class="form-control">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-2 control-label">联系人性别</label>
+                <div class="col-sm-8">
+                    <select class="form-control m-b" name="contact_sex">
+                        <option value="1" {if $data.contact_sex == 1} selected {/if}>先生</option>
+                        <option value="2" {if $data.contact_sex == 2} selected {/if}>女士</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-2 control-label">联系人电话</label>
+                <div class="col-sm-8">
+                    <input name="contact_tel" required value="{$data.contact_tel}"  type="text" class="form-control">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-2 control-label">联系人身份证号</label>
+                <div class="col-sm-8">
+                    <input name="contact_license_code" value="{$data.contact_license_code}" required  type="text" class="form-control">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">联系人身份证正反照片</label>
+                <div class="col-sm-8">
+                    <div class="col-sm-8">
+                        <!--dom结构部分-->
+                        <div id="uploader-demo">
+                            <div id="filePicker" style="margin-bottom: 10px;">选择图片</div>
+                            <!--用来存放item-->
+                            <div id="fileList" class="uploader-list">
+                                {foreach :explode(',',$data.contact_license_pic) as $key => $value}
+                                <div class="file-item thumbnail upload-state-done">
+                                    <img src="{$value}" onclick="removePic(this,'{$value}','contact_license_pic')" style="width: 150px;">
+                                </div>
+                                {/foreach}
+                            </div>
+                        </div>
+                        <span class="help-block m-b-none">点击删除旧图片</span>
+
+                    </div>
+
+                </div>
+
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">工作邮箱</label>
+                <div class="col-sm-8">
+                    <input name="email" required  value="{$data.email}"  type="text" class="form-control">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">微信号</label>
+                <div class="col-sm-8">
+                    <input name="contact_wechat" required value="{$data.contact_wechat}" type="text" class="form-control">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-3 control-label"></label>
+                <div class="col-sm-5">
+                    <button type="button" class="btn btn-w-m btn-success" onclick="save()">提交</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+</div>
+
+<script>
+    $('select[name=province]').change(function(){
+
+        var id = $(this).val()
+
+        if (id){
+            var jqObj = $('select[name=city]');
+
+            getArea(jqObj,id)
+        }
+
+
+
+        $('select[name=county]').html('<option value="">请选择</option>')
+    })
+
+    $('select[name=city]').change(function(){
+
+        var id = $(this).val()
+
+        if (id){
+            var jqObj = $('select[name=county]');
+            getArea(jqObj,id)
+        } else{
+            $('select[name=county]').html('<option value="">请选择</option>')
+        }
+    })
+
+    function getArea(jqObj,p_id)
+    {
+        jqObj.html('')
+        $.ajax({
+            type:"POST",
+            url:"{:url('getArea')}",
+            data: {
+                p_id : p_id,
+            },
+            cache: false,
+            success: function (data) {
+                var html = '<option value="">请选择</option>';
+
+                $(data.data).each(function(k,v){
+                    html += '<option value="'+v.id+'-'+v.name+'">'+v.name+'</option>'
+                })
+                jqObj.html(html)
+            },
+            error:function(){
+                layer.alert('error!');
+                return;
+            }
+        })
+    }
+
+    $(document).ready(function () {
+        $('.summernote').summernote({
+            lang: 'zh-CN',
+            onImageUpload: function(files, editor, welEditable) {
+                uploadSummerPic(files[0], editor, welEditable);
+            }
+        });
+
+        removePic = function(_this,pic,name){
+
+            var val = $('input[name='+name+']').val()
+
+            var arr = val.split(',')
+
+            var res = []
+
+            $(arr).each(function(k,v){
+                if (v != pic){
+                    res.push(v)
+                }
+            })
+
+            $('input[name='+name+']').val(res.join(','))
+            $(_this).parents('.thumbnail').remove()
+        }
+        // $('select[name=type]').change(function(){
+        //     var val = $(this).val();
+        //
+        //     $.ajax({
+        //         type:"POST",
+        //         url:"{:url('getProduct')}",
+        //         data: {
+        //             type : val,
+        //         },
+        //         cache: false,
+        //         success: function (data) {
+        //             let html = ``;
+        //             $(data.data).each(function(k,v){
+        //                 html += `<option value="${v.id}">${v.name}</option>`
+        //             })
+        //             $('#pro_id').html(html)
+        //         },
+        //         error:function(){
+        //             layer.alert('上传失败!');
+        //             return;
+        //         }
+        //     });
+        // })
+        //
+        // if(that.Province){
+        //     format1=that.Province+'/'+that.City+'/'+that.County
+        // }
+        $(".pick-area1").pickArea({
+            // "format":format1,
+            "color" : "#00b7ee",
+            "width" : "400px",
+            "fontSize" : "17px",
+            "getVal":function(){
+                //console.log($(".pick-area-hidden").val())
+                //console.log($(".pick-area-dom").val())
+                var thisdom = $("."+$(".pick-area-dom").val());
+                thisdom.next().val($(".pick-area-hidden").val());
+                console.log($(".pick-area-hidden").val())
+                var address_ss= $('.pick-area-hidden').val()
+                address_ss=address_ss.split(' ')
+                console.log(address_ss)
+                // if(address_ss[0]){
+                //     that.Province=address_ss[0]
+                // }
+                // if(address_ss[1]){
+                //     that.City=address_ss[1]
+                // }
+                // if(address_ss[2]){
+                //     that.County=address_ss[2]
+                // }
+            }
+        });
+    });
+
+
+    function uploadSummerPic(file, editor, welEditable) {
+        var data = new FormData();
+        data.append("file", file);
+        $.ajax({
+            type:"POST",
+            url:"{:url('uploadPic')}",
+            data: data,
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: function (data) {
+
+                editor.insertImage(welEditable,data.msg);//回显到框内很重要
+            },
+            error:function(){
+                layer.alert('上传失败!');
+                return;
+            }
+        });
+    }
+    var edit = function () {
+        $("#eg").addClass("no-padding");
+        $('.click2edit').summernote({
+            lang: 'zh-CN',
+            focus: true
+        });
+    };
+    var save = function(){
+
+        var formData = new FormData($('form')[0]);
+
+        // formData.append('desc',$(".summernote").code())
+        $.ajax({
+            url: "{:url('update')}",
+            type: 'post',
+            dataType: 'json',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (data) {
+                if (data.code == 0) {
+                    layer.msg(data.msg, {icon: 5})
+                } else {
+                    layer.msg('提交成功', {icon: 1});
+                    setTimeout(function () {
+                        window.location.href = "{:url('index')}";
+                    }, 600)
+                }
+            }
+        })
+    }
+
+    var $list = $("#fileList");
+    // 初始化Web Uploader
+    var uploader = WebUploader.create({
+
+        // 选完文件后，是否自动上传。
+        auto: true,
+
+        // swf文件路径
+        swf: "__STATIC__/js/plugins/webuploader/Uploader.swf",
+
+
+        // 文件接收服务端。
+        server: "{:url('uploadPic')}",
+
+        // 选择文件的按钮。可选。
+        // 内部根据当前运行是创建，可能是input元素，也可能是flash.
+        pick: '#filePicker',
+
+        // 只允许选择图片文件。
+        accept: {
+            title: 'Images',
+            extensions: 'gif,jpg,jpeg,bmp,png',
+            mimeTypes: 'image/*'
+        }
+    });
+    uploader.on( 'fileQueued', function( file ) {
+        var $li = $(
+            '<div id="' + file.id + '" class="file-item thumbnail">' +
+            '<img>' +
+            '<div >' + file.name + '</div>' +
+            '</div>'
+            ),
+            $img = $li.find('img');
+
+
+        // $list为容器jQuery实例
+        $list.append( $li );
+
+        // 创建缩略图
+        // 如果为非图片文件，可以不用调用此方法。
+        // thumbnailWidth x thumbnailHeight 为 100 x 100
+        uploader.makeThumb( file, function( error, src ) {
+            if ( error ) {
+                $img.replaceWith('<span>不能预览</span>');
+                return;
+            }
+            $img.attr( 'src', src );
+        }, 100, 100 );
+    });
+    uploader.on( 'uploadProgress', function( file, percentage ) {
+        var $li = $( '#'+file.id ),
+            $percent = $li.find('.progress span');
+
+        // 避免重复创建
+        if ( !$percent.length ) {
+            $percent = $('<p class="progress"><span></span></p>')
+                .appendTo( $li )
+                .find('span');
+        }
+
+        $percent.css( 'width', percentage * 100 + '%' );
+    });
+
+    // 文件上传成功，给item添加成功class, 用样式标记上传成功。
+    uploader.on( 'uploadSuccess', function( file ,response) {
+        var str = $('input[name=contact_license_pic]').val()
+        if (!str){
+            str = response.msg
+        }else{
+            str += ',' + response.msg
+        }
+        $('input[name=contact_license_pic]').val(str)
+        $( '#'+file.id ).addClass('upload-state-done');
+        // console.log(response)
+        // $('input[name=contact_license_pic]').val(response.msg)
+        // $( '#'+file.id ).addClass('upload-state-done');
+    });
+
+    // 文件上传失败，显示上传出错。
+    uploader.on( 'uploadError', function( file ) {
+        var $li = $( '#'+file.id ),
+            $error = $li.find('div.error');
+
+        // 避免重复创建
+        if ( !$error.length ) {
+            $error = $('<div class="error"></div>').appendTo( $li );
+        }
+
+        $error.text('上传失败');
+    });
+
+    // 完成上传完了，成功或者失败，先删除进度条。
+    uploader.on( 'uploadComplete', function( file ) {
+        $( '#'+file.id ).find('.progress').remove();
+    });
+
+    var $list2 = $("#fileList2");
+    // 初始化Web Uploader
+    var uploader = WebUploader.create({
+
+        // 选完文件后，是否自动上传。
+        auto: true,
+
+        // swf文件路径
+        swf: "__STATIC__/js/plugins/webuploader/Uploader.swf",
+
+
+        // 文件接收服务端。
+        server: "{:url('uploadPic')}",
+
+        // 选择文件的按钮。可选。
+        // 内部根据当前运行是创建，可能是input元素，也可能是flash.
+        pick: '#filePicker2',
+
+        // 只允许选择图片文件。
+        accept: {
+            title: 'Images',
+            extensions: 'gif,jpg,jpeg,bmp,png',
+            mimeTypes: 'image/*'
+        }
+    });
+    uploader.on( 'fileQueued', function( file ) {
+        var $li = $(
+            '<div id="' + file.id + '" class="file-item thumbnail">' +
+            '<img>' +
+            '<div class="info">' + file.name + '</div>' +
+            '</div>'
+            ),
+            $img = $li.find('img');
+
+
+        // $list为容器jQuery实例
+        // $list2.html( $li );
+        $list2.append( $li );
+
+        // 创建缩略图
+        // 如果为非图片文件，可以不用调用此方法。
+        // thumbnailWidth x thumbnailHeight 为 100 x 100
+        uploader.makeThumb( file, function( error, src ) {
+            if ( error ) {
+                $img.replaceWith('<span>不能预览</span>');
+                return;
+            }
+
+            $img.attr( 'src', src );
+        }, 100, 100 );
+    });
+
+    uploader.on( 'uploadProgress', function( file, percentage ) {
+        var $li = $( '#'+file.id ),
+            $percent = $li.find('.progress span');
+
+        // 避免重复创建
+        if ( !$percent.length ) {
+            $percent = $('<p class="progress"><span></span></p>')
+                .appendTo( $li )
+                .find('span');
+        }
+
+        $percent.css( 'width', percentage * 100 + '%' );
+    });
+
+    // 文件上传成功，给item添加成功class, 用样式标记上传成功。
+    uploader.on( 'uploadSuccess', function( file ,response) {
+        var str = $('input[name=bus_license]').val()
+        if (!str){
+            str = response.msg
+        }else{
+            str += ',' + response.msg
+        }
+        $('input[name=bus_license]').val(str)
+        $( '#'+file.id ).addClass('upload-state-done');
+    });
+
+    // 文件上传失败，显示上传出错。
+    uploader.on( 'uploadError', function( file ) {
+        var $li = $( '#'+file.id ),
+            $error = $li.find('div.error');
+
+        // 避免重复创建
+        if ( !$error.length ) {
+            $error = $('<div class="error"></div>').appendTo( $li );
+        }
+
+        $error.text('上传失败');
+    });
+
+    // 完成上传完了，成功或者失败，先删除进度条。
+    uploader.on( 'uploadComplete', function( file ) {
+        $( '#'+file.id ).find('.progress').remove();
+    });
+</script>

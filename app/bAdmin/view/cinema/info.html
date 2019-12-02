@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href="__STATIC__/css/bootstrap.min.css?v=3.3.6" rel="stylesheet">
+    <link href="__STATIC__/css/font-awesome.css?v=4.4.0" rel="stylesheet">
+
+    <link href="__STATIC__/css/animate.css" rel="stylesheet">
+    <link href="__STATIC__/css/style.css?v=4.1.0" rel="stylesheet">
+
+</head>
+
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight">
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox-content p-xl">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <address>
+                            <strong>{$info.name}</strong><br><br/>
+                            {$info.province} {$info.city} {$info.county} {$info.address}
+                            <br><br/>
+                            <strong>所属行业：</strong> {$info.pro_name}
+                            <br/>
+                            <br/>
+                            <strong>影院周边：</strong> {$info.area_value}
+                            <br/>
+                            <br/>
+                            <strong>联系电话：</strong> {$info.tel}
+                            <br/>
+                            <br/>
+                            <strong>物业公司：</strong> {$info.property_company}
+                            <br/>
+                            <br/>
+                            <strong>营业面积：</strong> {$info.bus_area}
+                            <br/>
+                            <br/>
+
+                            <strong >统一社会信用代码：</strong> {$info.credit_code}
+                            <br/>
+                            <br/>
+                            <strong >营业执照：</strong> {$info.bus_license_code}
+                            <br/>
+                            <br/>
+                            <strong>注册时间：</strong> {$info.create_time}
+                            <br/>
+                            <br/>
+                            <strong>影投公司：</strong> <a href="{:url('aUser/info',['id'=>$tou.id])}">{$tou.name}</a>
+                            <br/>
+                            <br/>
+                            <strong>院线：</strong> <a href="{:url('aUser/info',['id'=>$yuan.id])}">{$yuan.name}</a>
+                            <br/>
+                            <br/>
+                        </address>
+                    </div>
+
+                    <div class="col-sm-6 text-right">
+                        <h4>联系人：{$info.contact} {if $info.contact_sex == 1} 先生 {else} 女士 {/if}</h4>
+                        <h4 class="text-navy">{$info.contact_tel}</h4>
+                        <address>
+                            <strong>身份证 : {$info.contact_license_code}</strong><br>
+                            <abbr >微信：</abbr> {$info.contact_wechat}<br/>
+                            <abbr >工作邮箱：</abbr> {$info.email}<br/>
+                            <div>
+                                {foreach :explode(',',$info.contact_license_pic) as $key => $value}
+                                <img style="width: 200px;" src="{$value}" alt="">
+                                {/foreach}
+                            </div>
+                        </address>
+
+                    </div>
+                </div>
+                <hr>
+                <div class="table-responsive m-t">
+
+
+                    <h4>统计信息</h4>
+                    <br/>
+                    <strong>厅数量：</strong>
+                    {if $info.screen_sum != 0}
+                    {$info.screen_sum}
+                    {/if}
+                    <br/>
+                    <br/>
+                    <strong>座位总数：</strong>
+                    {if $info.seat_sum != 0}
+                    {$info.seat_sum}
+                    {/if}
+                    <br/>
+                    <br/>
+                    <strong>年票房总量：</strong> {$info.box_office_for_year}
+                    <br/>
+                    <br/>
+                    <strong>观影人次：</strong> {$info.watch_mv_sum}
+                    <br/>
+                    <br/>
+                    <strong>平均票价：</strong> {$info.ticket_price_for_average}
+                    <br/>
+                    <br/>
+                </div>
+                <hr>
+
+                <div class="table-responsive m-t">
+
+
+                    <h4>营业执照</h4>
+                    <br/>
+                    {foreach :explode(',',$info.bus_license) as $key => $value}
+                    <img src="{$value}" alt="">
+                    {/foreach}
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 全局js -->
+<script src="__STATIC__/js/jquery.min.js?v=2.1.4"></script>
+<script src="__STATIC__/js/bootstrap.min.js?v=3.3.6"></script>
+
+
+
+<!-- 自定义js -->
+<script src="__STATIC__/js/content.js?v=1.0.0"></script>
+
+
+
+</body>
+
+</html>

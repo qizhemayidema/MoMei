@@ -15,7 +15,6 @@
                     <thead>
                     <tr class="text-center">
                         <th style="text-align: center;">名称</th>
-                        <th style="text-align: center;">账号类型</th>
                         <th style="text-align: center;">所属行业</th>
                         <th style="text-align: center;">账号</th>
                         <th style="text-align: center;">当前状态</th>
@@ -26,13 +25,6 @@
                     {foreach $list as $key => $value}
                     <tr>
                         <td>{$value.name}</td>
-                        <td >
-                            {if $value.type == 1}
-                            影投
-                            {else}
-                            院线
-                            {/if}
-                        </td>
                         <td>{$value.pro_name}</td>
                         <td>{$value.username}</td>
                         <td>
@@ -48,14 +40,11 @@
                         </td>
                         <td>
                             <button onclick="window.location.href='{:url('edit',['id'=>$value.id])}'" class="btn btn-info" type="button"><i class="fa fa-paste"></i> 编辑</button>
-                            <button onclick="removeArticle(this,'{$value.id}')" class="btn btn-danger" type="button"><i class="fa fa-remove"></i> <span class="bold">删除</span></button>
                             <div class="btn-group">
                                 <button data-toggle="dropdown" class="btn btn-primary dropdown-toggle" aria-expanded="false">更多 <span class="caret"></span>
                                 </button>
                                 <ul class="dropdown-menu">
                                     <li><a href="{:url('info',['id'=>$value.id])}">查看详情</a>
-                                    </li>
-                                    <li><a href="buttons.html#" class="font-bold">关联影院</a>
                                     </li>
                                 </ul>
                             </div>
