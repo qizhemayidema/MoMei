@@ -17,6 +17,8 @@ class ABus implements \app\common\typeCode\CateImpl,\app\common\typeCode\CacheIm
 
     private $cacheName = 'cate_a_bus';
 
+    private $issetAttr = false;
+
     public function getCateType(): int
     {
         return $this->type;
@@ -42,5 +44,12 @@ class ABus implements \app\common\typeCode\CateImpl,\app\common\typeCode\CacheIm
 
         return $this->masterId;
     }
+
+    public function issetAttr(): bool
+    {
+        // TODO: Implement issetAttr() method.
+        return $this->issetAttr;
+    }
+
 
 }

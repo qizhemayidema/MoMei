@@ -19,4 +19,6 @@ interface CateImpl extends BaseImpl
 
     public function getMasterId() : int;    //获取 所属影院用户id
 
+    public function issetAttr() : bool;     //是否拥有属性 返回 true  false
+
 }

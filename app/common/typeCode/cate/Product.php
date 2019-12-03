@@ -19,6 +19,8 @@ class Product implements \app\common\typeCode\CateImpl,\app\common\typeCode\Cach
 
     private $cacheName = 'cate_product';
 
+    private $issetAttr = false;
+
     public function getCateType(): int
     {
         return $this->type;
@@ -43,6 +45,11 @@ class Product implements \app\common\typeCode\CateImpl,\app\common\typeCode\Cach
     {
 
         return $this->masterId;
+    }
+
+    public function issetAttr(): bool
+    {
+        return $this->issetAttr;
     }
 
 }

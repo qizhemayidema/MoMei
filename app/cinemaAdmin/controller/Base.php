@@ -33,7 +33,6 @@ class Base extends BaseController
         }
 
         $this->setMenu();
-
     }
 
 

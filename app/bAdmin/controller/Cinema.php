@@ -3,17 +3,14 @@ declare (strict_types = 1);
 
 namespace app\bAdmin\controller;
 
-use app\BaseController;
 use app\common\service\Area;
 use app\common\service\Category;
-use app\common\service\CinemaLevel;
+use app\common\service\CategoryObjHaveAttr;
 use app\common\tool\Upload;
 use app\common\typeCode\Manager\Ying;
 use app\common\typeCode\Manager\Yuan;
 use app\common\typeCode\cate\ABus;
 use app\common\typeCode\cate\CinemaNearby;
-use app\common\typeCode\cate\LevelName;
-use app\common\typeCode\cate\LevelOption;
 use think\exception\ValidateException;
 use app\common\service\Manager as Service;
 use think\Request;
@@ -34,6 +31,7 @@ class Cinema extends Base
     public function add()
     {
         $cateService = new Category();
+
         //查询行业分类
         $cate = $cateService->getList((new ABus()));
 
@@ -49,19 +47,20 @@ class Cinema extends Base
         //获取周边分类列表
         $zhou = $cateService->getList((new CinemaNearby()));
 
-        //获取级别名称
-        $levelName = $cateService->getList((new LevelName()));
+        //获取级别分类列表
+        $level = $cateService->getList((new \app\common\typeCode\cate\CinemaLevel()));
 
-        //获取级别选项
-        $levelOption = $cateService->getList((new LevelOption()));
+        foreach ($level as $key => $value){
+            $level[$key]['attr'] =  $cateService->getAttrList($value['id']);
+        }
 
+//        dump($level);die;
         View::assign('area',$area);
         View::assign('yuan',$yuan);
         View::assign('ying',$ying);
         View::assign('bus_cate',$cate);
         View::assign('zhou',$zhou);
-        View::assign('level_name',$levelName);
-        View::assign('level_option',$levelOption);
+        View::assign('level',$level);
 
         return view();
     }
@@ -149,12 +148,13 @@ class Cinema extends Base
 
             $data = $service->insert($post);
 
+//            return json(['code'=>0]);
             $id = $data['id'];
             //新增影院相关级别
             $levels = $data['level_name'];
             $options = $data['level_option'];
 
-            (new CinemaLevel())->insert($id,$levels,$options);
+            (new CategoryObjHaveAttr(1))->insert($id,$levels,$options);
 
             $model->commit();
 
@@ -209,14 +209,15 @@ class Cinema extends Base
         //获取周边分类列表
         $zhou = $cateService->getList((new CinemaNearby()));
 
-        //获取级别名称
-        $levelName = $cateService->getList((new LevelName()));
+        //获取级别分类列表
+        $level = $cateService->getList((new \app\common\typeCode\cate\CinemaLevel()));
 
-        //获取级别选项
-        $levelOption = $cateService->getList((new LevelOption()));
+        foreach ($level as $key => $value){
+            $level[$key]['attr'] =  $cateService->getAttrList($value['id']);
+        }
 
         //获取数据级别选中状态
-        $levelCheck = (new CinemaLevel())->getIdColumns($user['id']);
+        $levelCheck = (new CategoryObjHaveAttr(1))->getIdColumns($user['group_code']);
 
         View::assign('area1',$area1);
         View::assign('area2',$area2);
@@ -227,8 +228,7 @@ class Cinema extends Base
         View::assign('zhou',$zhou);
         View::assign('user',$user);
         View::assign('data',$data);
-        View::assign('level_name',$levelName);
-        View::assign('level_option',$levelOption);
+        View::assign('level',$level);
         View::assign('level_check',$levelCheck);
 
         return view();
@@ -277,7 +277,7 @@ class Cinema extends Base
 
         $validate->rule($rules);
 
-        $model = new \app\common\model\Cinema();
+        $model = new \app\common\model\Manager();
         try{
             if (!$post['yuan_id'] && !$post['tou_id']) throw new ValidateException('影投和院线必须至少选一个');
 
@@ -322,11 +322,12 @@ class Cinema extends Base
 
             $service->updateInfo($oldUser['info_id'],$post);
 
+            $user = (new \app\common\service\Manager())->get($post['id']);
             //新增影院相关级别
             $levels = $post['level_name'];
             $options = $post['level_option'];
 
-            (new CinemaLevel())->update($post['id'],$levels,$options);
+            (new CategoryObjHaveAttr(1))->update($user['group_code'],$levels,$options);
 
 
             $model->commit();
@@ -375,7 +376,10 @@ class Cinema extends Base
         $yuanUser =  $yuanService->get($info['yuan_id']);
         $yuan =  $yuanService->getInfo($yuanUser['info_id']);
 
-        View::assign(compact('user','info','tou','yuan','yingUser','yuanUser'));
+        $levels = (new CategoryObjHaveAttr(1))->getList($user['group_code']);
+
+
+        View::assign(compact('user','info','tou','yuan','yingUser','yuanUser','levels'));
 
         return view();
 

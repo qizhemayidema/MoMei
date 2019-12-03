@@ -2,14 +2,14 @@
 /**
  * Created by PhpStorm.
  * User: 刘彪
- * Date: 2019/11/26
- * Time: 14:10
+ * Date: 2019/12/3
+ * Time: 22:16
  */
 
 namespace app\common\typeCode\cate;
 
 
-class LevelName implements \app\common\typeCode\CateImpl,\app\common\typeCode\CacheImpl
+class AreaLevel implements \app\common\typeCode\CateImpl,\app\common\typeCode\CacheImpl
 {
     private $type = 5;
 
@@ -17,7 +17,9 @@ class LevelName implements \app\common\typeCode\CateImpl,\app\common\typeCode\Ca
 
     private $masterId = 0;
 
-    private $cacheName = 'cate_level_name';
+    private $cacheName = 'cate_area_level';
+
+    private $issetAttr = true;
 
     public function getCateType(): int
     {
@@ -44,5 +46,14 @@ class LevelName implements \app\common\typeCode\CateImpl,\app\common\typeCode\Ca
 
         return $this->masterId;
     }
+
+    /**
+     * @return bool
+     */
+    public function issetAttr(): bool
+    {
+        return $this->issetAttr;
+    }
+
 
 }

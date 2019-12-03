@@ -23,6 +23,8 @@ class CinemaNearby implements \app\common\typeCode\CateImpl,\app\common\typeCode
 
     private $cacheName = 'cate_nearby';
 
+    private $issetAttr = false;
+
     public function getCateType(): int
     {
         return $this->type;
@@ -48,5 +50,12 @@ class CinemaNearby implements \app\common\typeCode\CateImpl,\app\common\typeCode
 
         return $this->masterId;
     }
+
+    public function issetAttr(): bool
+    {
+        // TODO: Implement issetAttr() method.
+        return $this->issetAttr;
+    }
+
 
 }

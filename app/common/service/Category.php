@@ -9,6 +9,8 @@
 namespace app\common\service;
 
 
+use app\common\model\CategoryAttr;
+use app\common\model\CategoryObjHaveAttr;
 use app\common\tool\Cache;
 use app\common\typeCode\CacheImpl;
 use app\common\typeCode\cate\ABus;
@@ -114,5 +116,55 @@ class Category
         if($cateImpl instanceof CacheImpl){
             (new Cache($cateImpl))->clear();
         }
+    }
+
+    /*------------------attr--------------------------*/
+
+    public function getAttrList($cateId)
+    {
+        return (new CategoryAttr())->where(['cate_id'=>$cateId])
+            ->order('order_num','desc')
+            ->select();
+    }
+
+    //添加一个分类属性
+    public function insertAttr($cateId,$data)
+    {
+        $result = [
+            'cate_id' => $cateId,
+            'value'  => $data['value'],
+            'order_num' => $data['order_num'],
+            'is_show' => $data['is_show'] ?? 1,
+        ];
+
+        return (new CategoryAttr())->add($result);
+    }
+
+    //修改一个分类属性
+    public function updateAttr($attrId,$data)
+    {
+        $result = [
+            'value'  => $data['value'],
+            'order_num' => $data['order_num'],
+            'is_show' => $data['is_show'] ?? 1,
+        ];
+
+        return (new CategoryAttr())->modify($attrId,$result);
+    }
+
+    //删除一个分类属性
+    public function deleteAttrById($attrId)
+    {
+        (new CategoryAttr())->where(['id'=>$attrId])->delete();
+
+        (new CategoryObjHaveAttr())->where(['attr_id'=>$attrId])->delete();
+    }
+
+    //删除多个分类属性
+    public function deleteAttrByCateId($cateId,$exceptAttrIds = [])
+    {
+        (new CategoryAttr())->where(['cate_id'=>$cateId])->whereNotIn('id',$exceptAttrIds)->delete();
+
+        (new CategoryObjHaveAttr())->where(['cate_id'=>$cateId])->whereNotIn('attr_id',$exceptAttrIds)->delete();
     }
 }

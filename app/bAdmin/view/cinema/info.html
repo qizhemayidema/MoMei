@@ -105,7 +105,18 @@
                     <br/>
                 </div>
                 <hr>
+                <div class="table-responsive m-t">
+                    <h4>影院级别</h4>
+                    <br/>
+                    {foreach $levels as $key => $value}
+                    <strong>{$value.cate_name}：</strong>
+                    {$value.attr_value}
+                    <br/>
+                    <br/>
+                    {/foreach}
 
+                </div>
+                <hr>
                 <div class="table-responsive m-t">
 
 

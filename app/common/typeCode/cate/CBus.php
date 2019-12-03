@@ -19,6 +19,8 @@ class CBus implements \app\common\typeCode\CateImpl,\app\common\typeCode\CacheIm
 
     private $masterId = 0;
 
+    private $issetAttr = false;
+
     public function getCateType(): int
     {
         return $this->type;
@@ -44,5 +46,14 @@ class CBus implements \app\common\typeCode\CateImpl,\app\common\typeCode\CacheIm
 
         return $this->masterId;
     }
+
+    /**
+     * @return bool
+     */
+    public function issetAttr(): bool
+    {
+        return $this->issetAttr;
+    }
+
 
 }

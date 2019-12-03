@@ -2,14 +2,14 @@
 /**
  * Created by PhpStorm.
  * User: 刘彪
- * Date: 2019/11/26
- * Time: 13:35
+ * Date: 2019/12/3
+ * Time: 22:16
  */
 
 namespace app\common\typeCode\cate;
 
 
-class LevelOption implements \app\common\typeCode\CateImpl,\app\common\typeCode\CacheImpl
+class CinemaLevel implements \app\common\typeCode\CateImpl,\app\common\typeCode\CacheImpl
 {
     private $type = 3;
 
@@ -17,7 +17,9 @@ class LevelOption implements \app\common\typeCode\CateImpl,\app\common\typeCode\
 
     private $masterId = 0;
 
-    private $cacheName = 'cate_level_option';
+    private $cacheName = 'cate_cinema_level';
+
+    private $issetAttr = true;
 
     public function getCateType(): int
     {
@@ -44,5 +46,14 @@ class LevelOption implements \app\common\typeCode\CateImpl,\app\common\typeCode\
 
         return $this->masterId;
     }
+
+    /**
+     * @return bool
+     */
+    public function issetAttr(): bool
+    {
+        return $this->issetAttr;
+    }
+
 
 }
