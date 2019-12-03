@@ -59,7 +59,7 @@ class Base extends BaseController
 
         $url = strtolower($controller.'/'.$action);
 
-        $ignorePermission = ['index/index'];
+        $ignorePermission = ['index/index','BasicInformation/uploadPic'];
 
         if (in_array($url,$ignorePermission)) return true;
 

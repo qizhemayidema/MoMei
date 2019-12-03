@@ -10,10 +10,12 @@ namespace app\aAdmin\controller;
 
 
 use app\common\service\AUser;
-use app\common\service\Cinema;
+use app\common\service\Manager as ManagerService;
 use app\common\tool\Session;
+use app\common\typeCode\manager\Cinema as CinemaTypeDesc;
 use app\Request;
 use think\facade\View;
+
 
 class AssociatedCinema extends Base
 {
@@ -21,7 +23,18 @@ class AssociatedCinema extends Base
     {
         $info = (new Session())->getData();
 
-        $data = (new AUser())->getAssociatedCinemaList($info['type'],$info['id'],15);
+        //查询属于该资源方下的影院
+        $managerService = '';
+        $field = '';
+        $managerService = new ManagerService(new CinemaTypeDesc());
+        if($info['type']==2){  //院线
+            $field = 'yuan_id';
+        }elseif ($info['type']==3){ //影投
+            $field = 'tou_id';
+        }
+
+        $data = $managerService->setWhere('info',$field,$info['id'])->showType(true)->pageLength()->getList();
+
 
         View::assign('data',$data);
 
@@ -30,9 +43,14 @@ class AssociatedCinema extends Base
 
     public function getDetail(Request $request)
     {
-        $cinemaId = $request->param('cinema_id');
+        $id = $request->param('id');
 
-        $data = (new Cinema())->get($cinemaId);
+        $service = new ManagerService((new CinemaTypeDesc()));
+
+        //获取数据
+        $user = $service->get($id);
+
+        $data = $service->getInfo($user['info_id']);
 
         View::assign('data',$data);
 

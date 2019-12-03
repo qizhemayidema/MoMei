@@ -33,7 +33,7 @@ class Login extends BaseController
 
                 $validate = new Validate();
                 $rules = [
-                    'username|登录类型'  => 'require',
+                    'type|登录类型'  => 'require',
                     'username|用户名'  => 'require',
                     'password|密码'  => 'require',
                     'captcha|验证码'   => 'require|captcha',
