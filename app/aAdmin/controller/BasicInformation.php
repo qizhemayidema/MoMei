@@ -5,11 +5,12 @@
  * Date: 2019/12/2
  * Time: 13:06
  */
-
+declare (strict_types = 1);
 namespace app\aAdmin\controller;
 
 use app\common\service\AUser as Service;
 use app\common\service\Category as CateService;
+use app\common\service\Cinema as CinemaService;
 use app\common\typeCode\cate\ABus as ABusTypeDesc;
 use think\facade\View;
 use app\common\tool\Session;
@@ -27,6 +28,11 @@ class BasicInformation extends Base
 
         //获取a端行业分类
         $busCate = (new CateService())->getList((new ABusTypeDesc()));
+
+        //查询影院关联总数等
+        $countResult  = (new CinemaService())->getCinemaAmountCount($info['id'],$info['type']);
+
+        View::assign('countResult',$countResult);
 
         View::assign('bus_cate',$busCate);
 
@@ -84,7 +90,7 @@ class BasicInformation extends Base
                 throw new ValidateException('该用户名已存在');
             }
 
-            (new Service())->update($post['id'], $post);
+            (new Service())->update($post['id'], $post);  //这里用户可以多填写年总票房等
 
             $aUserModel->commit();
 

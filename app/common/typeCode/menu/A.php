@@ -16,7 +16,7 @@ class A implements MenuImpl,CacheImpl
 
     private $level = 2;
 
-    private $cacheName = 'menu_c';
+    private $cacheName = 'menu_a';
 
 
     public function getMasterType(): int

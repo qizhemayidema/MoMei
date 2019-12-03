@@ -165,6 +165,9 @@ class AUser
             'type'  => $data['type'],
             'role_id'  => $data['role_id'] ?? 0,
             'pro_name' => $proName,
+            'box_office_for_year'  => $data['box_office_for_year'] ?? '',
+            'watch_mv_sum'  => $data['watch_mv_sum'] ?? '',
+            'ticket_price_for_average'  => $data['ticket_price_for_average'] ?? '',
         ];
 
         if (isset($data['password']) && $data['password']){
@@ -222,9 +225,9 @@ class AUser
     {
         $handler = new \app\common\model\Cinema();
         if($type==1){
-            $handler->where('tou_id','in',$id);
+            $handler = $handler->where('tou_id',$id);
         }elseif ($type==2){
-            $handler->where('yuan_id','in',$id);
+            $handler = $handler->where('yuan_id',$id);
         }
         return $page ? $handler->paginate($page) : $handler->select()->toArray();
     }

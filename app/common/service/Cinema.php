@@ -158,4 +158,25 @@ class Cinema
     {
         (new \app\common\model\Cinema())->modify($id,['status'=>$status]);
     }
+
+    /**
+     * 查询某资源方下的影院总数 厅总数 座位总数
+     * @param $id           int   资源方id
+     * @param $type         int   类型  1 影投 2 院线
+     * @return array
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     * $data 2019/12/3 13:15
+     */
+    public function getCinemaAmountCount($id,$type)
+    {
+        $cinemaModel = new  \app\common\model\Cinema();
+        if($type==1){
+            $cinemaModel = $cinemaModel->belongToTou($id);
+        }elseif ($type==2){
+            $cinemaModel = $cinemaModel->belongToYuan($id);
+        }
+        return $cinemaModel->field('count(*) as cinemaCount,sum(screen_sum) as screenSum,sum(seat_sum) as seatSum')->select()->toArray();
+    }
 }

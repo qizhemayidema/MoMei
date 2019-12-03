@@ -5,7 +5,7 @@
  * Date: 2019/12/2
  * Time: 14:01
  */
-
+declare (strict_types = 1);
 namespace app\aAdmin\controller;
 
 

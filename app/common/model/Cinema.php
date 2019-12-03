@@ -49,4 +49,14 @@ class Cinema extends Model implements BasicImpl,ShowImpl
         return $this;
     }
 
+    public function belongToTou($id)
+    {
+        return $this->where('tou_id',$id);
+    }
+
+    public function belongToYuan($id)
+    {
+        return $this->where('yuan_id',$id);
+    }
+
 }

@@ -1,0 +1,81 @@
+{include file="common/source"}
+<div class="col-sm-12">
+    <div class="ibox-content">
+        <form action="" class="form-horizontal">
+            <div class="form-group">
+                <label class="col-sm-2 control-label">影院名称</label>
+                <div class="col-sm-8">
+                    <input  value="{$data.cinema_name}"   type="text" disabled class="form-control">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">产品名称</label>
+                <div class="col-sm-8">
+                    <input   value="{$data.name}" type="text" disabled class="form-control">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">产品介绍</label>
+                <div class="col-sm-8">
+                    <input   value="{$data.desc}" type="text" disabled class="form-control">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">影厅名称</label>
+                <div class="col-sm-8">
+                    <input  value="{$data.screen_name}"  type="text" disabled class="form-control">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">分类名称</label>
+                <div class="col-sm-8">
+                    <input  value="{$data.cinema_cate_name}"   type="text" disabled class="form-control">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">级别名称</label>
+                <div class="col-sm-8">
+                    <input   value="{$data.level_name}" type="text" disabled class="form-control">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">产品数量类型</label>
+                <div class="col-sm-8">
+                    <input  {if condition="$data.type eq 1"}value="多个"{elseif condition="$data.type eq 2"}value="单个"{/if}  disabled type="text" class="form-control">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-2 control-label">产品数量</label>
+                <div class="col-sm-8">
+                    <input  value="{$data.sum}"  disabled type="text" class="form-control">
+                </div>
+            </div>
+
+            <table class="table table-bordered table-hover text-center">
+                <thead>
+                <tr class="text-center">
+                    <th style="text-align: center;">实体名称</th>
+                    <th style="text-align: center;">每日价格</th>
+                    <th style="text-align: center;">包月价格</th>
+                    <th style="text-align: center;">包年价格</th>
+                    <th style="text-align: center;">顺序</th>
+                </tr>
+                </thead>
+                <tbody>
+                {foreach $productData as $key => $value}
+                <tr>
+                    <td style="text-align: center;">{$value.entity_name}</td>
+                    <td style="text-align: center;"><button class="btn btn-info" type="button"><i class="fa fa-paste"></i> 查看</button></td>
+                    <td style="text-align: center;">{$value.price_month}</td>
+                    <td style="text-align: center;">{$value.price_year}</td>
+                    <td style="text-align: center;">{$value.sort}</td>
+                </tr>
+                {/foreach}
+                </tbody>
+            </table>
+
+        </form>
+    </div>
+
+</div>
