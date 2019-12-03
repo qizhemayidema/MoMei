@@ -47,7 +47,7 @@ class Cinema implements ManagerImpl
         'pro_name' ,
         'duty' ,
         'duty_tel' ,
-        'create_time',
+        'add_time',
         ];
     public function getManagerType()
     {

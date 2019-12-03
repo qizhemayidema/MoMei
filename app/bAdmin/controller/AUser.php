@@ -99,8 +99,11 @@ class AUser extends BaseController
 
             if(!$validate->check($post))  throw new ValidateException($validate->getError());
 
-
-            $service = $post['type'] == 1 ? new Service((new Ying())) : new Service((new Yuan()));
+            if ($post['type'] == 2){
+                $service = new Service((new Yuan()));
+            }else{
+                $service = new Service((new Ying()));
+            }
 
             if($service->existsUsername($post['username'])){
                 throw new ValidateException('该用户名已存在');
@@ -194,11 +197,12 @@ class AUser extends BaseController
 
             if (!$validate->check($post)) throw new ValidateException($validate->getError());
 
-            if ($post['type'] == 1){
-                $typeCode =  new Ying();
-            }else{
+            if ($post['type'] == 2){
                 $typeCode = new Yuan();
+            }else{
+                $typeCode =  new Ying();
             }
+
             $service = new Service($typeCode);
 
             if ($service->existsUsername($post['username'], $post['id'])) {

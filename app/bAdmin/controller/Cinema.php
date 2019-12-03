@@ -3,19 +3,19 @@ declare (strict_types = 1);
 
 namespace app\bAdmin\controller;
 
+use app\BaseController;
 use app\common\service\Area;
 use app\common\service\Category;
 use app\common\service\CinemaLevel;
 use app\common\tool\Upload;
-use app\common\typeCode\aUser\Ying;
-use app\common\typeCode\aUser\Yuan;
+use app\common\typeCode\Manager\Ying;
+use app\common\typeCode\Manager\Yuan;
 use app\common\typeCode\cate\ABus;
-use app\common\typeCode\cate\CBus;
 use app\common\typeCode\cate\CinemaNearby;
 use app\common\typeCode\cate\LevelName;
 use app\common\typeCode\cate\LevelOption;
 use think\exception\ValidateException;
-use app\common\service\Cinema as Service;
+use app\common\service\Manager as Service;
 use think\Request;
 use think\facade\View;
 use think\Validate;
@@ -24,7 +24,7 @@ class Cinema extends Base
 {
     public function index()
     {
-        $list = (new Service())->getList(true,10);
+        $list = (new Service((new \app\common\typeCode\manager\Cinema())))->showType(true)->pageLength(15)->getList();
 
         View::assign('list',$list);
 
@@ -41,10 +41,10 @@ class Cinema extends Base
         $area = (new Area())->getListByPId();
 
         //查询院线列表
-        $yuan = (new \app\common\service\AUser((new Yuan())))->showType(true)->getList();
+        $yuan = (new Service((new Yuan())))->showType(true)->getList();
 
         //查询影投列表
-        $ying = (new \app\common\service\AUser((new Ying())))->showType(true)->getList();
+        $ying = (new Service((new Ying())))->showType(true)->getList();
 
         //获取周边分类列表
         $zhou = $cateService->getList((new CinemaNearby()));
@@ -108,7 +108,7 @@ class Cinema extends Base
 
         $validate->rule($rules);
 
-        $model = new \app\common\model\Cinema();
+        $model = new \app\common\model\Manager();
         try{
             if (!$post['yuan_id'] && !$post['tou_id']) throw new ValidateException('影投和院线必须至少选一个');
 
@@ -116,7 +116,7 @@ class Cinema extends Base
 
             if(!$validate->check($post))  throw new ValidateException($validate->getError());
 
-            $service = new Service();
+            $service = new Service((new \app\common\typeCode\manager\Cinema()));
 
             if($service->existsUsername($post['username']))
             {
@@ -129,6 +129,7 @@ class Cinema extends Base
             //处理表变组合
             if (!$post['area_id']){
                 $post['area_id'] = 0;
+                $post['area_value'] = '';
             }else{
                 $area = explode('-',$post['area_id']);
                 $post['area_id'] = $area[0];
@@ -149,7 +150,6 @@ class Cinema extends Base
             $data = $service->insert($post);
 
             $id = $data['id'];
-
             //新增影院相关级别
             $levels = $data['level_name'];
             $options = $data['level_option'];
@@ -167,7 +167,7 @@ class Cinema extends Base
         }catch (\Exception $e){
 
             $model->rollback();
-            return json(['code'=>0,'msg'=>$e->getMessage()]);
+            return json(['code'=>0,'msg'=>$e->getMessage().$e->getLine()]);
 
         }
 
@@ -180,11 +180,13 @@ class Cinema extends Base
 
         $cateService = new Category();
 
-        $service = new Service();
+        $service = new Service((new \app\common\typeCode\manager\Cinema()));
 
         $area = new Area();
         //获取数据
-        $data = $service->get($id);
+        $user = $service->get($id);
+
+        $data = $service->getInfo($user['info_id']);
 
         //查询行业分类
         $cate = $cateService->getList((new ABus()));
@@ -199,14 +201,13 @@ class Cinema extends Base
         $area3 = $area->getListByPId($data['city_id']);
 
         //查询院线列表
-        $yuan = (new \app\common\service\AUser((new Yuan())))->showType(true)->getList();
+        $yuan = (new Service((new Yuan())))->showType(true)->getList();
 
         //查询影投列表
-        $ying = (new \app\common\service\AUser((new Ying())))->showType(true)->getList();
+        $ying = (new Service((new Ying())))->showType(true)->getList();
 
         //获取周边分类列表
         $zhou = $cateService->getList((new CinemaNearby()));
-
 
         //获取级别名称
         $levelName = $cateService->getList((new LevelName()));
@@ -215,7 +216,7 @@ class Cinema extends Base
         $levelOption = $cateService->getList((new LevelOption()));
 
         //获取数据级别选中状态
-        $levelCheck = (new CinemaLevel())->getIdColumns($id);
+        $levelCheck = (new CinemaLevel())->getIdColumns($user['id']);
 
         View::assign('area1',$area1);
         View::assign('area2',$area2);
@@ -224,6 +225,7 @@ class Cinema extends Base
         View::assign('ying',$ying);
         View::assign('bus_cate',$cate);
         View::assign('zhou',$zhou);
+        View::assign('user',$user);
         View::assign('data',$data);
         View::assign('level_name',$levelName);
         View::assign('level_option',$levelOption);
@@ -283,7 +285,7 @@ class Cinema extends Base
 
             if(!$validate->check($post))  throw new ValidateException($validate->getError());
 
-            $service = new Service();
+            $service = new Service((new \app\common\typeCode\manager\Cinema()));
 
             if($service->existsUsername($post['username'],$post['id']))
             {
@@ -296,6 +298,7 @@ class Cinema extends Base
             //处理表变组合
             if (!$post['area_id']){
                 $post['area_id'] = 0;
+                $post['area_value'] = '';
             }else{
                 $area = explode('-',$post['area_id']);
                 $post['area_id'] = $area[0];
@@ -313,8 +316,11 @@ class Cinema extends Base
             $post['county_id'] = $county[0] ?? 0;
             $post['county'] = $county[1] ?? '';
 
+            $oldUser = $service->get($post['id']);
 //            return json(['code'=>0]);
             $service->update($post['id'],$post);
+
+            $service->updateInfo($oldUser['info_id'],$post);
 
             //新增影院相关级别
             $levels = $post['level_name'];
@@ -345,7 +351,7 @@ class Cinema extends Base
         $status = $request->post('status');
         $id = $request->post('id');
 
-        (new Service())->changeStatus($id,$status);
+        (new Service((new \app\common\typeCode\manager\Cinema())))->changeStatus($id,$status);
 
         return json(['code'=>1,'msg'=>'success']);
     }
@@ -354,15 +360,22 @@ class Cinema extends Base
     {
         $id = $request->param('id');
 
-        $info = (new Service())->get($id);
+        $service = (new Service(new \app\common\typeCode\manager\Cinema()));
 
-        $aUserModel = new \app\common\service\AUser();
+        $user = $service->get($id);
 
-        $tou = $aUserModel->get($info['tou_id']);
+        $info = $service->getInfo($user['info_id']);
 
-        $yuan =  $aUserModel->get($info['yuan_id']);
+        $yingService = (new Service(new \app\common\typeCode\manager\Ying()));
+        $yuanService = (new Service(new \app\common\typeCode\manager\Yuan()));
 
-        View::assign(compact('info','tou','yuan'));
+        $yingUser = $yingService->get($info['tou_id']);
+        $tou = $yingService->getInfo($yingUser['info_id']);
+
+        $yuanUser =  $yuanService->get($info['yuan_id']);
+        $yuan =  $yuanService->getInfo($yuanUser['info_id']);
+
+        View::assign(compact('user','info','tou','yuan','yingUser','yuanUser'));
 
         return view();
 

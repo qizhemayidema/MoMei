@@ -103,7 +103,7 @@ class Manager
         }
 
         $handler = $handler->leftJoin($this->infoTableName.' info',$alias.'.info_id = info.id')
-            ->field('*,info.id none_id,'.$alias.'.id id');
+            ->field('*,info.id none_id,'.$alias.'.id id,info.type info_type');
 
         $handler = $this->order ? $handler->order($alias.'.'.$this->order[0],$alias.'.'.$this->order[1]) : $handler;
 
@@ -170,6 +170,7 @@ class Manager
 
         $managerModel->insert($managerInsert);
 
+        $data['id'] = $managerModel->getLastInsID();
         if ($this->managerImpl->isInfo()){
 
             $id = $managerModel->getLastInsID();
@@ -180,6 +181,7 @@ class Manager
             }
 
         }
+
         return $data;
 
     }
@@ -191,14 +193,14 @@ class Manager
         $salt = $managerModel->where(['id'=>$id])->value('salt');
 
         $update = [
-            'password'  => md5($data['password'] . $salt),
             'role_id'   => $data['role_id'] ?? 0,
             'role_name'   => $data['role_name'] ?? '',
         ];
 
+        if (isset($data['password']) && $data['password']) $update['password'] = md5($data['password'] . $salt);
         if (isset($data['username'])) $update['username'] = $data['username'];
 
-        $data['type'] = $this->managerImpl->getManagerType();
+        $update['type'] = $this->managerImpl->getManagerType();
 
         $managerModel->modify($id,$update);
     }
