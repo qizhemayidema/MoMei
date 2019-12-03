@@ -29,8 +29,10 @@ class Manager
     //描述类
     private $managerImpl = null;
 
+    //信息表
     private $infoTableName = 'manager_info';
 
+    private $groupCode = 0;
 
     public function __construct(?ManagerImpl $managerImpl = null)
     {
@@ -59,6 +61,13 @@ class Manager
         return $this;
     }
 
+    public function setGroupCode($groupCode)
+    {
+        $this->groupCode = $groupCode;
+        return $this;
+    }
+
+
     /**
      * 包含info 全部返回
      * @return mixed
@@ -69,10 +78,11 @@ class Manager
 
         $alias = 'manager';
 
-        $handler = $handler->alias($alias);
-
         $handler = $this->showType ? $handler->backgroundShowData($alias) : $handler->receptionShowData($alias);
 
+        $handler->alias($alias);
+
+        $handler = $this->groupCode ? $handler->where([$alias.'.group_code'=>$this->groupCode]) : $handler;
 
         $handler = $this->managerImpl ? $handler->where([$alias.'.type'=>$this->managerImpl->getManagerType()]) : $handler;
 
@@ -159,7 +169,6 @@ class Manager
 
     public function update($id,$data)
     {
-
         $managerModel = (new ManagerModel());
 
         $salt = $managerModel->where(['id'=>$id])->value('salt');
@@ -170,9 +179,7 @@ class Manager
         ];
 
         if (isset($data['username'])) $update['username'] = $data['username'];
-
-
-        $managerModel->modify($id,$update);
+            $managerModel->modify($id,$update);
     }
 
     public function updateInfo($infoId,$data)
