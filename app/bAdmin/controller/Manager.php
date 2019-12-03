@@ -12,6 +12,8 @@ namespace app\bAdmin\controller;
 
 use app\common\service\Role;
 use app\common\typeCode\role\B as TypeDesc;
+use app\common\service\Manager as ManagerService;
+use app\common\typeCode\manager\B as BManagerTypeDesc;
 use app\Request;
 use think\facade\View;
 use think\Validate;
@@ -21,7 +23,9 @@ class Manager extends Base
     public function index()
     {
         try{
-            $userData = (new \app\common\service\Manager())->getManagerList(15);
+            $managerService = new ManagerService(new BManagerTypeDesc());
+
+            $userData = $managerService->getList();
 
             View::assign('userData',$userData);
 
@@ -44,7 +48,7 @@ class Manager extends Base
     {
         try{
             $post = $request->post();
-            $valiatde = new Validate();
+            $validate = new Validate();
             $rules = Array(
                 'username|用户名'=>'require|max:30',
                 'password|密码'=>'require|max:30|confirm:affirm_password',
@@ -53,14 +57,17 @@ class Manager extends Base
                 '__token__'     => 'token',
             );
 
-            $valiatde->rule($rules);
-            $checkRes  = $valiatde->check($post);
-            if(!$checkRes)  throw new \Exception($valiatde->getError());
+            $validate->rule($rules);
+            $checkRes  = $validate->check($post);
+            if(!$checkRes)  throw new \Exception($validate->getError());
 
-            $managerInfo = (new \app\common\service\Manager())->getManagerByUsername($post['username']);
+            $managerService = new ManagerService(new BManagerTypeDesc());
+
+            $managerInfo = $managerService->existsUsername($post['username']);
+
             if(!empty($managerInfo)) throw new \Exception('用户名已存在');
 
-            $insertResult = (new \app\common\service\Manager())->insert($post);
+            $insertResult = $managerService->insert($post);
             if(!$insertResult) throw new \Exception('添加失败');
             return json(['code'=>1,'msg'=>'success']);
         }catch (\Exception $e){
@@ -73,7 +80,7 @@ class Manager extends Base
         try{
             $uid = $request->param('userid');
 
-            $userData = (new \app\common\service\Manager())->getFindData($uid);
+            $userData = (new ManagerService())->get($uid);
 
             $roleData = (new Role())->getRoleList(new TypeDesc());
 
@@ -114,11 +121,14 @@ class Manager extends Base
             $checkRes  = $validate->check($post);
             if(!$checkRes)  throw new \Exception($validate->getError());
 
-            $managerInfo = (new \app\common\service\Manager())->getManagerByUsername($post['username'],$post['id']);
+            $managerService = new ManagerService(new BManagerTypeDesc());
+
+            $managerInfo = $managerService->existsUsername($post['username'],$post['id']);
+
             if(!empty($managerInfo)) throw new \Exception('用户名已存在');
 
-            $updateResult = (new \app\common\service\Manager())->updateRes($post);
-            if(!$updateResult) throw new \Exception('修改失败');
+            $managerService->update($post['id'],$post);
+
             return json(['code'=>1,'msg'=>'success']);
         }catch (\Exception $e){
             return json(['code'=>0,'msg'=>$e->getMessage()]);
@@ -130,8 +140,8 @@ class Manager extends Base
         try{
             $userId = $request->post('user_id');
             //先查询该用户
-            $deleteResult = (new \app\common\service\Manager())->delete($userId);
-            if($deleteResult['code']==0) throw new \Exception($deleteResult['msg']);
+            (new ManagerService())->delete($userId);
+
             return json(['code'=>1,'msg'=>'success']);
         }catch (\Exception $e){
             return json(['code'=>0,'msg'=>$e->getMessage()]);

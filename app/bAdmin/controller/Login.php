@@ -10,7 +10,8 @@ declare (strict_types = 1);
 namespace app\bAdmin\controller;
 
 use app\BaseController;
-use app\common\model\Manager;
+use app\common\service\Manager as ManagerService;
+use app\common\typeCode\manager\B as TypeDesc;
 use app\common\service\Role;
 use app\common\tool\Session;
 use app\Request;
@@ -38,11 +39,11 @@ class Login extends BaseController
                     return json(['code' => 0, 'msg'=>$validate->getError()]);
                 }
 
-                //查询登录的用户
-                $res = (new Manager())->where(['username'=>$data['username'],'password'=>md5($data['password'])])->find();
-                if (!$res){
-                    return json(['code' => 0, 'msg'=>'账号或密码不正确']);
-                }
+                $res = (new ManagerService(new TypeDesc()))->existsUsername($data['username']);  //查询用户是否存在
+                if (!$res)  throw new \Exception('用户名错误');
+
+                if(md5($data['password'].$res['salt']) != $res['password'] )   throw new \Exception('密码错误');
+
                 if ($res['role_id']){
                     $res['role_name'] = (new Role())->getFindRes($res['role_id'])['role_name'];
                 }else{

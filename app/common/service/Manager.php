@@ -69,28 +69,29 @@ class Manager
 
         $alias = 'manager';
 
+        $handler = $handler->alias($alias);
+
         $handler = $this->showType ? $handler->backgroundShowData($alias) : $handler->receptionShowData($alias);
 
 
         $handler = $this->managerImpl ? $handler->where([$alias.'.type'=>$this->managerImpl->getManagerType()]) : $handler;
 
         $handler = $handler->leftJoin($this->infoTableName.' info',$alias.'.info_id = info.id')
-            ->field('*,info.id none_id');
+            ->field('*,info.id none_id,'.$alias.'.id id');
 
         $handler = $this->order ? $handler->order($alias.'.'.$this->order[0],$alias.'.'.$this->order[1]) : $handler;
 
         return $this->pageLength ? $handler->paginate($this->pageLength) : $handler->select();
     }
 
-    public function existsUsername($username,$type = null,$exceptId = 0)
+    public function existsUsername($username,$exceptId = 0)
     {
-        if (!$type) $type = $this->managerImpl->getManagerType();
 
         $handler = (new ManagerModel());
 
         if ($exceptId) $handler = $handler->where('id','<>',$exceptId);
 
-        $result = $handler->where(['type'=>$type,'username'=> $username])->find();
+        $result = $handler->where(['type'=>$this->managerImpl->getManagerType(),'username'=> $username])->find();
 
         return  $result ? $result : null;
     }
@@ -108,7 +109,7 @@ class Manager
 
         $managerInsert = [
             'username'  => $data['username'],
-            'slat'      => $salt,
+            'salt'      => $salt,
             'password'  => md5($data['password'] . $salt),
             'type'      => $this->managerImpl->getManagerType(),
             'role_id'   => $data['role_id'] ?? 0,
@@ -146,7 +147,7 @@ class Manager
 
             $id = $managerModel->getLastInsID();
 
-            if (!isset($managerInsert['group_code'])){
+            if (!isset($data['group_code'])){
                 $data['group_code'] = $id;
                 $managerModel->where(['id'=>$id])->update(['group_code'=>$id]);
             }
@@ -168,6 +169,8 @@ class Manager
             'role_id'   => $data['role_id'] ?? 0,
         ];
 
+        if (isset($data['username'])) $update['username'] = $data['username'];
+
 
         $managerModel->modify($id,$update);
     }
@@ -186,7 +189,7 @@ class Manager
         $update = [];
 
         foreach ($fieldArr as $key => $value) {
-            $update[$value] = $data[$value];
+            if (isset($data[$value])) $update[$value] = $data[$value];
         }
 
         $managerInfoModel->where(['id'=>$infoId])->update($update);
@@ -212,62 +215,4 @@ class Manager
         (new ManagerModel())->softDelete($id);
     }
 
-
-//    public function existsUsernameReturnInfo($username,$type = null,$exceptId = 0)
-//    {
-//        $handler = (new AUserModel());
-//
-//        if (!$type) $type = $this->aUserImpl->getUserType();
-//
-//        if ($exceptId) $handler = $handler->where('id','<>',$exceptId);
-//
-//        return $handler->where(['username'=> $username])->find();
-//    }
-
-    public function verifyAccount($username,$password,$slat,$type = null)
-    {
-        if (!$type) $type = $this->managerImpl->getManagerType();
-
-        $passwordSlat = md5($password.$slat);
-
-        return (new ManagerModel())->where(['type'=>$type,'username'=>$username,'password'=>$passwordSlat])->find() ? true : false;
-    }
-
-    public function getManagerList($page=false)
-    {
-        $manager = new \app\common\model\Manager();
-        return $page ? $manager->alias('a')->join('role b','a.role_id=b.id','left')->field('a.*,b.role_name')->order('id asc')->paginate($page) : $manager->alias('a')->join('role b','a.role_id=b.id','left')->order('id asc')->field('a.*,b.role_name')->select();
-    }
-
-    public function getManagerByUsername($username,$id=false)
-    {
-        if($id) return (new \app\common\model\Manager())->where('id','<>',$id)->where('username',$username)->find();
-
-        return (new \app\common\model\Manager())->where('username',$username)->find();
-    }
-
-//    public function getFindData($id)
-//    {
-//        return (new \app\common\model\Manager())->get($id);
-//    }
-
-//    public function updateRes($data)
-//    {
-//        $updateData = [
-//            'username' => $data['username'],
-//            'role_id' => $data['role_id'],
-//        ];
-//        if(!empty($data['password'])) $updateData['password'] = md5($data['password']);
-//
-//        return (new \app\common\model\Manager())->modify($data['id'],$updateData);
-//    }
-//
-//    public function delete($id)
-//    {
-//        $managerData = (new \app\common\model\Manager())->get($id);
-//        if($managerData['role_id']==0) return ['code'=>0,'msg'=>'超级管理员不可删除'];
-//        $rmResult = (new \app\common\model\Manager())->rm($id);
-//        if(!$rmResult) return ['code'=>0,'msg'=>'删除失败'];
-//        return ['code'=>1,'msg'=>'success'];
-//    }
 }
