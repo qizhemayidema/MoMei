@@ -18,6 +18,8 @@ use app\common\tool\Upload;
 use app\Request;
 use think\Validate;
 use think\exception\ValidateException;
+use app\common\typeCode\manager\Yuan;
+use app\common\typeCode\manager\Ying;
 
 class BasicInformation extends Base
 {
@@ -52,6 +54,7 @@ class BasicInformation extends Base
     {
         $post = $request->post();
 
+
         $validate = new Validate();
 
         $rules = [
@@ -77,42 +80,53 @@ class BasicInformation extends Base
             'name|企业名称' => 'require|max:31',
             'pro_id|行业分类' => 'require',
             'type|账号类型' => 'require',
-                '__token__'     => 'token',
+//                '__token__'     => 'token',
         ];
 
 
         $validate->rule($rules);
 
-        $aUserModel = new \app\common\model\AUser();
+        $model = new \app\common\model\Manager();
 
         try {
-            $aUserModel->startTrans();
+            $model->startTrans();
 
             if (!$validate->check($post)) throw new ValidateException($validate->getError());
 
+            if ($post['type'] == 2){
+                $typeCode = new Yuan();
+            }else{
+                $typeCode =  new Ying();
+            }
 
-            $service = new Service();
+            $service = new ManagerService($typeCode);
 
-            if ($service->existsUsername($post['username'], $post['type'], $post['id'])) {
+            if ($service->existsUsername($post['username'], $post['id'])) {
                 throw new ValidateException('该用户名已存在');
             }
 
-            (new Service())->update($post['id'], $post);  //这里用户可以多填写年总票房等
+            $oldUser = $service->get($post['id']);
 
-            $aUserModel->commit();
+            $post['role_id'] = $oldUser['role_id'];
+
+            $post['pro_name'] = (new \app\common\model\Category())->get($post['pro_id'])['name'];
+
+            $service->update($post['id'], $post);
+
+            $service->updateInfo($oldUser['info_id'],$post);
+
+            $model->commit();
 
             return json(['code' => 1, 'msg' => 'success']);
         } catch (ValidateException $e) {
 
-            $aUserModel->rollback();
+            $model->rollback();
             return json(['code' => 0, 'msg' => $e->getMessage()]);
 
         } catch (\Exception $e) {
 
-            $aUserModel->rollback();
+            $model->rollback();
             return json(['code' => 0, 'msg' => $e->getMessage()]);
-
-
         }
     }
 
