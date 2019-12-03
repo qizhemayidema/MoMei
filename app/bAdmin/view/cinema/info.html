@@ -48,13 +48,13 @@
                             <strong >营业执照：</strong> {$info.bus_license_code}
                             <br/>
                             <br/>
-                            <strong>注册时间：</strong> {$info.create_time}
+                            <strong>注册时间：</strong> {$user.create_time}
                             <br/>
                             <br/>
-                            <strong>影投公司：</strong> <a href="{:url('aUser/info',['id'=>$tou.id])}">{$tou.name}</a>
+                            <strong>影投公司：</strong> <a href="{:url('aUser/info',['id'=>$yingUser.id])}">{$tou.name}</a>
                             <br/>
                             <br/>
-                            <strong>院线：</strong> <a href="{:url('aUser/info',['id'=>$yuan.id])}">{$yuan.name}</a>
+                            <strong>院线：</strong> <a href="{:url('aUser/info',['id'=>$yuanUser.id])}">{$yuan.name}</a>
                             <br/>
                             <br/>
                         </address>
