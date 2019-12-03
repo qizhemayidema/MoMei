@@ -37,7 +37,7 @@ class BasicInformation extends Base
         $busCate = (new CateService())->getList((new ABusTypeDesc()));
 
         //查询影院关联总数等
-        $countResult  = (new CinemaService())->getCinemaAmountCount($info['id'],$info['type']);
+        $countResult  = $managerService->getCinemaAmountCount($info['id'],$info['type']);
 
         View::assign('countResult',$countResult);
 

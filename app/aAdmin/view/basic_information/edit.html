@@ -96,11 +96,13 @@
                         <div id="filePicker2" style="margin-bottom: 10px;">选择图片</div>
                         <!--用来存放item-->
                         <div id="fileList2" class="uploader-list">
+                            {if $managerInfoData.bus_license}
                             {foreach :explode(',',$managerInfoData.bus_license) as $key => $value}
                             <div class="file-item thumbnail upload-state-done">
                                 <img src="{$value}" onclick="removePic(this,'{$value}','bus_license')" style="width: 150px;">
                             </div>
                             {/foreach}
+                            {/if}
                         </div>
                         <span class="help-block m-b-none">点击删除旧图片</span>
 
@@ -173,11 +175,13 @@
                             <div id="filePicker" style="margin-bottom: 10px;">选择图片</div>
                             <!--用来存放item-->
                             <div id="fileList" class="uploader-list">
+                                {if $managerInfoData.contact_license_pic}
                                 {foreach :explode(',',$managerInfoData.contact_license_pic) as $key => $value}
                                 <div class="file-item thumbnail upload-state-done">
                                     <img src="{$value}" onclick="removePic(this,'{$value}','contact_license_pic')" style="width: 150px;">
                                 </div>
                                 {/foreach}
+                                {/if}
                             </div>
                         </div>
                         <span class="help-block m-b-none">点击删除旧图片</span>
