@@ -29,8 +29,10 @@ class Manager
     //描述类
     private $managerImpl = null;
 
+    //信息表
     private $infoTableName = 'manager_info';
 
+    private $groupCode = 0;
 
     public function __construct(?ManagerImpl $managerImpl = null)
     {
@@ -59,6 +61,12 @@ class Manager
         return $this;
     }
 
+    public function setGroupCode($groupCode)
+    {
+        $this->groupCode = $groupCode;
+    }
+
+
     /**
      * 包含info 全部返回
      * @return mixed
@@ -71,26 +79,28 @@ class Manager
 
         $handler = $this->showType ? $handler->backgroundShowData($alias) : $handler->receptionShowData($alias);
 
+        $handler->alias($alias);
+
+        $handler = $this->groupCode ? $handler->where([$alias.'.group_code'=>$this->groupCode]) : $handler;
 
         $handler = $this->managerImpl ? $handler->where([$alias.'.type'=>$this->managerImpl->getManagerType()]) : $handler;
 
         $handler = $handler->leftJoin($this->infoTableName.' info',$alias.'.info_id = info.id')
-            ->field('*,info.id none_id');
+            ->field('*,info.id none_id,'.$alias.'.id id');
 
         $handler = $this->order ? $handler->order($alias.'.'.$this->order[0],$alias.'.'.$this->order[1]) : $handler;
 
         return $this->pageLength ? $handler->paginate($this->pageLength) : $handler->select();
     }
 
-    public function existsUsername($username,$type = null,$exceptId = 0)
+    public function existsUsername($username,$exceptId = 0)
     {
-        if (!$type) $type = $this->managerImpl->getManagerType();
 
         $handler = (new ManagerModel());
 
         if ($exceptId) $handler = $handler->where('id','<>',$exceptId);
 
-        $result = $handler->where(['type'=>$type,'username'=> $username])->find();
+        $result = $handler->where(['type'=>$this->managerImpl->getManagerType(),'username'=> $username])->find();
 
         return  $result ? $result : null;
     }
@@ -108,7 +118,7 @@ class Manager
 
         $managerInsert = [
             'username'  => $data['username'],
-            'slat'      => $salt,
+            'salt'      => $salt,
             'password'  => md5($data['password'] . $salt),
             'type'      => $this->managerImpl->getManagerType(),
             'role_id'   => $data['role_id'] ?? 0,
@@ -146,7 +156,7 @@ class Manager
 
             $id = $managerModel->getLastInsID();
 
-            if (!isset($managerInsert['group_code'])){
+            if (!isset($data['group_code'])){
                 $data['group_code'] = $id;
                 $managerModel->where(['id'=>$id])->update(['group_code'=>$id]);
             }
@@ -158,7 +168,6 @@ class Manager
 
     public function update($id,$data)
     {
-
         $managerModel = (new ManagerModel());
 
         $salt = $managerModel->where(['id'=>$id])->value('salt');
@@ -168,8 +177,9 @@ class Manager
             'role_id'   => $data['role_id'] ?? 0,
         ];
 
+        if (isset($data['username'])) $update['username'] = $data['username'];
 
-        $managerModel->modify($id,$update);
+            $managerModel->modify($id,$update);
     }
 
     public function updateInfo($infoId,$data)
@@ -186,7 +196,7 @@ class Manager
         $update = [];
 
         foreach ($fieldArr as $key => $value) {
-            $update[$value] = $data[$value];
+            if (isset($data[$value])) $update[$value] = $data[$value];
         }
 
         $managerInfoModel->where(['id'=>$infoId])->update($update);
@@ -224,11 +234,11 @@ class Manager
 //        return $handler->where(['username'=> $username])->find();
 //    }
 
-    public function verifyAccount($username,$password,$slat,$type = null)
+    public function verifyAccount($username,$password,$salt,$type = null)
     {
         if (!$type) $type = $this->managerImpl->getManagerType();
 
-        $passwordSlat = md5($password.$slat);
+        $passwordSlat = md5($password.$salt);
 
         return (new ManagerModel())->where(['type'=>$type,'username'=>$username,'password'=>$passwordSlat])->find() ? true : false;
     }
