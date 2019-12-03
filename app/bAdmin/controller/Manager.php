@@ -63,6 +63,10 @@ class Manager extends Base
 
             $managerService = new ManagerService(new BManagerTypeDesc());
 
+            $role = (new Role())->getFindRes($post['role_id']); //根据角色id查询出角色名称
+
+            $post['role_name'] = $role['role_name'];
+
             $managerInfo = $managerService->existsUsername($post['username']);
 
             if(!empty($managerInfo)) throw new \Exception('用户名已存在');
@@ -126,6 +130,10 @@ class Manager extends Base
             $managerInfo = $managerService->existsUsername($post['username'],$post['id']);
 
             if(!empty($managerInfo)) throw new \Exception('用户名已存在');
+
+            $role = (new Role())->getFindRes($post['role_id']); //根据角色id查询出角色名称
+
+            $post['role_name'] = $role['role_name'];
 
             $managerService->update($post['id'],$post);
 

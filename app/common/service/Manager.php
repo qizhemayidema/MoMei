@@ -123,6 +123,7 @@ class Manager
             'password'  => md5($data['password'] . $salt),
             'type'      => $this->managerImpl->getManagerType(),
             'role_id'   => $data['role_id'] ?? 0,
+            'role_name'   => $data['role_name'] ?? '',
             'group_code'  => $data['group_code'] ?? 0,
             'info_id'   => $data['info_id'] ?? 0,
             'create_time' => $createTime,
@@ -176,6 +177,7 @@ class Manager
         $update = [
             'password'  => md5($data['password'] . $salt),
             'role_id'   => $data['role_id'] ?? 0,
+            'role_name'   => $data['role_name'] ?? '',
         ];
 
         if (isset($data['username'])) $update['username'] = $data['username'];
