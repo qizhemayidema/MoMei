@@ -4,11 +4,14 @@ declare (strict_types = 1);
 namespace app\bAdmin\controller;
 
 use app\BaseController;
-use app\common\service\AUser as Service;
+use app\common\model\ManagerInfo;
+use app\common\service\Manager as Service;
 use app\common\service\Category as CateService;
 use app\common\tool\Upload;
 use app\common\typeCode\cate\ABus as ABusTypeDesc;
 use app\common\typeCode\cate\ABus;
+use app\common\typeCode\manager\Yuan;
+use app\common\typeCode\manager\Ying;
 use think\exception\ValidateException;
 use think\Validate;
 use think\facade\View;
@@ -18,7 +21,9 @@ class AUser extends BaseController
 {
     public function index()
     {
-        $list = (new Service())->showType(true)->order('id','desc')->pageLength(1)->getList();
+        $yuan = new Yuan();
+        $ying = new Ying();
+        $list = (new Service())->setTypes($ying->getManagerType())->setTypes($yuan->getManagerType())->showType(true)->order('id','desc')->pageLength(15)->getList();
 
         View::assign('list',$list);
 
@@ -30,7 +35,14 @@ class AUser extends BaseController
     {
         $id = $request->param('id');
 
-        $info = (new Service())->get($id);
+        $service = (new Service());
+
+
+        $user = $service->get($id);
+
+        $info = $service->getInfo($user['info_id']);
+
+        View::assign('user',$user);
 
         View::assign(['info'=>$info]);
 
@@ -81,35 +93,34 @@ class AUser extends BaseController
 
         $validate->rule($rules);
 
-        $aUserModel = new \app\common\model\AUser();
+        $model = new \app\common\model\Manager();
         try{
-            $aUserModel->startTrans();
+            $model->startTrans();
 
             if(!$validate->check($post))  throw new ValidateException($validate->getError());
 
 
-            $service = new Service();
+            $service = $post['type'] == 1 ? new Service((new Ying())) : new Service((new Yuan()));
 
-            if($service->existsUsername($post['username'],$post['type'])){
+            if($service->existsUsername($post['username'])){
                 throw new ValidateException('该用户名已存在');
             }
 
             $post['pro_name'] = (new \app\common\model\Category())->get($post['pro_id'])['name'];
 
+            $service->insert($post);
 
-            (new Service())->insert($post);
-
-            $aUserModel->commit();
+            $model->commit();
 
             return json(['code'=>1,'msg'=>'success']);
         }catch (ValidateException $e){
 
-            $aUserModel->rollback();
+            $model->rollback();
             return json(['code'=>0,'msg'=>$e->getMessage()]);
 
         }catch (\Exception $e){
 
-            $aUserModel->rollback();
+            $model->rollback();
             return json(['code'=>0,'msg'=>$e->getMessage()]);
 
         }
@@ -121,12 +132,18 @@ class AUser extends BaseController
     {
         $id = $request->param('id');
 
-        $data = (new Service())->get($id);
+        $service = (new Service());
+
+        $user = $service->get($id);
+
+        $data = $service->getInfo($user['info_id']);
 
         //获取a端行业分类
         $busCate = (new CateService())->getList((new ABusTypeDesc()));
 
         View::assign('bus_cate',$busCate);
+
+        View::assign('user',$user);
 
         View::assign('data',$data);
 
@@ -170,36 +187,46 @@ class AUser extends BaseController
 
         $validate->rule($rules);
 
-        $aUserModel = new \app\common\model\AUser();
+        $model = new \app\common\model\Manager();
 
         try {
-            $aUserModel->startTrans();
+            $model->startTrans();
 
             if (!$validate->check($post)) throw new ValidateException($validate->getError());
 
+            if ($post['type'] == 1){
+                $typeCode =  new Ying();
+            }else{
+                $typeCode = new Yuan();
+            }
+            $service = new Service($typeCode);
 
-            $service = new Service();
-
-            if ($service->existsUsername($post['username'], $post['type'], $post['id'])) {
+            if ($service->existsUsername($post['username'], $post['id'])) {
                 throw new ValidateException('该用户名已存在');
             }
 
-            (new Service())->update($post['id'], $post);
+            $oldUser = $service->get($post['id']);
 
-            $aUserModel->commit();
+            $post['role_id'] = $oldUser['role_id'];
+
+            $post['pro_name'] = (new \app\common\model\Category())->get($post['pro_id'])['name'];
+
+            $service->update($post['id'], $post);
+
+            $service->updateInfo($oldUser['info_id'],$post);
+
+            $model->commit();
 
             return json(['code' => 1, 'msg' => 'success']);
         } catch (ValidateException $e) {
 
-            $aUserModel->rollback();
+            $model->rollback();
             return json(['code' => 0, 'msg' => $e->getMessage()]);
 
         } catch (\Exception $e) {
 
-            $aUserModel->rollback();
+            $model->rollback();
             return json(['code' => 0, 'msg' => $e->getMessage()]);
-
-
         }
     }
 
@@ -215,6 +242,7 @@ class AUser extends BaseController
     public function changeStatus(Request $request)
     {
         $status = $request->post('status');
+
         $id = $request->post('id');
 
         (new Service())->changeStatus($id,$status);
@@ -237,5 +265,6 @@ class AUser extends BaseController
     {
         return json((new Upload())->uploadOnePic('aUser/'));
     }
+
 
 }

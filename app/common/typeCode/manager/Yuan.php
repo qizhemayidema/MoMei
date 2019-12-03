@@ -3,7 +3,7 @@
  * Created by PhpStorm.
  * User: 刘彪
  * Date: 2019/12/3
- * Time: 11:20
+ * Time: 15:06
  */
 
 namespace app\common\typeCode\manager;
@@ -11,7 +11,7 @@ namespace app\common\typeCode\manager;
 
 use app\common\typeCode\ManagerImpl;
 
-class A implements ManagerImpl
+class Yuan implements ManagerImpl
 {
     private $type = 2;
 
@@ -57,6 +57,4 @@ class A implements ManagerImpl
         // TODO: Implement getInfoField() method.
         return $this->field;
     }
-
-
 }

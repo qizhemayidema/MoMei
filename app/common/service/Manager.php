@@ -32,7 +32,11 @@ class Manager
     //信息表
     private $infoTableName = 'manager_info';
 
+    //组 code
     private $groupCode = 0;
+
+    //如果展示多个type的数据 可传入这个数组 如果数组中有值 则不会采用managerImpl中的值
+    private $types = [];
 
     public function __construct(?ManagerImpl $managerImpl = null)
     {
@@ -64,6 +68,14 @@ class Manager
     public function setGroupCode($groupCode)
     {
         $this->groupCode = $groupCode;
+
+        return $this;
+    }
+
+    public function setTypes($type)
+    {
+        $this->types[] = $type;
+
         return $this;
     }
 
@@ -84,7 +96,11 @@ class Manager
 
         $handler = $this->groupCode ? $handler->where([$alias.'.group_code'=>$this->groupCode]) : $handler;
 
-        $handler = $this->managerImpl ? $handler->where([$alias.'.type'=>$this->managerImpl->getManagerType()]) : $handler;
+        if (!empty($this->types)){
+            $handler = $handler->whereIn($alias.'.type',$this->types);
+        }else{
+            $handler = $this->managerImpl ? $handler->where([$alias.'.type'=>$this->managerImpl->getManagerType()]) : $handler;
+        }
 
         $handler = $handler->leftJoin($this->infoTableName.' info',$alias.'.info_id = info.id')
             ->field('*,info.id none_id,'.$alias.'.id id');
@@ -181,7 +197,10 @@ class Manager
         ];
 
         if (isset($data['username'])) $update['username'] = $data['username'];
-            $managerModel->modify($id,$update);
+
+        $data['type'] = $this->managerImpl->getManagerType();
+
+        $managerModel->modify($id,$update);
     }
 
     public function updateInfo($infoId,$data)
