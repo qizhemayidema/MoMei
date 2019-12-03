@@ -88,12 +88,14 @@ class AUser extends BaseController
             if(!$validate->check($post))  throw new ValidateException($validate->getError());
 
 
-
             $service = new Service();
 
             if($service->existsUsername($post['username'],$post['type'])){
                 throw new ValidateException('该用户名已存在');
             }
+
+            $post['pro_name'] = (new \app\common\model\Category())->get($post['pro_id'])['name'];
+
 
             (new Service())->insert($post);
 

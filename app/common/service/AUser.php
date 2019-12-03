@@ -77,7 +77,9 @@ class AUser
 
         if ($exceptId) $handler = $handler->where('id','<>',$exceptId);
 
-        return $handler->where(['type'=>$type,'username'=> $username])->find() ? true : false;
+        $result = $handler->where(['type'=>$type,'username'=> $username])->find();
+
+        return  $result ? $result : null;
     }
 
     public function insert($data)

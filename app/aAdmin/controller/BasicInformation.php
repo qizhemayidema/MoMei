@@ -18,6 +18,7 @@ use app\common\tool\Upload;
 use app\Request;
 use think\Validate;
 use think\exception\ValidateException;
+
 class BasicInformation extends Base
 {
     public function edit()
