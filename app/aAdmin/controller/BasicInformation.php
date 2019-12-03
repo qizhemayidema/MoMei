@@ -8,7 +8,7 @@
 declare (strict_types = 1);
 namespace app\aAdmin\controller;
 
-use app\common\service\AUser as Service;
+use app\common\service\Manager as ManagerService;
 use app\common\service\Category as CateService;
 use app\common\service\Cinema as CinemaService;
 use app\common\typeCode\cate\ABus as ABusTypeDesc;
@@ -25,7 +25,11 @@ class BasicInformation extends Base
     {
         $info = (new Session())->getData();
 
-        $data = (new Service())->get($info['id']);
+        $managerService = new ManagerService();
+
+        $managerData = $managerService->get($info['id']);
+
+        $managerInfoData =$managerService->getInfo($info['info_id']);
 
         //获取a端行业分类
         $busCate = (new CateService())->getList((new ABusTypeDesc()));
@@ -37,7 +41,9 @@ class BasicInformation extends Base
 
         View::assign('bus_cate',$busCate);
 
-        View::assign('data',$data);
+        View::assign('managerData',$managerData);
+
+        View::assign('managerInfoData',$managerInfoData);
 
         return view();
     }

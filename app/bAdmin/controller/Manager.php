@@ -155,4 +155,15 @@ class Manager extends Base
             return json(['code'=>0,'msg'=>$e->getMessage()]);
         }
     }
+
+    public function changeStatus(Request $request)
+    {
+        $status = $request->post('status');
+
+        $id = $request->post('id');
+
+        (new ManagerService())->changeStatus($id,$status);
+
+        return json(['code'=>1,'msg'=>'success']);
+    }
 }
