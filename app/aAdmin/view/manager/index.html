@@ -33,17 +33,17 @@
                         </td>
                         <td>
                             {if condition="$value.role_id neq 0"}
-                                {if $value.status == 1}
-                                <a href="javascript:void(0);" onclick="checkStatus(this,2,'{$value.id}')">
-                                    <p><span class="label label-info">正常</span></p>
-                                </a>
-                                {else}
-                                <a href="javascript:void(0);" onclick="checkStatus(this,1,'{$value.id}')">
-                                    <p><span class="label label-danger">冻结</span></p>
-                                </a>
-                                {/if}
-                            {else}
+                            {if $value.status == 1}
+                            <a href="javascript:void(0);" onclick="checkStatus(this,2,'{$value.id}')">
                                 <p><span class="label label-info">正常</span></p>
+                            </a>
+                            {else}
+                            <a href="javascript:void(0);" onclick="checkStatus(this,1,'{$value.id}')">
+                                <p><span class="label label-danger">冻结</span></p>
+                            </a>
+                            {/if}
+                            {else}
+                            <p><span class="label label-info">正常</span></p>
                             {/if}
                         </td>
                         <td>

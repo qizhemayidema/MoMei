@@ -34,6 +34,9 @@
             <form method="" action="/">
                 <h4 class="no-margins">登录：</h4>
                 <p class="m-t-md">欢迎登录影投系统！</p>
+                <button type="button" style="width: 113px;" onclick="choices(this,2);"  class="btn btn-outline btn-success option">院线</button>
+                <button type="button" style="width: 113px;" onclick="choices(this,3);" class="btn btn-outline btn-success option">影投</button>
+                <input type="hidden" name="type" class="choicesType">
                 <input type="text" name="username" class="form-control uname" placeholder="用户名" />
                 <input type="password" name="password" class="form-control pword m-b" placeholder="密码" />
                 <input type="text" name="captcha" class="form-control pword"  placeholder="验证码" />
@@ -67,5 +70,13 @@
             return false;
         })
     })
+
+    function choices(obj,type) {
+        $(".option").css({'background':''});
+        $(".option").css({'color':'#1c84c6'});
+        $(obj).css({'background':'#1c84c6'});
+        $(obj).css({'color':'white'});
+        $(".choicesType").val(type);
+    }
 </script>
 </html>

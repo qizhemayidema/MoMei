@@ -10,12 +10,13 @@ declare (strict_types = 1);
 namespace app\aAdmin\controller;
 
 use app\BaseController;
-use app\common\service\AUser;
 use app\common\service\Role;
-use app\common\typeCode\aUser\Ying;
 use app\Request;
 use think\Validate;
 use app\common\tool\Session;
+use app\common\service\Manager as ManagerService;
+use app\common\typeCode\manager\Ying as YingTypeDesc;
+use app\common\typeCode\manager\Yuan as YuanTypeDesc;
 
 class Login extends BaseController
 {
@@ -32,6 +33,7 @@ class Login extends BaseController
 
                 $validate = new Validate();
                 $rules = [
+                    'type|登录类型'  => 'require',
                     'username|用户名'  => 'require',
                     'password|密码'  => 'require',
                     'captcha|验证码'   => 'require|captcha',
@@ -40,16 +42,18 @@ class Login extends BaseController
                 $result = $validate->check($data);
                 if (!$result)  throw new \Exception($validate->getError());
 
-                //查询登录的用户是否存在
-                $res = (new AUser(new Ying()))->existsUsernameReturnInfo($data['username']);
+                if($data['type']==2) $ManagerService = new ManagerService(new YuanTypeDesc());
+                if($data['type']==3) $ManagerService = new ManagerService(new YingTypeDesc());
 
-                if (!$res)  throw new \Exception('用户不存在');
+                $res = $ManagerService->existsUsername($data['username']);  //查询用户是否存在
 
-                if($res['status']==2) throw new \Exception('该账号已冻结');
+                if (!$res)  throw new \Exception('用户名错误');
 
-                $verifyResult = (new AUser(new Ying()))->verifyAccount($data['username'],$data['password'],$res['slat']);
+                if ($res['delete_time']!=0) throw new \Exception('用户不存在');
 
-                if(!$verifyResult) throw new \Exception('账号或密码不正确');
+                if ($res['status']==2) throw new \Exception('账号已被冻结');
+
+                if(md5($data['password'].$res['salt']) != $res['password'] )   throw new \Exception('密码错误');
 
                 if ($res['role_id']){
                     $res['role_name'] = (new Role())->getFindRes($res['role_id'])['role_name'];

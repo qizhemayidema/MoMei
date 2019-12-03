@@ -38,6 +38,8 @@ class Manager
     //如果展示多个type的数据 可传入这个数组 如果数组中有值 则不会采用managerImpl中的值
     private $types = [];
 
+    private $where = [];
+
     public function __construct(?ManagerImpl $managerImpl = null)
     {
         $this->managerImpl = $managerImpl;
@@ -79,6 +81,14 @@ class Manager
         return $this;
     }
 
+    public function setWhere($alias,$field,$value)
+    {
+        $this->where[0] = $alias;
+        $this->where[1] = $field;
+        $this->where[2] = $value;
+
+        return $this;
+    }
 
     /**
      * 包含info 全部返回
@@ -106,6 +116,8 @@ class Manager
             ->field('*,info.id none_id,'.$alias.'.id id,info.type info_type');
 
         $handler = $this->order ? $handler->order($alias.'.'.$this->order[0],$alias.'.'.$this->order[1]) : $handler;
+
+        $handler = $this->where ? $handler->where($this->where[0].'.'.$this->where[1],$this->where[2]) : $handler;
 
         return $this->pageLength ? $handler->paginate($this->pageLength) : $handler->select();
     }
@@ -158,7 +170,7 @@ class Manager
             $insert = [];
 
             foreach ($fieldArr as $key => $value) {
-                $insert[$value] = $data[$value];
+                if (isset($data[$value])) $insert[$value] = $data[$value];
             }
 
             $managerInfoModel->insert($insert);
@@ -222,6 +234,10 @@ class Manager
             if (isset($data[$value])) $update[$value] = $data[$value];
         }
 
+        if($data['box_office_for_year']) $update['box_office_for_year'] = $data['box_office_for_year'];
+        if($data['ticket_price_for_average']) $update['ticket_price_for_average'] = $data['ticket_price_for_average'];
+        if($data['watch_mv_sum']) $update['watch_mv_sum'] = $data['watch_mv_sum'];
+
         $managerInfoModel->where(['id'=>$infoId])->update($update);
     }
 
@@ -243,6 +259,27 @@ class Manager
     public function delete($id)
     {
         (new ManagerModel())->softDelete($id);
+    }
+
+    /**
+     * 查询某资源方下的影院总数 厅总数 座位总数
+     * @param $id           int   资源方id
+     * @param $type         int   类型  1 影投 2 院线
+     * @return array
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     * $data 2019/12/3 13:15
+     */
+    public function getCinemaAmountCount($id,$type)
+    {
+        $ManagerInfoModel = new  ManagerInfoModel;
+        if($type==2){
+            $ManagerInfoModel = $ManagerInfoModel->where('tou_id',$id);
+        }elseif ($type==2){
+            $ManagerInfoModel = $ManagerInfoModel->where('yuan_id',$id);
+        }
+        return $ManagerInfoModel->field('count(*) as cinemaCount,sum(screen_sum) as screenSum,sum(seat_sum) as seatSum')->select()->toArray();
     }
 
 }
