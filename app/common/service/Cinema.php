@@ -152,7 +152,18 @@ class Cinema
 
         if ($exceptId) $handler = $handler->where('id','<>',$exceptId);
 
-        return $handler->where(['username'=> $username])->find() ? true : false;
+        $result = $handler->where(['username'=> $username])->find();
+
+        return $result ?? null;
+    }
+
+    public function verifyAccount($username,$password,$slat = null)
+    {
+
+        $passwordSlat = md5($password.$slat);
+
+        return (new \app\common\model\Cinema())->where(['username'=>$username,'password'=>$passwordSlat])->value('id') ? true : false;
+
     }
 
     public function changeStatus($id,$status)

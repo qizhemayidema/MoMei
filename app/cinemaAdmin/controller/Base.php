@@ -6,8 +6,8 @@ namespace app\cinemaAdmin\controller;
 use app\BaseController;
 use app\common\service\Role;
 use app\common\tool\Session;
-use app\common\typeCode\role\B;
-use app\middleware\CinemaAdmin;
+use app\common\typeCode\role\Cinema;
+use app\middleware\CinemaAdminCheck;
 use think\facade\View;
 use app\common\service\Menu as MenuService;
 use think\Request;
@@ -17,7 +17,7 @@ class Base extends BaseController
     const WEBSITE_CONFIG_PATH = __DIR__.'/../config/' . 'website_config.json';
 
     protected $middleware = [
-        CinemaAdmin::class,
+        CinemaAdminCheck::class,
     ];
 
     public function initialize()
@@ -57,7 +57,7 @@ class Base extends BaseController
 
         if($adminRes['role_id']==0)  return true;
 
-        $authAll = (new Role())->getUserRoleAuth(new B(),$adminRes['role_id']);
+        $authAll = (new Role())->getUserRoleAuth(new Cinema(),$adminRes['role_id']);
 
         $authAllRes = array_column($authAll,'urls');
 

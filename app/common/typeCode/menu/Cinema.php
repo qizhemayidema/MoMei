@@ -18,7 +18,7 @@ class Cinema implements MenuImpl,CacheImpl
 
     private $level = 2;
 
-    private $cacheName = 'menu_b';
+    private $cacheName = 'menu_cinema';
 
 
     public function getMasterType(): int

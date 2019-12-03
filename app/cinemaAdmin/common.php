@@ -1,6 +1,6 @@
 <?php
 use app\common\tool\Session;
-use app\common\typeCode\role\B;
+use app\common\typeCode\role\Cinema;
 use app\common\service\Role;
 /*判断权限*/
 function checkPermission($controller,$action)
@@ -12,7 +12,7 @@ function checkPermission($controller,$action)
         return true;
     }
 
-    $authAll = (new Role())->getUserRoleAuth(new B(),$adminRes['role_id']);
+    $authAll = (new Role())->getUserRoleAuth(new Cinema(),$adminRes['role_id']);
 
     $authAllRes = array_column($authAll,'urls');
 

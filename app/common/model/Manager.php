@@ -9,8 +9,9 @@
 namespace app\common\model;
 
 use app\common\model\impl\BasicImpl;
+use app\common\model\impl\ShowImpl;
 use think\Model;
-class Manager extends Model implements BasicImpl
+class Manager extends Model implements BasicImpl,ShowImpl
 {
     public function get($id) // 获取一条
     {
@@ -34,6 +35,27 @@ class Manager extends Model implements BasicImpl
 
     public function softDelete($id)        //软删除
     {
-
+        $this->where(['id'=>$id])->update(['delete_time'=>time()]);
     }
+
+    public function receptionShowData(string $alias = '')
+    {
+        $alias = $alias ? $alias .'.' : $alias;
+
+        return $this->where([
+            $alias.'delete_time' => 0,
+            $alias.'status'      => 1,
+        ]);
+    }
+
+    public function backgroundShowData(string $alias = '')
+    {
+        $alias = $alias ? $alias .'.' : $alias;
+
+        return $this->where([
+            $alias.'delete_time' => 0,
+        ]);
+    }
+
+
 }
