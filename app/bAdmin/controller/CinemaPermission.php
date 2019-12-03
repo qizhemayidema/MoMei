@@ -40,7 +40,7 @@ class CinemaPermission extends Base
     {
         $data =$request->post();
         try{
-            $valiatde = new Validate();
+            $validate = new Validate();
             $rules = Array(
                 'p_id|所属权限类目'=>'require',
                 'name|权限名称'=>'require|max:60',
@@ -48,10 +48,10 @@ class CinemaPermission extends Base
                 'action|方法'=>'require|max:60',
                 '__token__'     => 'token',
             );
-            $valiatde->rule($rules);
-            $checkres  = $valiatde->check($data);
-            if(!$checkres){
-                throw new \Exception($valiatde->getError());
+            $validate->rule($rules);
+            $checkResult  = $validate->check($data);
+            if(!$checkResult){
+                throw new \Exception($validate->getError());
             }
 
             $res = (new Permission())->insert(new TypeDesc(),$data);
@@ -80,8 +80,8 @@ class CinemaPermission extends Base
     {
         $post = $request->post();
         try{
-            $valiatde = new Validate();
-            $valiatde->rule(Array(
+            $validate = new Validate();
+            $validate->rule(Array(
                 'id'       => 'require',
                 'p_id|所属权限类目'=>'require',
                 'name|权限名称'=>'require|max:60',
@@ -89,7 +89,7 @@ class CinemaPermission extends Base
                 'action|方法'=>'require|max:60',
                 '__token__'     => 'token',
             ));
-            if(!$valiatde->check($post))  throw new \Exception($valiatde->getError());
+            if(!$validate->check($post))  throw new \Exception($validate->getError());
             $res = (new Permission())->updataRes(new TypeDesc(),$post);
             if(!$res) throw new \Exception('修改失败');
             return json(['code'=>1,'msg'=>'success']);

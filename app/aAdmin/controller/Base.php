@@ -4,7 +4,7 @@ declare (strict_types = 1);
 namespace app\aAdmin\controller;
 
 use app\BaseController;
-use app\middleware\CAdminCheck;
+use app\middleware\AAdminCheck;
 use think\facade\View;
 use app\common\tool\Session;
 use app\common\service\Role;
@@ -15,7 +15,7 @@ class Base extends BaseController
     const WEBSITE_CONFIG_PATH = __DIR__.'/../config/' . 'website_config.json';
 
     protected $middleware = [
-        CAdminCheck::class,
+        AAdminCheck::class,
     ];
 
     public function initialize()

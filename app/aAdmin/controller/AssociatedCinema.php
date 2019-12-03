@@ -9,8 +9,9 @@
 namespace app\aAdmin\controller;
 
 
+use app\common\service\AUser;
+use app\common\service\Cinema;
 use app\common\tool\Session;
-use app\common\service\AssociatedCinema as AssociatedCinemaService;
 use app\Request;
 use think\facade\View;
 
@@ -20,7 +21,7 @@ class AssociatedCinema extends Base
     {
         $info = (new Session())->getData();
 
-        $data = (new AssociatedCinemaService())->getAssociatedCinemaList($info['type'],$info['id'],15);
+        $data = (new AUser())->getAssociatedCinemaList($info['type'],$info['id'],15);
 
         View::assign('data',$data);
 
@@ -31,7 +32,7 @@ class AssociatedCinema extends Base
     {
         $cinemaId = $request->param('cinema_id');
 
-        $data = (new AssociatedCinemaService())->getCinema($cinemaId);
+        $data = (new Cinema())->get($cinemaId);
 
         View::assign('data',$data);
 
