@@ -1,0 +1,89 @@
+{include file="common/source"}
+<div class="col-sm-12">
+    <div class="ibox-content">
+        <form action="" class="form-horizontal">
+            {:token_field()}
+
+            <input type="hidden" name="id" value="{$cate.id}">
+
+            <div class="form-group">
+                <label class="col-sm-2 control-label">级别名称</label>
+                <div class="col-sm-8">
+                    <input name="name" value="{$cate.name}" required  type="text" class="form-control">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">排序</label>
+                <div class="col-sm-8">
+                    <input name="order_num" value="{$cate.order_num}" required placeholder="从0开始,越大顺序越靠前,最大999" type="text" class="form-control">
+                </div>
+            </div>
+            <div id="level" class="form-group">
+                <label class="col-sm-2 control-label"><a class="btn btn-info" onclick="add_level()">添加选项</a></label>
+                <div class="col-sm-8" id="level_list">
+                    {foreach $attr as $key => $value}
+                    <div class="lv">
+                        <input type="hidden" name="old_attr_id[]" value="{$value.id}">
+                        <input name="old_attr_value[]" value="{$value.value}" placeholder="选项名称" style="display:inline;width:45%;margin-bottom: 20px;" required  type="text" class="form-control">
+                        <input name="old_attr_order[]" value="{$value.order_num}" placeholder="选项排序" style="display:inline;width:45%;margin-bottom: 20px;" required  type="text" class="form-control">
+                        <a href="javascript:void(0);" onclick="close_level(this)">
+                            <i class="glyphicon glyphicon-remove"></i>
+                        </a>
+                    </div>
+                    {/foreach}
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label"></label>
+                <div class="col-sm-5">
+                    <button type="button" class="btn btn-w-m btn-success" onclick="save()">编辑</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+</div>
+
+<script>
+
+
+    var add_level = function(){
+
+        var html = '<div class="lv">' +
+            '                        <input name="attr_value[]" placeholder="选项名称" style="display:inline;width:45%;margin-bottom: 20px;" value="" required  type="text" class="form-control">' +
+            '                        <input name="attr_order[]" placeholder="选项排序" style="display:inline;width:45%;margin-bottom: 20px;" value="0" required  type="text" class="form-control">' +
+            '                        <a href="javascript:void(0);" onclick="close_level(this)">' +
+            '                                <i class="glyphicon glyphicon-remove"></i>' +
+            '                            </a>' +
+            '                    </div>'
+
+        $('#level_list').append(html)
+        return false;
+    }
+    var close_level = function(_this){
+        $(_this).parents('.lv').remove();
+    }
+
+    var save = function () {
+        var formData = new FormData($('form')[0]);
+
+        $.ajax({
+            url: "{:url('update')}",
+            type: 'post',
+            dataType: 'json',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (data) {
+                if (data.code == 0) {
+                    layer.msg(data.msg, {icon: 5})
+                } else {
+                    layer.msg('修改成功', {icon: 1});
+                    setTimeout(function () {
+                        window.location.href = "{:url('index')}";
+                    }, 600)
+                }
+            }
+        })
+    }
+</script>

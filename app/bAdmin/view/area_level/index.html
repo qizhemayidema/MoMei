@@ -20,17 +20,13 @@
                     <thead>
                     <tr class="text-center">
                         <th style="text-align: center;">地区</th>
-                        <th style="text-align: center;">级别</th>
-                        <th style="text-align: center;">热门</th>
                         <th style="text-align: center;">操作</th>
                     </tr>
                     </thead>
                     <tbody>
                     {foreach $pidResult as $key => $value}
-                    <tr onclick="oneClick({$value.id});">
+                    <tr>
                         <td style="text-align: center;">{$value.name}</td>
-                        <td>{$value.level_value}</td>
-                        <td>{if $value.is_hot}是{else}否{/if}</td>
                         <td>
                             {if condition="$value.level neq 3"}
                             <button onclick="window.location.href='{:url('index',['pid'=>$value.id])}'" class="btn btn-info" type="button"><i class="fa fa-paste"></i> 查看下级</button>

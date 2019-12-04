@@ -12,10 +12,10 @@ namespace app\bAdmin\controller;
 
 use app\common\service\Area;
 use app\common\service\Category;
-use app\common\typeCode\cate\LevelOption;
 use app\Request;
 use think\facade\View;
 use think\Validate;
+use app\common\service\CategoryObjHaveAttr;
 
 class AreaLevel extends Base
 {
@@ -35,7 +35,7 @@ class AreaLevel extends Base
 
             View::assign('pidResult',$pidResult);
 
-            return view('area_level/index');
+            return view();
         }catch (\Exception $e){
             return $e->getMessage();
         }
@@ -46,11 +46,23 @@ class AreaLevel extends Base
         try {
             //查询城市
             $city_id = $request->param('city_id');
-            $getFindResult = (new Area())->getFindById($city_id);
-            //查询级别选项的
-            $cateList = (new Category())->getList(new LevelOption());
 
-            View::assign('cateList',$cateList);
+            $getFindResult = (new Area())->getFindById($city_id);
+
+            //获取级别分类列表
+            $cateService = new Category();
+
+            $level = $cateService->getList((new \app\common\typeCode\cate\AreaLevel()));
+
+            foreach ($level as $key => $value){
+                $level[$key]['attr'] =  $cateService->getAttrList($value['id']);
+            }
+
+            //获取数据级别选中状态
+            $levelCheck = (new CategoryObjHaveAttr(2))->getIdColumns($city_id);
+
+            View::assign('level_check',$levelCheck);
+            View::assign('level',$level);
             View::assign('data', $getFindResult);
             return view();
         }catch (\Exception $e){
@@ -66,21 +78,17 @@ class AreaLevel extends Base
             $valiatde = new Validate();
             $valiatde->rule(Array(
                 'id'       => 'require',
-                'level_id|级别'=>'require',
-                'level_sort|排序'=>'require|between:0,999',
-                'is_hot|热门'=>'require',
                 '__token__'     => 'token',
             ));
 
             if(!$valiatde->check($post))  throw new \Exception($valiatde->getError());
 
-            //根据级别id查出值
-            $cateOneResult = (new Category())->getOneById($post['level_id']);
+            //新增影院相关级别
+            $levels = $post['level_name'];
+            $options = $post['level_option'];
 
-            $post['level_value'] = $cateOneResult['name'];
+            (new CategoryObjHaveAttr(2))->update($post['id'],$levels,$options);
 
-            $result = (new Area())->update($post);
-            if(!$result) throw new \Exception('修改失败');
             return json(['code'=>1,'msg'=>'success']);
         }catch (\Exception $e){
             return json(['code'=>0,'msg'=>$e->getMessage()]);
