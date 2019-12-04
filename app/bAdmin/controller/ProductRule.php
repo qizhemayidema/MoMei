@@ -24,7 +24,7 @@ class ProductRule
 
         $rules = [
             'cate_id' => 'require',
-            'sum|产品数量' => 'require|integer',
+            'type|产品数量类型' => 'require|integer',
             'select_max_sum|最多选择数量' => 'require|integer',
             'is_screen|是否影厅' => 'require',
             'is_level|是否开启级别' => 'require',
@@ -40,6 +40,7 @@ class ProductRule
         $model->startTrans();
 
         try {
+
             if (!$validate->check($post)) throw new ValidateException($validate->getError());
 
             $post['cate_name'] = (new Category())->get($post['cate_id'])['name'];

@@ -36,10 +36,10 @@ class ProductRule
             'cate_id' => $data['cate_id'],
             'select_max_sum' => $data['select_max_sum'],
             'cate_name' => $data['cate_name'],
-            'type' => $data['type'] ?? ($data['sum'] == 1) ? 1 : 2,
+            'type' =>  $data['type'],
             'is_screen' => $data['is_screen'],
             'is_level' => $data['is_level'],
-            'sum'       => $data['sum'],
+//            'sum'       => $data['sum'],
         ];
         $productModel = (new Product());
 
@@ -53,10 +53,9 @@ class ProductRule
         $update = [
             'select_max_sum' => $data['select_max_sum'],
             'cate_name' => $data['cate_name'],
-            'type' => $data['type'] ?? ($data['sum'] == 1) ? 1 : 2,
+            'type' => $data['type'],
             'is_screen' => $data['is_screen'],
             'is_level' => $data['is_level'],
-            'sum'       => $data['sum'],
         ];
         $productModel = (new Product());
 
@@ -74,6 +73,12 @@ class ProductRule
         $level = new ProductLevel();
         return $level->where(['cate_id'=>$cateId])->select();
 
+    }
+
+    //获取一个级别信息
+    public function getLevel($levelId)
+    {
+        return (new ProductLevel())->find($levelId);
     }
 
     //批量新增

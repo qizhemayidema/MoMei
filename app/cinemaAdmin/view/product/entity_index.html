@@ -5,16 +5,27 @@
 <script src="__STATIC__/js/plugins/summernote/summernote-zh-CN.js"></script>
 <link rel="stylesheet" href="__STATIC__/css/plugins/summernote/summernote.css">
 <link rel="stylesheet" href="__STATIC__/css/plugins/summernote/summernote-bs3.css">
+
+<link href="__STATIC__/css/plugins/iCheck/custom.css" rel="stylesheet">
+<link href="__STATIC__/css/plugins/fullcalendar/fullcalendar.css" rel="stylesheet">
+<link href="__STATIC__/css/plugins/fullcalendar/fullcalendar.print.css" rel="stylesheet">
+
+<!-- iCheck -->
+<script src="__STATIC__/js/plugins/iCheck/icheck.min.js"></script>
+
+<!-- Full Calendar -->
+<script src="__STATIC__/js/plugins/fullcalendar/fullcalendar.min.js"></script>
+
 <!--<script src="__STATIC__/js/demo/treeview-demo.js"></script>-->
 <div class="col-sm-12">
     <div class="ibox float-e-margins">
         <div class="ibox-content">
-            <div class="col-sm-4">
+            <div class="col-sm-3">
                 <div class="">
                     <div id="treeview1" class="test"></div>
                 </div>
             </div>
-            <div class="col-sm-8" id="container">
+            <div class="col-sm-9" id="container">
 
             </div>
 
@@ -26,7 +37,7 @@
     function getHtml (id)
     {
         $.ajax({
-            url:"{:url('getFormHtml')}",
+            url:"{:url('getEntityHtml')}",
             data:{
                 id : id
             },
@@ -41,32 +52,22 @@
 
     $(function(){
         $.ajax({
-            url:"{:url('getCateList')}",
+            url:"{:url('getEntityList')}",
             type:'post',
+            data:{
+                id : "{$id}",
+            },
             dataType:'json',
             success:function(data)
             {
                 var defaultData = [];
 
                 $(data.data).each(function(k,v){
-
-                    var child = [];
-
-                    $(v.children).each(function(k1,v1){
-                        child.push({
-                            text: v1.name,
-                            href: '#child1',
-                            id : v1.id,
-                            // tags: ['2'],
-                        })
-                    })
-
                     defaultData.push({
-                        text: v.name,
+                        text: v.entity_name,
                         href: '#parent1',
                         // tags: ['4'],
                         id : v.id,
-                        nodes:child,
                     })
                 })
 
