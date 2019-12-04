@@ -9,7 +9,6 @@ declare (strict_types = 1);
 namespace app\aAdmin\controller;
 
 
-use app\common\service\AUser;
 use app\common\service\Manager as ManagerService;
 use app\common\tool\Session;
 use app\common\typeCode\manager\Cinema as CinemaTypeDesc;
