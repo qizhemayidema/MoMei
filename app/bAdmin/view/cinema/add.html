@@ -38,6 +38,7 @@
             {:token_field()}
             <input type="hidden" name="contact_license_pic">
             <input type="hidden" name="bus_license">
+            <input type="hidden" name="type" value="4">
 
             <div class="form-group">
                 <label class="col-sm-2 control-label">所属行业</label>
@@ -427,7 +428,6 @@
             processData: false,
             contentType: false,
             success: function (data) {
-                return false;
 
                 if (data.code == 0) {
                     layer.msg(data.msg, {icon: 5})
