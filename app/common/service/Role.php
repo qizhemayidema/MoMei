@@ -18,25 +18,25 @@ class Role
      * 查询全部的权限组(角色)
      * $data 2019/11/26 12:00
      */
-    public function getRoleList(\app\common\typeCode\RoleImpl $obj)
+    public function getRoleList(\app\common\typeCode\RoleImpl $obj,$group_code=0)
     {
         $type = $obj->getRoleType();
         //缓存
-        if($obj instanceof CacheImpl){
-            $cache = new Cache($obj);
-            if($res = $cache->getCache()) {
-                return $res;
-            }else{
-                //查询全部的权限组
-                $res = (new \app\common\model\Role())->getList($type);
-                $cache->setCache($res);
-                return $res;
-            }
-        }else{
+//        if($obj instanceof CacheImpl){
+//            $cache = new Cache($obj);
+//            if($res = $cache->getCache()) {
+//                return $res;
+//            }else{
+//                //查询全部的权限组
+//                $res = (new \app\common\model\Role())->getList($type,$group_code);
+//                $cache->setCache($res);
+//                return $res;
+//            }
+//        }else{
             //查询全部的权限组
-            $res = (new \app\common\model\Role())->getList($type);
+            $res = (new \app\common\model\Role())->getList($type,$group_code);
             return $res;
-        }
+//        }
 
     }
 

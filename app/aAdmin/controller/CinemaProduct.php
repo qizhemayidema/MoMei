@@ -21,7 +21,7 @@ class CinemaProduct extends Base
     {
         $info = (new Session())->getData();
 
-        $cinemaData = (new AUserService())->getAssociatedCinemaList($info['type'],$info['id']); //属于该影投/院线的影院
+        $cinemaData = (new AUserService())->getAssociatedCinemaList($info['type'],$info['group_code']); //属于该影投/院线的影院
 
 //        $productResult = (new CinemaProductService())->getProductList(array_column($cinemaData,'id'),1,15);  //该资源方下全部影院的全部产品
 

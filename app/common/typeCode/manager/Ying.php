@@ -58,5 +58,10 @@ class Ying implements ManagerImpl
         return $this->field;
     }
 
+    public function setIsInfo($value=false){
+        $this->isInfo = $value;
+
+        return $this;
+    }
 
 }

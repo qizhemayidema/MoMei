@@ -237,6 +237,8 @@ class Manager
         if(isset($data['box_office_for_year'])) $update['box_office_for_year'] = $data['box_office_for_year'];
         if(isset($data['ticket_price_for_average'])) $update['ticket_price_for_average'] = $data['ticket_price_for_average'];
         if(isset($data['watch_mv_sum'])) $update['watch_mv_sum'] = $data['watch_mv_sum'];
+        if(isset($data['seat_sum'])) $update['seat_sum'] = $data['seat_sum'];
+        if(isset($data['screen_sum'])) $update['screen_sum'] = $data['screen_sum'];
 
         $managerInfoModel->where(['id'=>$infoId])->update($update);
     }
@@ -262,7 +264,7 @@ class Manager
     }
 
     /**
-     * 查询某资源方下的影院总数 厅总数 座位总数
+     * 查询某资源方下的全部影院总数 厅总数 座位总数
      * @param $id           int   资源方id
      * @param $type         int   类型  1 影投 2 院线
      * @return array
@@ -271,15 +273,30 @@ class Manager
      * @throws \think\db\exception\ModelNotFoundException
      * $data 2019/12/3 13:15
      */
-    public function getCinemaAmountCount($id,$type)
+    public function getCinemaAmountCount($id)
     {
-        $ManagerInfoModel = new  ManagerInfoModel;
-        if($type==2){
-            $ManagerInfoModel = $ManagerInfoModel->where('tou_id',$id);
-        }elseif ($type==2){
-            $ManagerInfoModel = $ManagerInfoModel->where('yuan_id',$id);
-        }
+        $ManagerInfoModel = new  ManagerInfoModel();
+
+        $ManagerInfoModel = $ManagerInfoModel->where('type',$this->managerImpl->getManagerType())->where(function ($query) use($id) {
+            $query->where('tou_id',$id)->whereOr('yuan_id',$id);
+        });
+
         return $ManagerInfoModel->field('count(*) as cinemaCount,sum(screen_sum) as screenSum,sum(seat_sum) as seatSum')->select()->toArray();
+    }
+
+    /**
+     * 查询某资源方下的直系影院总数
+     * @param $id       int   资源方id
+     * @return int
+     * $data 2019/12/4 15:24
+     */
+    public function getLinealCinemaAmountCount($id)
+    {
+        $ManagerInfoModel = new  ManagerInfoModel();
+
+        $ManagerInfoModel = $ManagerInfoModel->where('type',$this->managerImpl->getManagerType())->where('yuan_id',$id);
+
+        return $ManagerInfoModel->count('id');
     }
 
 }

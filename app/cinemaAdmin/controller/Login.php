@@ -4,11 +4,12 @@ declare (strict_types=1);
 namespace app\cinemaAdmin\controller;
 
 use app\BaseController;
-use app\common\service\Cinema as CinemaService;
 use app\common\service\Role;
-use app\common\tool\Session;
+use app\common\typeCode\manager\Cinema;
 use app\Request;
 use think\Validate;
+use app\common\tool\Session;
+use app\common\service\Manager as ManagerService;
 
 class Login extends BaseController
 {
@@ -19,41 +20,46 @@ class Login extends BaseController
 
     public function check(Request $request)
     {
-        try {
-            if (request()->isPost()) {
-                $data = $request->post();
+        try{
+            if(request()->isPost()){
+                $data =$request->post();
 
                 $validate = new Validate();
                 $rules = [
-                    'username|用户名' => 'require',
-                    'password|密码' => 'require',
-                    'captcha|验证码' => 'require|captcha',
+                    'username|用户名'  => 'require',
+                    'password|密码'  => 'require',
+                    'captcha|验证码'   => 'require|captcha',
                 ];
                 $validate->rule($rules);
                 $result = $validate->check($data);
-                if (!$result) {
-                    return json(['code' => 0, 'msg' => $validate->getError()]);
-                }
+                if (!$result)  throw new \Exception($validate->getError());
 
-                $service = new CinemaService();
-                //查询登录的用户
-                $res = $service->existsUsername($data['username']);
-                if (!$res && !$service->verifyAccount($data['username'],$data['password'],$res['slat'])) {
-                    return json(['code' => 0, 'msg' => '账号或密码不正确']);
-                }
-                if ($res['role_id']) {
+                $ManagerService = new ManagerService(new Cinema());
+
+                $res = $ManagerService->existsUsername($data['username']);  //查询用户是否存在
+
+                if (!$res)  throw new \Exception('用户名错误');
+
+                if ($res['delete_time']!=0) throw new \Exception('用户不存在');
+
+                if ($res['status']==2) throw new \Exception('账号已被冻结');
+
+                if(md5($data['password'].$res['salt']) != $res['password'] )   throw new \Exception('密码错误');
+
+                if ($res['role_id']){
                     $res['role_name'] = (new Role())->getFindRes($res['role_id'])['role_name'];
-                } else {
+                }else{
                     $res['role_name'] = '超级管理员';
                 }
                 //登陆成功
                 (new Session())->setData($res);
 
-                return json(['code' => 1, 'msg' => 'success']);
+                return json(['code' => 1, 'msg'=>'success']);
 
             }
-        } catch (\Exception $e) {
-            return json(['code' => 0, 'msg' => $e->getMessage()]);
+        }
+        catch (\Exception $e){
+            return json(['code' => 0, 'msg'=>$e->getMessage()]);
         }
     }
 

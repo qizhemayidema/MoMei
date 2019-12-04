@@ -23,8 +23,10 @@ class Role extends Base
     public function index()
     {
         try{
+            $info = (new Session())->getData();
+
             //查询影院的全部权限组
-            $roleList = (new Service())->getRoleList(new TypeDesc());
+            $roleList = (new Service())->getRoleList(new TypeDesc(),$info['group_code']);
 
             View::assign('roleList',$roleList);
             return view();
@@ -47,17 +49,17 @@ class Role extends Base
         $post = $request->post();
 
         try{
-            $valiatde = new Validate();
+            $validate = new Validate();
             $rules = Array(
                 'role_name|角色名称'=>'require|max:30',
                 'role_desc|角色备注'=>'require|max:120',
                 'rules|权限'=>'require',
                 '__token__'     => 'token',
             );
-            $valiatde->rule($rules);
-            $checkres  = $valiatde->check($post);
-            if(!$checkres){
-                throw new \Exception($valiatde->getError());
+            $validate->rule($rules);
+            $checkResult  = $validate->check($post);
+            if(!$checkResult){
+                throw new \Exception($validate->getError());
             }
 
             $userInfo = (new Session())->getData();
@@ -93,7 +95,7 @@ class Role extends Base
     {
         $post = $request->post();
         try{
-            $valiatde = new Validate();
+            $validate = new Validate();
             $rules = Array(
                 'id'=>'require',
                 'role_name|角色名称'=>'require|max:30',
@@ -101,10 +103,10 @@ class Role extends Base
                 'rules|权限'=>'require',
                 '__token__'     => 'token',
             );
-            $valiatde->rule($rules);
-            $checkres  = $valiatde->check($post);
-            if(!$checkres){
-                throw new \Exception($valiatde->getError());
+            $validate->rule($rules);
+            $checkResult  = $validate->check($post);
+            if(!$checkResult){
+                throw new \Exception($validate->getError());
             }
 
             $res = (new Service())->updateRes(new TypeDesc(),$post);
