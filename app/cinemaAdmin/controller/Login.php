@@ -1,24 +1,15 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: fk
- * Date: 2019/12/2
- * Time: 9:33
- */
-declare (strict_types = 1);
+declare (strict_types=1);
 
 namespace app\cinemaAdmin\controller;
 
 use app\BaseController;
 use app\common\service\Role;
-
 use app\common\typeCode\manager\Cinema;
 use app\Request;
 use think\Validate;
 use app\common\tool\Session;
 use app\common\service\Manager as ManagerService;
-
-use app\common\typeCode\manager\Cinema as TypeDesc;
 
 class Login extends BaseController
 {
@@ -77,4 +68,5 @@ class Login extends BaseController
         (new Session())->setData(NULL);
         return redirect('index');
     }
+
 }
