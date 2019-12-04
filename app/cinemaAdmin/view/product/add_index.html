@@ -1,0 +1,103 @@
+{include file="common/source"}
+<script src="__STATIC__/js/plugins/treeview/bootstrap-treeview.js"></script>
+<!--<script src="__STATIC__/js/demo/treeview-demo.js"></script>-->
+<div class="col-sm-12">
+    <div class="ibox float-e-margins">
+        <div class="ibox-content">
+            <div class="col-sm-4">
+                <div class="">
+                    <div id="treeview1" class="test"></div>
+                </div>
+            </div>
+            <div class="col-sm-8" id="container">
+
+            </div>
+
+        </div>
+    </div>
+</div>
+<script>
+
+    function getHtml (id)
+    {
+        $.ajax({
+            url:"{:url('edit')}",
+            data:{
+                id : id
+            },
+            type:'post',
+            dataType:'html',
+            success:function(data) {
+                // console.log(data)
+                $('#container').html(data)
+            }
+        })
+    }
+
+    $(function(){
+        $.ajax({
+            url:"{:url('getCateList')}",
+            type:'post',
+            dataType:'json',
+            success:function(data)
+            {
+                var defaultData = [];
+
+                $(data.data).each(function(k,v){
+
+                    var child = [];
+
+                    $(v.children).each(function(k1,v1){
+                        child.push({
+                            text: v1.name,
+                            href: '#child1',
+                            id : v1.id,
+                            // tags: ['2'],
+                        })
+                    })
+
+                    defaultData.push({
+                        text: v.name,
+                        href: '#parent1',
+                        // tags: ['4'],
+                        id : v.id,
+                        nodes:child,
+                    })
+                })
+
+                $('#treeview1').treeview({
+                    data: defaultData,
+                    onNodeSelected: function(event, data) {
+                        console.log(data)
+                        getHtml(data.id)
+                    }
+                });
+
+                console.log(data);
+            }
+        })
+
+    })
+
+
+    var removeArticle = function (_this, article_id) {
+        $.ajax({
+            url: "{:url('delete')}",
+            type: 'post',
+            dataType: 'json',
+            data:{
+                cate_id : article_id,
+            },
+            success: function (data) {
+                console.log(data)
+                if (data.code == 0) {
+                    layer.msg(data.msg,{icon: 5})
+                } else {
+                    layer.msg('删除成功',{icon : 1})
+                    $(_this).parents('tr').remove();
+                }
+
+            }
+        })
+    }
+</script>
