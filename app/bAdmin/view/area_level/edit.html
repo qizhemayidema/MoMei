@@ -10,32 +10,19 @@
                     <input name="name" required  readonly value="{$data.name}" type="text" class="form-control" >
                 </div>
             </div>
+            {foreach $level as $key => $value}
             <div class="form-group">
-                <label class="col-sm-2 control-label">级别</label>
+                <input type="hidden" name="level_name[{$value.id}]" value="{$value.name}">
+                <label class="col-sm-2 control-label">{$value.name}</label>
                 <div class="col-sm-8">
-                    <select class="form-control m-b" name="level_id" id="">
-                        {foreach $cateList as $key => $value}
-                        <option value="{$value.id}" {if condition="$data.level_id eq $value.id"}selected{/if}>{$value.name}</option>
+                    <select class="form-control m-b" name="level_option[{$value.id}]">
+                        {foreach $value.attr as $key1 => $value1}
+                        <option value="{$value1.id}-{$value1.value}" {if !empty($level_check) && $level_check[$value.id] == $value1.id} selected {/if}>{$value1.value}</option>
                         {/foreach}
                     </select>
                 </div>
             </div>
-            <div class="form-group">
-                <label class="col-sm-2 control-label">排序</label>
-                <div class="col-sm-8">
-                    <input name="level_sort" required placeholder="从0开始,越大级别越高,最大999"  value="{$data.level_sort}" type="text" class="form-control" >
-                </div>
-            </div>
-            <div class="form-group draggable">
-                <label class="col-sm-2 control-label">热门</label>
-                <div class="col-sm-8">
-                    <label class="radio-inline">
-                        <input type="radio" checked="" value="1" {if condition="$data['is_hot'] eq 1"}checked{/if} id="optionsRadios1" name="is_hot">是</label>
-                    <label class="radio-inline">
-                        <input type="radio" value="0" {if condition="$data['is_hot'] eq 0"}checked{/if} id="optionsRadios2" name="is_hot">否</label>
-
-                </div>
-            </div>
+            {/foreach}
 
             <div class="form-group">
                 <label class="col-sm-3 control-label"></label>
