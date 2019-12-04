@@ -13,11 +13,16 @@
             {foreach $level as $key => $value}
             <div class="form-group">
                 <input type="hidden" name="level_name[{$value.id}]" value="{$value.name}">
-                <label class="col-sm-2 control-label">{$value.name}</label>
+                <label class="col-sm-2 control-label">
+                    {$value.name}
+                    {if empty($level_check[$value.id])}
+                    (请选择保存)
+                    {/if}
+                </label>
                 <div class="col-sm-8">
                     <select class="form-control m-b" name="level_option[{$value.id}]">
                         {foreach $value.attr as $key1 => $value1}
-                        <option value="{$value1.id}-{$value1.value}" {if !empty($level_check) && $level_check[$value.id] == $value1.id} selected {/if}>{$value1.value}</option>
+                        <option value="{$value1.id}-{$value1.value}" {if !empty($level_check[$value.id]) && $level_check[$value.id] == $value1.id} selected {/if}>{$value1.value}</option>
                         {/foreach}
                     </select>
                 </div>
