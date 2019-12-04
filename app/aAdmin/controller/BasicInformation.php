@@ -10,8 +10,8 @@ namespace app\aAdmin\controller;
 
 use app\common\service\Manager as ManagerService;
 use app\common\service\Category as CateService;
-use app\common\service\Cinema as CinemaService;
 use app\common\typeCode\cate\ABus as ABusTypeDesc;
+use app\common\typeCode\manager\Cinema;
 use think\facade\View;
 use app\common\tool\Session;
 use app\common\tool\Upload;
@@ -27,7 +27,7 @@ class BasicInformation extends Base
     {
         $info = (new Session())->getData();
 
-        $managerService = new ManagerService();
+        $managerService = new ManagerService(new Cinema());
 
         $managerData = $managerService->get($info['id']);
 
@@ -37,7 +37,12 @@ class BasicInformation extends Base
         $busCate = (new CateService())->getList((new ABusTypeDesc()));
 
         //查询影院关联总数等
-        $countResult  = $managerService->getCinemaAmountCount($info['id'],$info['type']);
+        $countResult  = $managerService->getCinemaAmountCount($info['info_id']);
+
+        //查询直系影院总数
+        $getLinealCinemaAmountCount = $managerService->getLinealCinemaAmountCount($info['info_id']);
+
+        View::assign('getLinealCinemaAmountCount',$getLinealCinemaAmountCount);
 
         View::assign('countResult',$countResult);
 
@@ -105,9 +110,10 @@ class BasicInformation extends Base
                 throw new ValidateException('该用户名已存在');
             }
 
-            $oldUser = $service->get($post['id']);
+            $oldUser = $service->get($post['id']); //登录的用户信息
 
             $post['role_id'] = $oldUser['role_id'];
+            $post['role_name'] = $oldUser['role_name'];
 
             $post['pro_name'] = (new \app\common\model\Category())->get($post['pro_id'])['name'];
 

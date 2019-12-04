@@ -57,4 +57,10 @@ class Yuan implements ManagerImpl
         // TODO: Implement getInfoField() method.
         return $this->field;
     }
+
+    public function setIsInfo($value=false){
+        $this->isInfo = $value;
+
+        return $this;
+    }
 }

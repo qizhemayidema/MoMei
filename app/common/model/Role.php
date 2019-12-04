@@ -19,9 +19,9 @@ class Role extends Model implements BasicImpl
         return $this->where(['id'=>$id])->find();
     }
 
-    public function getList($type)  // 获取list
+    public function getList($type,$group_code)  // 获取list
     {
-        return $this->where(['type'=>$type])->select()->toArray();
+        return $this->where(['type'=>$type,'group_code'=>$group_code])->select()->toArray();
     }
 
     public function add(Array $data) : int    //插入一条数据 返回自增主键id

@@ -46,7 +46,9 @@ class Manager extends Base
 
     public function add()
     {
-        $roleData = (new Role())->getRoleList(new TypeDesc());
+        $info = (new Session())->getData();
+
+        $roleData = (new Role())->getRoleList(new TypeDesc(),$info['group_code']);
 
         View::assign('data',$roleData);
 
@@ -82,9 +84,13 @@ class Manager extends Base
             $managerService = '';
 
             if($info['type']==2){  //院线
-                $managerService = new ManagerService(new Yuan());
+//                $managerService = new ManagerService(new Yuan());
+                $managerService = new ManagerService((new Yuan())->setIsInfo());
+                $post['info_id'] = $info['info_id'];
             }elseif ($info['type']==3){  //影投
-                $managerService = new ManagerService(new Ying());
+//                $managerService = new ManagerService(new Ying());
+                $managerService = new ManagerService((new Ying())->setIsInfo());
+                $post['info_id'] = $info['info_id'];
             }
 
             $role = (new Role())->getFindRes($post['role_id']); //根据角色id查询出角色名称
@@ -116,7 +122,9 @@ class Manager extends Base
 
             $userData = (new ManagerService())->get($uid);
 
-            $roleData = (new Role())->getRoleList(new TypeDesc());
+            $info = (new Session())->getData();
+
+            $roleData = (new Role())->getRoleList(new TypeDesc(),$info['group_code']);
 
             View::assign('data',$roleData);
 

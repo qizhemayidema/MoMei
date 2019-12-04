@@ -23,8 +23,10 @@ class ARole extends Base
     public function index()
     {
         try{
+            $userInfo = (new Session())->getData();
+
             //查询平台的全部权限组
-            $roleList = (new Role())->getRoleList(new TypeDesc());
+            $roleList = (new Role())->getRoleList(new TypeDesc(),$userInfo['group_code']);
 
             View::assign('roleList',$roleList);
             return view();

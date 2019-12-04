@@ -44,8 +44,8 @@ class Permission extends Base
                 '__token__'     => 'token',
             );
             $validate->rule($rules);
-            $checkres  = $validate->check($data);
-            if(!$checkres){
+            $checkResult  = $validate->check($data);
+            if(!$checkResult){
                 throw new \Exception($validate->getError());
             }
 
