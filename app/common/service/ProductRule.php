@@ -48,7 +48,6 @@ class ProductRule
         return $productModel->getLastInsID();
     }
 
-
     public function update($data,$id)
     {
         $update = [
@@ -69,6 +68,14 @@ class ProductRule
         return (new ProductLevel())->where(['product_id'=>$productId])->select()->toArray();
     }
 
+    //获取一个规则的级别
+    public function getLevelList($cateId)
+    {
+        $level = new ProductLevel();
+        return $level->where(['cate_id'=>$cateId])->select();
+
+    }
+
     //批量新增
     public function insertLevel($data,$productId)
     {
@@ -76,6 +83,7 @@ class ProductRule
 
         foreach ($data['level_name'] as $key => $value){
             $insert[] = [
+                'cate_id'    => $data['cate_id'],
                 'level_name' => $value,
                 'product_id' => $productId,
             ];
@@ -84,8 +92,8 @@ class ProductRule
 
         $level->insertAll($insert);
     }
-
     //批量修改 ['id'=>1,'level_name'=>'123']
+
     public function updateLevel($data,$productId)
     {
         $level = new ProductLevel();
@@ -93,16 +101,16 @@ class ProductRule
              $level->where(['id'=>$value['id'],'product_id'=>$productId])->update(['level_name'=>$value['level_name']]);
         }
     }
-
     //获取除ids外的id
+
     public function getLevelExceptIds($ids,$productId)
     {
         return (new ProductLevel())->where(['product_id'=>$productId])
             ->whereNotIn('id',$ids)
             ->column('id');
     }
-
     //批量删除
+
     public function deleteLevel($ids,$productId)
     {
         $levelModel = new ProductLevel();
@@ -112,5 +120,4 @@ class ProductRule
             $levelModel->whereIn('id',$ids)->where(['product_id'=>$productId])->delete();
         }
     }
-
 }

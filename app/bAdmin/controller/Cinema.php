@@ -340,7 +340,7 @@ class Cinema extends Base
         }catch (\Exception $e){
 
             $model->rollback();
-            return json(['code'=>0,'msg'=>$e->getMessage()]);
+            return json(['code'=>0,'msg'=>$e->getMessage().$e->getLine().$e->getFile()]);
 
         }
 

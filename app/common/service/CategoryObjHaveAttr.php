@@ -70,7 +70,8 @@ class CategoryObjHaveAttr
                     'cate_id' => $key,
                     'attr_id' => $option[0],
                     'cate_name' => $value,
-                    'attr_value' => $option[1]
+                    'attr_value' => $option[1],
+                    'type'   => $this->type,
                 ]);
             }
 

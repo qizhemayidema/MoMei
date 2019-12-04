@@ -234,9 +234,9 @@ class Manager
             if (isset($data[$value])) $update[$value] = $data[$value];
         }
 
-        if($data['box_office_for_year']) $update['box_office_for_year'] = $data['box_office_for_year'];
-        if($data['ticket_price_for_average']) $update['ticket_price_for_average'] = $data['ticket_price_for_average'];
-        if($data['watch_mv_sum']) $update['watch_mv_sum'] = $data['watch_mv_sum'];
+        if(isset($data['box_office_for_year'])) $update['box_office_for_year'] = $data['box_office_for_year'];
+        if(isset($data['ticket_price_for_average'])) $update['ticket_price_for_average'] = $data['ticket_price_for_average'];
+        if(isset($data['watch_mv_sum'])) $update['watch_mv_sum'] = $data['watch_mv_sum'];
 
         $managerInfoModel->where(['id'=>$infoId])->update($update);
     }
