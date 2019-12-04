@@ -32,6 +32,8 @@ class Manager extends Base
                 $managerService = new ManagerService(new Ying());
             }
 
+            if($info['group_code']) $managerService = $managerService->setGroupCode($info['group_code']);
+
             $userData = $managerService->showType(true)->pageLength()->getList();
 
             View::assign('userData',$userData);
@@ -74,6 +76,8 @@ class Manager extends Base
             if(!$checkRes)  throw new \Exception($validate->getError());
 
             $info = (new Session())->getData();
+
+            $post['group_code'] = $info['group_code'];
 
             $managerService = '';
 
