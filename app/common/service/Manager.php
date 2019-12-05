@@ -122,6 +122,36 @@ class Manager
         return $this->pageLength ? $handler->paginate($this->pageLength) : $handler->select();
     }
 
+    public function getInfoList()
+    {
+        $handler = new ManagerModel();
+
+        $alias = 'manager';
+
+        $handler = $this->showType ? $handler->backgroundShowData($alias) : $handler->receptionShowData($alias);
+
+        $handler->alias($alias);
+
+        $handler = $this->groupCode ? $handler->where([$alias.'.group_code'=>$this->groupCode]) : $handler;
+
+        if (!empty($this->types)){
+            $handler = $handler->whereIn($alias.'.type',$this->types);
+        }else{
+            $handler = $this->managerImpl ? $handler->where([$alias.'.type'=>$this->managerImpl->getManagerType()]) : $handler;
+        }
+
+        $handler->join($this->infoTableName.' info',$alias.'.info_id = info.id')
+            ->field('*,info.id none_id,'.$alias.'.id id,info.type info_type');
+
+        $handler->join('manager m2','m2.id = '.$alias.'.group_code');
+
+        $handler = $this->order ? $handler->order($alias.'.'.$this->order[0],$alias.'.'.$this->order[1]) : $handler;
+
+        $handler = $this->where ? $handler->where($this->where[0].'.'.$this->where[1],$this->where[2]) : $handler;
+
+        return $this->pageLength ? $handler->paginate($this->pageLength) : $handler->select();
+    }
+
     public function existsUsername($username,$exceptId = 0)
     {
 

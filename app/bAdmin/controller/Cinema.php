@@ -7,8 +7,8 @@ use app\common\service\Area;
 use app\common\service\Category;
 use app\common\service\CategoryObjHaveAttr;
 use app\common\tool\Upload;
-use app\common\typeCode\Manager\Ying;
-use app\common\typeCode\Manager\Yuan;
+use app\common\typeCode\manager\Ying;
+use app\common\typeCode\manager\Yuan;
 use app\common\typeCode\cate\ABus;
 use app\common\typeCode\cate\CinemaNearby;
 use think\exception\ValidateException;
@@ -39,10 +39,10 @@ class Cinema extends Base
         $area = (new Area())->getListByPId();
 
         //查询院线列表
-        $yuan = (new Service((new Yuan())))->showType(true)->getList();
+        $yuan = (new Service((new Yuan())))->showType(true)->getInfoList();
 
         //查询影投列表
-        $ying = (new Service((new Ying())))->showType(true)->getList();
+        $ying = (new Service((new Ying())))->showType(true)->getInfoList();
 
         //获取周边分类列表
         $zhou = $cateService->getList((new CinemaNearby()));
@@ -150,11 +150,15 @@ class Cinema extends Base
 
 //            return json(['code'=>0]);
             $id = $data['id'];
-            //新增影院相关级别
-            $levels = $data['level_name'];
-            $options = $data['level_option'];
 
-            (new CategoryObjHaveAttr(1))->insert($id,$levels,$options);
+            if (isset($data['level_name'])){
+                //新增影院相关级别
+                $levels = $data['level_name'];
+                $options = $data['level_option'];
+
+                (new CategoryObjHaveAttr(1))->insert($id,$levels,$options);
+
+            }
 
             $model->commit();
 
@@ -201,10 +205,10 @@ class Cinema extends Base
         $area3 = $area->getListByPId($data['city_id']);
 
         //查询院线列表
-        $yuan = (new Service((new Yuan())))->showType(true)->getList();
+        $yuan = (new Service((new Yuan())))->showType(true)->getInfoList();
 
         //查询影投列表
-        $ying = (new Service((new Ying())))->showType(true)->getList();
+        $ying = (new Service((new Ying())))->showType(true)->getInfoList();
 
         //获取周边分类列表
         $zhou = $cateService->getList((new CinemaNearby()));
@@ -323,12 +327,14 @@ class Cinema extends Base
             $service->updateInfo($oldUser['info_id'],$post);
 
             $user = (new \app\common\service\Manager())->get($post['id']);
-            //新增影院相关级别
-            $levels = $post['level_name'];
-            $options = $post['level_option'];
 
-            (new CategoryObjHaveAttr(1))->update($user['group_code'],$levels,$options);
+            if (isset($post['level_name'])){
+                //新增影院相关级别
+                $levels = $post['level_name'];
+                $options = $post['level_option'];
 
+                (new CategoryObjHaveAttr(1))->update($user['group_code'],$levels,$options);
+            }
 
             $model->commit();
 

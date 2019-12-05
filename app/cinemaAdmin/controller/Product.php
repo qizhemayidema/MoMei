@@ -58,7 +58,6 @@ class Product extends Base
 
             $productRoleService = (new ProductRule());
 
-
             //获取影院相关信息
             $cinemaInfo = (new Manager())->getInfo($user['info_id']);
 
