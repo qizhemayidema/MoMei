@@ -170,14 +170,6 @@ class BasicInformation extends Base
 
             $service->updateInfo($oldUser['info_id'],$post);
 
-//            $user = (new \app\common\service\Manager())->get($post['id']);
-            //新增影院相关级别
-//            $levels = $post['level_name'];
-//            $options = $post['level_option'];
-//
-//            (new CategoryObjHaveAttr(1))->update($user['group_code'],$levels,$options);
-
-
             $model->commit();
 
         }catch (ValidateException $e){
