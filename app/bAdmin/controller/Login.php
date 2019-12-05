@@ -41,9 +41,9 @@ class Login extends BaseController
 
                 $res = (new ManagerService(new TypeDesc()))->existsUsername($data['username']);  //查询用户是否存在
 
-                if (!$res)  throw new \Exception('用户名错误');
+                if (!$res)  throw new \Exception('账号不存在');
 
-                if ($res['delete_time']!=0) throw new \Exception('用户不存在');
+                if ($res['delete_time']!=0) throw new \Exception('账号已被回收');
 
                 if ($res['status']==2) throw new \Exception('账号已被冻结');
 
