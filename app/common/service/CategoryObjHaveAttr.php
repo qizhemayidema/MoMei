@@ -18,11 +18,13 @@ class CategoryObjHaveAttr
         $this->type = $type;
     }
 
-    public function getList($objId)
+    public function getList($objId=null)
     {
         $model = new \app\common\model\CategoryObjHaveAttr();
 
-        return $model->where(['type'=>$this->type,'object_id'=>$objId])->select();
+        if ($objId) $model = $model->where('object_id',$objId);
+
+        return $model->where(['type'=>$this->type])->select();
 
     }
 

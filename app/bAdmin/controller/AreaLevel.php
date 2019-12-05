@@ -32,6 +32,11 @@ class AreaLevel extends Base
                 View::assign('threePid',$getFindResult['pid']);
             }
 
+            //查询全部地区的级别等
+            $categoryObjHaveAttr = new CategoryObjHaveAttr(2);
+            $attrResult = $categoryObjHaveAttr->getList();
+
+            View::assign('attrResult',$attrResult);
 
             View::assign('pidResult',$pidResult);
 

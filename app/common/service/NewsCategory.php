@@ -79,7 +79,7 @@ class NewsCategory
             'name'=>$data['name'],
             'type'=>$data['type'],
             'pid'=>$data['pid'],
-            'order_num'=>$data['order_num'],
+            'order_num'=>$data['order_num'] ?? 0,
         ];
 
         $result = (new \app\common\model\NewsCategory())->add($updateData);
@@ -104,7 +104,7 @@ class NewsCategory
             'name'=>$data['name'],
             'type'=>$data['type'],
             'pid'=>$data['pid'],
-            'order_num'=>$data['order_num'],
+            'order_num'=>$data['order_num'] ?? 0,
         ];
 
         $result = (new \app\common\model\NewsCategory())->modify($data['id'],$updateData);

@@ -11,7 +11,7 @@ use think\Request;
 use think\facade\View;
 use think\Validate;
 
-class ProductRule
+class ProductRule extends Base
 {
     public function index()
     {

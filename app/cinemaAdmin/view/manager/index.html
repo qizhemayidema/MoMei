@@ -1,0 +1,119 @@
+{include file="common/source"}
+<div class="col-sm-12">
+    <div class="ibox float-e-margins">
+        <div class="ibox-title">
+            <h5>
+                <button type="button" onclick="window.location.href='{:url('add')}'"
+                        class="btn btn-w-m btn-primary">添加用户
+                </button>
+            </h5>
+        </div>
+        <div class="ibox-content">
+            <div class="example">
+
+                <table class="table table-bordered table-hover text-center">
+                    <thead>
+                    <tr class="text-center">
+                        <th style="text-align: center;">用户名</th>
+                        <th style="text-align: center;">角色</th>
+                        <th style="text-align: center;">当前状态</th>
+                        <th style="text-align: center;">操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {foreach $userData as $key => $value}
+                    <tr>
+                        <td style="text-align: center;">{$value.username}</td>
+                        <td>
+                            {if condition="$value.role_id eq 0"}
+                            超级管理员
+                            {else}
+                            {$value.role_name}
+                            {/if}
+                        </td>
+                        <td>
+                            {if condition="$value.role_id neq 0"}
+                            {if $value.status == 1}
+                            <a href="javascript:void(0);" onclick="checkStatus(this,2,'{$value.id}')">
+                                <p><span class="label label-info">正常</span></p>
+                            </a>
+                            {else}
+                            <a href="javascript:void(0);" onclick="checkStatus(this,1,'{$value.id}')">
+                                <p><span class="label label-danger">冻结</span></p>
+                            </a>
+                            {/if}
+                            {else}
+                            <p><span class="label label-info">正常</span></p>
+                            {/if}
+                        </td>
+                        <td>
+                            <button onclick="window.location.href='{:url('edit',['userid'=>$value.id])}'" class="btn btn-info" type="button"><i class="fa fa-paste"></i> 编辑</button>
+                            {if condition="$value.role_id neq 0"}
+                            <button onclick="removeArticle(this,'{$value.id}')" class="btn btn-danger" type="button"><i class="fa fa-remove"></i> <span class="bold">删除</span></button>
+                            {/if}
+                        </td>
+                    </tr>
+                    {/foreach}
+                    </tbody>
+                </table>
+            </div>
+            <div style="text-align: center">
+                {$userData|raw}
+            </div>
+
+        </div>
+    </div>
+</div>
+<script>
+
+    checkStatus = function(_this,change_status,id) {
+        $.ajax({
+            url: "{:url('changeStatus')}",
+            type: 'post',
+            dataType: 'json',
+            data:{
+                id : id,
+                status : change_status,
+            },
+            success: function (data) {
+                if (data.code == 0) {
+                    layer.msg(data.msg,{icon: 5})
+                } else {
+                    layer.msg('修改成功')
+                    let str = ``
+                    if (change_status == 1){
+                        str = `<a href="javascript:void(0);" onclick="checkStatus(this,2,${id})">
+                                <p><span class="label label-info">正常</span></p>
+                            </a>`
+                    } else{
+                        str = `<a href="javascript:void(0);" onclick="checkStatus(this,1,'${id}')">
+                                <p><span class="label label-danger">冻结</span></p>
+                            </a>`
+                    }
+                    $(_this).parents('td').html(str)
+                }
+            }
+        })
+    }
+
+    var removeArticle = function (_this, article_id) {
+        $.ajax({
+            url: "{:url('delete')}",
+            type: 'post',
+            dataType: 'json',
+            data:{
+                user_id : article_id,
+            },
+            success: function (data) {
+                if (data.code == 0) {
+                    layer.msg(data.msg,{icon: 5})
+                } else {
+                    layer.msg('删除成功',{icon : 1})
+                    $(_this).parents('tr').remove();
+                }
+
+            }
+        })
+    }
+
+</script>

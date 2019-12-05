@@ -12,6 +12,7 @@ namespace app\aAdmin\controller;
 use app\common\service\Manager as ManagerService;
 use app\common\tool\Session;
 use app\common\typeCode\manager\Cinema as CinemaTypeDesc;
+use app\common\service\CategoryObjHaveAttr;
 use app\Request;
 use think\facade\View;
 
@@ -32,7 +33,7 @@ class AssociatedCinema extends Base
             $field = 'tou_id';
         }
 
-        $data = $managerService->setWhere('info',$field,$info['group_code'])->showType(true)->pageLength()->getList();
+        $data = $managerService->setWhere('info',$field,$info['group_code'])->showType(true)->pageLength()->getInfoList();
 
 
         View::assign('data',$data);
@@ -40,7 +41,7 @@ class AssociatedCinema extends Base
         return view();
     }
 
-    public function getDetail(Request $request)
+    public function info(Request $request)
     {
         $id = $request->param('id');
 
@@ -51,7 +52,9 @@ class AssociatedCinema extends Base
 
         $data = $service->getInfo($user['info_id']);
 
-        View::assign('data',$data);
+        $levels = (new CategoryObjHaveAttr(1))->getList($user['group_code']);
+
+        View::assign(['data'=>$data,'levels'=>$levels]);
 
         return view();
     }

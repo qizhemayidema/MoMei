@@ -20,6 +20,7 @@
                     <thead>
                     <tr class="text-center">
                         <th style="text-align: center;">地区</th>
+                        <th style="text-align: center;">其余选项</th>
                         <th style="text-align: center;">操作</th>
                     </tr>
                     </thead>
@@ -28,7 +29,14 @@
                     <tr>
                         <td style="text-align: center;">{$value.name}</td>
                         <td>
-                            {if condition="$value.level neq 3"}
+                            {foreach $attrResult as $key1 => $value1}
+                                {if condition="$value1.object_id eq $value.id"}
+                                    {$value1.cate_name}:{$value1.attr_value}&nbsp;&nbsp;
+                                {/if}
+                            {/foreach}
+                        </td>
+                        <td>
+                            {if condition="$value.level neq 2"}
                             <button onclick="window.location.href='{:url('index',['pid'=>$value.id])}'" class="btn btn-info" type="button"><i class="fa fa-paste"></i> 查看下级</button>
                             {/if}
                             <button onclick="window.location.href='{:url('edit',['city_id'=>$value.id])}'" class="btn btn-info" type="button"><i class="fa fa-paste"></i> 编辑</button>
