@@ -24,7 +24,14 @@
                         <td>{$value.pro_name}</td>
                         <td>{$value.province}</td>
                         <td>
-                            <button onclick="window.location.href='{:url('getDetail',['id'=>$value.id])}'" class="btn btn-info" type="button"><i class="fa fa-paste"></i> 查看</button>
+                            <div class="btn-group">
+                                <button data-toggle="dropdown" class="btn btn-primary dropdown-toggle" aria-expanded="false">更多 <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a href="{:url('info',['id'=>$value.id])}">查看详情</a>
+                                    </li>
+                                </ul>
+                            </div>
                         </td>
                     </tr>
                     {/foreach}
