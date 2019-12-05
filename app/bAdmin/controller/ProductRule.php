@@ -23,6 +23,7 @@ class ProductRule
         $post = $request->post();
 
         $rules = [
+            'is_open' => 'require',
             'cate_id' => 'require',
             'type|产品数量类型' => 'require|integer',
             'select_max_sum|最多选择数量' => 'require|integer',
@@ -48,11 +49,13 @@ class ProductRule
             $id = $service->existsCateId($post['cate_id']);
 
             //product的id
-            if (!$id){
-                $id = $service->insert($post);
-            }else{
-                $service->update($post,$id);
-            }
+//            if (!$id){
+//                $id = $service->insert($post);
+//            }else{
+//                $service->update($post,$id);
+//            }
+
+            $service->update($post,$id);
 
             //判断产品级别
             if (isset($post['old_level_id'])) {

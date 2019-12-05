@@ -42,7 +42,7 @@ class Category
 
             $cache = (new Cache($cateImpl));
 
-            if ($cache->exists()) return $cateModel->getList($type,$level,$masterId);
+            if ($cache->exists()) return $cache->getCache();
 
             $result = $cateModel->getList($type,$level,$masterId);
 

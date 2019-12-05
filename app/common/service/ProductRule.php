@@ -58,7 +58,7 @@ class ProductRule
             'type' => $data['type'],
             'is_screen' => $data['is_screen'],
             'is_level' => $data['is_level'],
-            'max_sum' => $data['max_sum'],
+            'max_sum' => $data['type'] == 1 ? 40 : 1,
         ];
         $productModel = (new Product());
 
