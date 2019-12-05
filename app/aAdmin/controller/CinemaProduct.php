@@ -33,9 +33,11 @@ class CinemaProduct extends Base
 
         $cinemaData = $managerService->setWhere('info',$field,$info['group_code'])->getList(); //属于该影投/院线的影院
 
-//        $productResult = (new CinemaProductService())->getProductList(array_column($cinemaData,'id'),1,15);  //该资源方下全部影院的全部产品
+        $cinemaIds = array_column($cinemaData,'group_code');   //这里是所属的全部影院的group_code
 
-//        View::assign('data',$productResult);
+        $productResult = (new CinemaProductService())->getList(15);  //该资源方下全部影院的全部产品
+
+        View::assign('data',$productResult);
 
         return view();
     }
