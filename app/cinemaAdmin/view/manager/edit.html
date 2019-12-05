@@ -5,36 +5,38 @@
             <div class="example">
                 <form action="" class="form-horizontal">
                     {:token_field()}
+                    <input type="hidden" name="id" value="{$userData['id']}">
                     <div class="form-group">
-                        <label class="col-sm-2 control-label">所属类别</label>
+                        <label class="col-sm-2 control-label">用户名</label>
                         <div class="col-sm-8">
-                            <select class="form-control m-b" name="pid" id="">
-                                <option value="0">顶级</option>
-                                <!--{foreach $data as $key => $value}-->
-                                <!--<option value="{$value.id}">{$value.name}</option>-->
-                                <!--{/foreach}-->
+                            <input name="username" required value="{$userData['username']}" type="text" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">密码</label>
+                        <div class="col-sm-8">
+                            <input name="password" required  type="password" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">确认密码</label>
+                        <div class="col-sm-8">
+                            <input name="affirm_password" required  type="password" class="form-control">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">选择角色</label>
+                        <div class="col-sm-8">
+                            <select class="form-control m-b" name="role_id" id="">
+                                {if condition="$userData['role_id'] neq 0"}
+                                    {foreach $data as $key => $value}
+                                    <option value="{$value.id}" {if condition="$userData.role_id eq $value.id"}selected{/if}>{$value.role_name}</option>
+                                    {/foreach}
+                                {else}
+                                <option value="0" selected>超级管理员</option>
+                                {/if}
                             </select>
-                        </div>
-                    </div>
-                    <div class="form-group draggable">
-                        <label class="col-sm-2 control-label">类型</label>
-                        <div class="col-sm-8">
-                            <label class="radio-inline">
-                                <input type="radio" checked=""  value="1" id="optionsRadios1" name="type">单新闻</label>
-                            <label class="radio-inline">
-                                <input type="radio" value="2" id="optionsRadios2" name="type">多新闻</label>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-sm-2 control-label">类别名称</label>
-                        <div class="col-sm-8">
-                            <input name="name" required  type="text" class="form-control">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-sm-2 control-label">排序</label>
-                        <div class="col-sm-8">
-                            <input name="order_num" required  value="0"  placeholder="从0开始,越大顺序越靠前,最大999" type="text" class="form-control">
                         </div>
                     </div>
                     <div class="form-group">
@@ -54,7 +56,7 @@
     var save = function () {
         var formData = new FormData($('form')[0]);
         $.ajax({
-            url: "{:url('save')}",
+            url: "{:url('update')}",
             type: 'post',
             dataType: 'json',
             data: formData,
@@ -64,7 +66,7 @@
                 if (data.code == 0) {
                     layer.msg(data.msg, {icon: 5})
                 } else {
-                    layer.msg('添加成功', {icon: 1});
+                    layer.msg('修改成功', {icon: 1});
                     setTimeout(function () {
                         window.location.href = "{:url('index')}";
                     }, 600)

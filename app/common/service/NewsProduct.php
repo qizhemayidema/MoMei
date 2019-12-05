@@ -64,7 +64,7 @@ class NewsProduct
             'cate_id'=>$data['cate_id'],
             'pic'=>$data['pic'],
             'content'=>$data['content'],
-            'sort'=>$data['sort'],
+            'sort'=>$data['sort'] ?? 0,
             'create_time'=>time(),
         ];
 
@@ -77,7 +77,7 @@ class NewsProduct
             'title'=>$data['title'],
             'cate_id'=>$data['cate_id'],
             'content'=>$data['content'],
-            'sort'=>$data['sort'],
+            'sort'=>$data['sort'] ?? 0,
         ];
         if(!empty($data['pic']!="undefined"))  $updateData['pic']=$data['pic'];
         return (new \app\common\model\NewsProduct())->modify($data['id'],$updateData);

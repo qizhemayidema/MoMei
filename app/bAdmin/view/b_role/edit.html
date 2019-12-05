@@ -30,7 +30,7 @@
                         <tr>
                             <td style="text-align: center;">
                                 <label class="checkbox-inline">
-                                <input type="checkbox" name='rules[]'  value="{$value.id}" id="inlineCheckbox1" {if condition="in_array($value.id,$dataRes.permission_ids)"}checked{/if}>{$value.name}</label>
+                                <input type="checkbox" name='rules[]' onclick="checkAll(this,'{$value.id}')"  value="{$value.id}" id="inlineCheckbox1" {if condition="in_array($value.id,$dataRes.permission_ids)"}checked{/if}>{$value.name}</label>
                             </td>
                             <td>
                                 {if isset($value.children)}
@@ -38,7 +38,7 @@
                                     <div class="col-sm-9">
                                         {foreach $value.children as $keys => $values}
                                         <label class="checkbox-inline">
-                                            <input type="checkbox" name='rules[]' value="{$values.id}" id="inlineCheckbox1" {if condition="in_array($values.id,$dataRes.permission_ids)"}checked{/if}>{$values.name}</label>
+                                            <input type="checkbox" name='rules[]' class="chk{$value.id}" value="{$values.id}" id="inlineCheckbox1" {if condition="in_array($values.id,$dataRes.permission_ids)"}checked{/if}>{$values.name}</label>
                                         {/foreach}
                                     </div>
                                 </div>
@@ -61,6 +61,11 @@
     </div>
 </div>
 <script>
+    function checkAll(obj,id) {
+        $(".chk"+id).each(function(a,b){
+            b.checked=obj.checked;
+        })
+    }
 
     var save = function () {
         var formData = new FormData($('form')[0]);

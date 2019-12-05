@@ -33,7 +33,6 @@ class Login extends BaseController
 
                 $validate = new Validate();
                 $rules = [
-                    'type|登录类型'  => 'require',
                     'username|用户名'  => 'require',
                     'password|密码'  => 'require',
                     'captcha|验证码'   => 'require|captcha',
@@ -42,14 +41,19 @@ class Login extends BaseController
                 $result = $validate->check($data);
                 if (!$result)  throw new \Exception($validate->getError());
 
-                if($data['type']==2) $ManagerService = new ManagerService(new YuanTypeDesc());
-                if($data['type']==3) $ManagerService = new ManagerService(new YingTypeDesc());
+                $ManagerService = new ManagerService(new YuanTypeDesc());
 
                 $res = $ManagerService->existsUsername($data['username']);  //查询用户是否存在
 
-                if (!$res)  throw new \Exception('用户名错误');
+                if (!$res){
+                    $ManagerService = new ManagerService(new YingTypeDesc());
 
-                if ($res['delete_time']!=0) throw new \Exception('用户不存在');
+                    $res = $ManagerService->existsUsername($data['username']);  //查询用户是否存在
+
+                    if(!$res) throw new \Exception('账号不存在');
+                }
+
+                if ($res['delete_time']!=0) throw new \Exception('账号已被回收');
 
                 if ($res['status']==2) throw new \Exception('账号已被冻结');
 
