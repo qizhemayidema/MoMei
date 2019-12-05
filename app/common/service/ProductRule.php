@@ -34,12 +34,13 @@ class ProductRule
     {
         $insert = [
             'cate_id' => $data['cate_id'],
-            'select_max_sum' => $data['select_max_sum'],
-            'cate_name' => $data['cate_name'],
-            'type' =>  $data['type'],
-            'is_screen' => $data['is_screen'],
-            'is_level' => $data['is_level'],
-//            'sum'       => $data['sum'],
+            'is_open' => $data['is_open'] ?? 0,
+            'select_max_sum' => $data['select_max_sum'] ?? 1,
+            'cate_name' => $data['cate_name'] ?? '',
+            'type' =>  $data['type'] ?? 2,
+            'is_screen' => $data['is_screen'] ?? 0,
+            'is_level' => $data['is_level'] ?? 0,
+            'max_sum' => $data['max_sum'] ?? 1
         ];
         $productModel = (new Product());
 
@@ -51,11 +52,13 @@ class ProductRule
     public function update($data,$id)
     {
         $update = [
+            'is_open' => $data['is_open'] ?? 0,
             'select_max_sum' => $data['select_max_sum'],
             'cate_name' => $data['cate_name'],
             'type' => $data['type'],
             'is_screen' => $data['is_screen'],
             'is_level' => $data['is_level'],
+            'max_sum' => $data['max_sum'],
         ];
         $productModel = (new Product());
 

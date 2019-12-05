@@ -25,6 +25,8 @@ class ARole extends Base
         try{
             $userInfo = (new Session())->getData();
 
+//            dump($userInfo->toArray());die;
+
             //查询平台的全部权限组
             $roleList = (new Role())->getRoleList(new TypeDesc(),$userInfo['group_code']);
 

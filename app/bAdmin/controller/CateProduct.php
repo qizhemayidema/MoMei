@@ -49,7 +49,10 @@ class CateProduct extends Base
 
             if (!$validate->check($post)) throw new \Exception($validate->getError());
 
-            (new Category())->insert((new TypeDesc()),$post);
+           $cateId = (new Category())->insert((new TypeDesc()),$post);
+
+            //创建对应的产品规则初始数据
+            (new \app\common\service\ProductRule())->insert(['cate_id'=>$cateId]);
 
             return json(['code'=>1,'msg'=>'success']);
 
