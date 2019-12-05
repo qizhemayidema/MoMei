@@ -143,7 +143,7 @@ class Manager
         $handler->join($this->infoTableName.' info',$alias.'.info_id = info.id')
             ->field('*,info.id none_id,'.$alias.'.id id,info.type info_type');
 
-        $handler->join('manager m2','m2.id = '.$alias.'.group_code');
+        $handler->join('manager m2','m2.id = '.$alias.'.group_code and m2.id = '.$alias.'.id');
 
         $handler = $this->order ? $handler->order($alias.'.'.$this->order[0],$alias.'.'.$this->order[1]) : $handler;
 
