@@ -31,7 +31,7 @@ class CinemaProduct extends Base
             $field = 'tou_id';
         }
 
-        $cinemaData = $managerService->setWhere('info',$field,$info['group_code'])->getList(); //属于该影投/院线的影院
+        $cinemaData = $managerService->setWhere('info',$field,$info['group_code'])->getInfoList(); //属于该影投/院线的影院
 
         $cinemaIds = array_column($cinemaData,'group_code');   //这里是所属的全部影院的group_code
 

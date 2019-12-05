@@ -33,7 +33,7 @@ class AssociatedCinema extends Base
             $field = 'tou_id';
         }
 
-        $data = $managerService->setWhere('info',$field,$info['group_code'])->showType(true)->pageLength()->getList();
+        $data = $managerService->setWhere('info',$field,$info['group_code'])->showType(true)->pageLength()->getInfoList();
 
 
         View::assign('data',$data);

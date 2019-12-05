@@ -162,7 +162,10 @@ class BasicInformation extends Base
             $post['county'] = $county[1] ?? '';
 
             $oldUser = $service->get($post['id']);
-//            return json(['code'=>0]);
+
+            $post['role_id'] = $oldUser['role_id'];
+            $post['role_name'] = $oldUser['role_name'];
+
             $service->update($post['id'],$post);
 
             $service->updateInfo($oldUser['info_id'],$post);

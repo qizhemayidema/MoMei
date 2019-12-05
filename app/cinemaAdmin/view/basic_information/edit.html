@@ -56,7 +56,7 @@
                     <select class="form-control m-b" name="area_id">
                         <option value="0">无</option>
                         {foreach $zhou as $key => $value}
-                        <option value="{$value.id}-{$vlaue.name}" {if $value.id == $data.area_id} selected {/if}>{$value.name}</option>
+                        <option value="{$value.id}-{$value.name}" {if $value.id == $data.area_id} selected {/if}>{$value.name}</option>
                         {/foreach}
                     </select>
                 </div>
