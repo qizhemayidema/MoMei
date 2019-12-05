@@ -44,7 +44,7 @@ class Product extends Base
             'cate_id'   => 'require',
             'level_id|级别' => 'require',
             'screen_id|影厅' => 'require',
-            'sum|数量'        => 'require',
+//            'sum|数量'        => 'require',
             'name|名称'       => 'require|max:30',
             'desc|介绍'       => 'require',
 //            '__token__'      => 'token'
@@ -67,14 +67,19 @@ class Product extends Base
             //获取分类名称
             $cateName = (new Category())->get($post['cate_id'])['name'];
 
+            //获取规则
+            $rule = $productRoleService->getByCateId($post['cate_id']);
+
             //级别名称
             $levelName = $post['level_id'] ? $productRoleService->getLevel($post['level_id'])['level_name'] : '';
 
             //数量类型
-            $type = $post['sum'] > 1 ? 2 : 1;
+            $type = $rule['type'];
 
-            //获取规则
-            $rule = $productRoleService->getByCateId($post['cate_id']);
+            //数量
+            $sum = $rule['max_sum'];
+
+
 
             //组装数据
             $data = [
@@ -90,7 +95,7 @@ class Product extends Base
                 'cinema_cate_name' => $cateName,
                 'type'      => $type,
                 'select_max_sum' => $rule['select_max_sum'],
-                'sum'       => $post['sum'],
+                'sum'       => $sum,
                 'status'    => 2,
             ];
 
@@ -132,8 +137,6 @@ class Product extends Base
         return view('add');
     }
 
-
-
     public function entity(Request $request)
     {
         $id = $request->param('id');
@@ -143,9 +146,77 @@ class Product extends Base
         return view('entity_index');
     }
 
+    public function entitySave(Request $request)
+    {
+        $post = $request->post();
+
+        $user = (new Session())->getData();
+
+        $rules = [
+            'id'   => 'require',
+            'product_id' => 'require',
+            'entity_name|名称' => 'require|max:64',
+            'price_month|包月价格' => 'require',
+            'price_year|名称'     => 'require',
+            'price_day|日价格'       => 'require',
+        ];
+
+
+        $validate = Validate::rule($rules);
+
+        try{
+            if (!$validate->check($post)) throw new \Exception($validate->getError());
+
+            $service = new CinemaProduct($user['group_code']);
+
+            //获取影院相关信息
+            $cinemaInfo = (new Manager())->getInfo($user['info_id']);
+
+            //获取产品相关信息
+            $productInfo = $service->get($post['product_id']);
+
+            if ($user['group_code'] != $productInfo['cinema_id']){
+                throw new \Exception('你要干嘛');
+            }
+            //组装数据
+            $data = [
+                'cinema_id' => $user['group_code'],
+                'cate_id'   => $productInfo['cate_id'],
+                'product_id' => $productInfo['id'],
+                'screen_id' => $productInfo['screen_id'],
+                'level_id'  => $productInfo['level_id'],
+                'cate_name' => $productInfo['cinema_cate_name'],
+                'cinema_name' => $cinemaInfo['name'],
+                'screen_name' => $productInfo['screen_name'],
+                'level_name' => $productInfo['level_name'],
+                'product_name' => $productInfo['name'],
+                'entity_name'  => $post['entity_name'],
+                'sort'      => $post['sort'],
+                'price_json' => $post['price_day'],
+                'price_month' => $post['price_month'],
+                'price_year' => $post['price_year'],
+            ];
+
+            if (!$post['id'] || $post['id'] == 0){   //修改
+                $service->insertEntity($data);
+            }else{
+                $service->updateEntity($post['id'],$data);
+            }
+
+        }catch (\Exception $e){
+            return json(['code'=>0,'msg'=>$e->getMessage().$e->getFile().$e->getLine()]);
+        }
+
+        return json(['code'=>1,'msg'=>'success']);
+    }
+
+
+
     public function getEntityHtml(Request $request)
     {
         $id = $request->post('id');
+
+        $productId = $request->post('product_id');
 
         $groupCode = (new Session())->getData()['group_code'];
 
@@ -153,7 +224,11 @@ class Product extends Base
 
         $entity = $service->getEntity($id);
 
+//        dump($entity);die;
+
         View::assign('data',$entity);
+
+        View::assign('product_id',$productId);
 
         return \view('entity');
 

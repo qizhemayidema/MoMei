@@ -77,6 +77,62 @@ class CinemaProduct
         (new \app\common\model\CinemaProduct())->modify($id,['status'=>$status]);
     }
 
+
+    /*-----------------------------------------------------*/
+    public function insertEntity($data)
+    {
+        $insert = [
+            'cinema_id'         => $data['cinema_id'  ],
+            'cate_id'           => $data['cate_id'    ],
+            'product_id'        => $data['product_id' ],
+            'screen_id'         => $data['screen_id'  ],
+            'level_id'          => $data['level_id'   ],
+            'cate_name'         => $data['cate_name'  ],
+            'cinema_name'       => $data['cinema_name'],
+            'screen_name'       => $data['screen_name'],
+            'level_name'        => $data['level_name' ],
+            'product_name'      => $data['product_name'],
+            'entity_name'       => $data['entity_name'],
+            'sort'              => $data['sort'       ],
+            'price_json'        => $data['price_json' ],
+            'price_month'       => $data['price_month'],
+            'price_year'        => $data['price_year' ],
+            'create_time'       => time(),
+        ];
+
+        $model = (new CinemaProductEntity());
+        $model->insert($insert);
+
+        return $model->getLastInsID();
+    }
+
+    public function updateEntity($entityId,$data)
+    {
+        $update = [
+            'cinema_id'         => $data['cinema_id'  ],
+            'cate_id'           => $data['cate_id'    ],
+            'product_id'        => $data['product_id' ],
+            'screen_id'         => $data['screen_id'  ],
+            'level_id'          => $data['level_id'   ],
+            'cate_name'         => $data['cate_name'  ],
+            'cinema_name'       => $data['cinema_name'],
+            'screen_name'       => $data['screen_name'],
+            'level_name'        => $data['level_name' ],
+            'product_name'      => $data['product_name'],
+            'entity_name'       => $data['entity_name'],
+            'sort'              => $data['sort'       ],
+            'price_json'        => $data['price_json' ],
+            'price_month'       => $data['price_month'],
+            'price_year'        => $data['price_year' ],
+            'create_time'       => time(),
+        ];
+
+        $model = (new CinemaProductEntity());
+
+        $model->where(['id'=>$entityId])->update($update);
+
+    }
+
     public function getEntity($entityId)
     {
         return (new \app\common\model\CinemaProductEntity())->where(['cinema_id'=>$this->groupCode])->find($entityId);
@@ -87,6 +143,7 @@ class CinemaProduct
         $handler = (new CinemaProductEntity());
 
         $this->entityShowType ? $handler->backgroundShowData() : $handler->receptionShowData();
-        return  $handler->where(['id'=>$cProductId,'cinema_id'=>$this->groupCode])->order('sort','desc')->select();
+
+        return  $handler->where(['product_id'=>$cProductId,'cinema_id'=>$this->groupCode])->order('sort','desc')->select();
     }
 }

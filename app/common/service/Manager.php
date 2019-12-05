@@ -159,7 +159,9 @@ class Manager
 
         if ($exceptId) $handler = $handler->where('id','<>',$exceptId);
 
-        $result = $handler->where(['type'=>$this->managerImpl->getManagerType(),'username'=> $username])->find();
+//        $result = $handler->where(['type'=>$this->managerImpl->getManagerType(),'username'=> $username])->find();
+
+        $result = $handler->where(['username'=> $username])->find();
 
         return  $result ? $result : null;
     }

@@ -1,147 +1,279 @@
-<div class="ibox float-e-margins">
-    <div class="ibox-title">
-        <h5>FullCalendar示例 </h5>
-        <div class="ibox-tools">
-            <a class="collapse-link">
-                <i class="fa fa-chevron-up"></i>
-            </a>
-            <a class="dropdown-toggle" data-toggle="dropdown" href="calendar.html#">
-                <i class="fa fa-wrench"></i>
-            </a>
-            <ul class="dropdown-menu dropdown-user">
-                <li><a href="calendar.html#">选项1</a>
-                </li>
-                <li><a href="calendar.html#">选项2</a>
-                </li>
-            </ul>
-            <a class="close-link">
-                <i class="fa fa-times"></i>
-            </a>
+<div style="
+    overflow: hidden;
+">
+
+    <input type="hidden" name="id" value="{$data.id ?? 0}">
+    <input type="hidden" name="product_id" value="{$product_id}">
+    <div class="form-group">
+        <label class="col-sm-2 control-label">名称</label>
+        <div class="col-sm-8">
+            <input name="entity_name" value="{$data.entity_name ?? ''}" required type="text" class="form-control">
         </div>
     </div>
-    <div class="ibox-content">
-        <div id="calendar"></div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label">包月价格</label>
+        <div class="col-sm-8">
+            <input name="price_month" value="{$data.price_month ?? ''}" required type="text" class="form-control">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label">包年价格</label>
+        <div class="col-sm-8">
+            <input name="price_year" value="{$data.price_year ?? ''}" required type="text" class="form-control">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label">产品排序</label>
+        <div class="col-sm-8">
+            <input name="sort" value="{$data.sort ?? 0}" required type="text" class="form-control">
+        </div>
     </div>
 </div>
+<style>
+
+
+    .form-group {
+        margin-bottom: 15px;
+        overflow: hidden;
+    }
+</style>
+<div class="container"></div>
 
 <script>
-    $(document).ready(function () {
+    var date = new Date();
+    var d = new Date()
+    d.setMonth(d.getMonth() + 18); //结束日期
+    // 生成模拟数据
+    var MOCK_DATA = createMockData();
+    // console.log(MOCK_DATA)
+    // 日历设置表单字段配置
+    // key 字段名
+    // name 表单label
+    // value 默认值
+    // placeholder input[placeholder]
+    var calendarConfig = [{
+        key: 'dayPrice',
+        name: '日价格',
+        type: 'number',
+        placeholder: '请输入日价格'
+    }
+        // ,
+        //
+        // {
+        //     key: 'monthPrice',
+        //     name: '月价格',
+        //     type: 'number',
+        //     placeholder: '请输入月价格'
+        // },
+        // {
+        //     key: 'yearPrice',
+        //     name: '年价格',
+        //     type: 'number',
+        //     placeholder: '请输入年价格'
+        // }
+    ]
 
-        $('.i-checks').iCheck({
-            checkboxClass: 'icheckbox_square-green',
-            radioClass: 'iradio_square-green',
-        });
+    // 日历中显示配置
+    var showConfig = [{
+        key: 'dayPrice',
+        name: '日:￥'
+    }
+        // ,
+        // {
+        //     key: 'monthPrice',
+        //     name: '月:￥'
+        // },
+        // {
+        //     key: 'yearPrice',
+        //     name: '年:￥'
+        // }
+    ]
 
-        /* initialize the external events
-         -----------------------------------------------------------------*/
+    // 样式颜色配置
+    var styleConfig = {
+        // 头部背景色
+        headerBgColor: '#098cc2',
+        // 头部文字颜色
+        headerTextColor: '#fff',
+        // 周一至周日背景色，及文字颜色
+        weekBgColor: '#098cc2',
+        weekTextColor: '#fff',
+        // 周末背景色，及文字颜色
+        weekendBgColor: '#098cc2',
+        weekendTextColor: '#fff',
+        // 有效日期颜色
+        validDateTextColor: '#333',
+        validDateBgColor: '#fff',
+        validDateBorderColor: '#eee',
+        // Hover
+        validDateHoverBgColor: '#098cc2',
+        validDateHoverTextColor: '#fff',
+        // 无效日期颜色
+        invalidDateTextColor: '#ccc',
+        invalidDateBgColor: '#fff',
+        invalidDateBorderColor: '#eee',
+        // 底部背景颜色
+        footerBgColor: '#fff',
+        // 重置按钮颜色
+        resetBtnBgColor: '#77c351',
+        resetBtnTextColor: '#fff',
+        resetBtnHoverBgColor: '#55b526',
+        resetBtnHoverTextColor: '#fff',
+        // 确定按钮
+        confirmBtnBgColor: '#098cc2',
+        confirmBtnTextColor: '#fff',
+        confirmBtnHoverBgColor: '#00649a',
+        confirmBtnHoverTextColor: '#fff',
+        // 取消按钮
+        cancelBtnBgColor: '#fff',
+        cancelBtnBorderColor: '#bbb',
+        cancelBtnTextColor: '#999',
+        cancelBtnHoverBgColor: '#fff',
+        cancelBtnHoverBorderColor: '#bbb',
+        cancelBtnHoverTextColor: '#666'
+    }
+    {if isset($data.price_json)}
+    var str = {:json_encode($data.price_json,256)};
+    {/if}
+    // 初始化日历
+    var zxCalendar = $.CalendarPrice({
+        el: '.container',
+        startDate: dateFormat("YYYY-mm-dd", date),
+        endDate: dateFormat("YYYY-mm-dd", d),
+        {if isset($data.price_json)}
+        data: JSON.parse(str),
+        {/if}
+        // 配置需要设置的字段名称
+        config: calendarConfig,
+        // 配置在日历中要显示的字段
+        show: showConfig,
+        // 自定义颜色
+        style: styleConfig
+    });
 
-        $('#external-events div.external-event').each(function () {
+    // 监听设置表单提交
+    // 将阻止默认流程执行
+    // 继续执行默认流程，请执行参数next()
+    zxCalendar.$on('submit-form', function (data, next) {
+        // data 设置的数据
+        console.log('$(submit-form)表单数据 ================')
+        console.log(data)
 
-            // create an Event Object (http://arshaw.com/fullcalendar/docs/event_data/Event_Object/)
-            // it doesn't need to have a start or end
-            var eventObject = {
-                title: $.trim($(this).text()) // use the element's text as the event title
-            };
+        // 此处可以验证表单
+        // 验证表单逻辑....
+        // ....
 
-            // store the Event Object in the DOM element so we can get to it later
-            $(this).data('eventObject', eventObject);
+        // 继续执行下一步
+        next()
+    })
 
-            // make the event draggable using jQuery UI
-            $(this).draggable({
-                zIndex: 999,
-                revert: true, // will cause the event to go back to its
-                revertDuration: 0 //  original position after the drag
-            });
+    // 执行过程中错误回调
+    zxCalendar.$on('error', function (err) {
+        // 执行中的错误提示
+        console.error('$on(error)Error:')
+        console.log(err)
+        alert(err.msg);
+    })
 
-        });
+    // 切换月份
+    zxCalendar.$on('month-change', function (data) {
+        console.log(data);
+    })
+
+    // 点击有效的某一天通知
+    zxCalendar.$on('valid-day', function (day, data, next) {
+        console.log(data);
+
+        // 继续执行默认流程
+        next();
+    })
+
+    // 设置数据变化
+    zxCalendar.$on('setup-value-change', function (data) {
+        console.log(data);
+        // 取消设置
+        // 这里可以触发关闭设置窗口
+    })
+
+    // 点击重置按钮回调
+    zxCalendar.$on('reset', function () {
+        console.log('$on(reset)数据重置成功！');
+    })
+
+    // 点击确定按钮回调，返回当前设置数据
+    zxCalendar.$on('confirm', function (data) {
+        console.log('$on(confirm)点击确定按钮通知！');
+        // console.log(data);
+
+        var list = JSON.stringify(data);
+
+        console.log(list)
+        var formData = new FormData();
+
+        var id= $('input[name=id]').val();
+        var name= $('input[name=entity_name]').val();
+        var price_month= $('input[name=price_month]').val();
+        var price_year= $('input[name=price_year]').val();
+        var sort= $('input[name=sort]').val();
 
 
-        /* initialize the calendar
-         -----------------------------------------------------------------*/
-        var date = new Date();
-        var d = date.getDate();
-        var m = date.getMonth();
-        var y = date.getFullYear();
+        formData.append('id',id);
+        formData.append('entity_name',name);
+        formData.append('price_month',price_month);
+        formData.append('price_year',price_year);
+        formData.append('price_day',list);
+        formData.append('sort',sort);
+        formData.append('product_id',$('input[name=product_id]').val());
 
-        $('#calendar').fullCalendar({
-            header: {
-                left: 'prev,next',
-                center: 'title',
-                right: 'month,agendaWeek,agendaDay'
-            },
-            editable: true,
-            droppable: true, // this allows things to be dropped onto the calendar !!!
-            drop: function (date, allDay) { // this function is called when something is dropped
+        $.ajax({
+            url:"{:url('entitySave')}",
+            data:formData,
+            type:'post',
+            dataType:'json',
+            processData:false,
+            contentType:false,
+            success:function(data){
+                if (data.code == 0){
+                    layer.alert(data.msg)
+                }else{
+                    setTimeout(function(){
+                        window.location.reload()
+                },700)
+            }
+            }
+        })
+    })
 
-                // retrieve the dropped element's stored Event Object
-                var originalEventObject = $(this).data('eventObject');
+    // 点击取消按钮回调
+    zxCalendar.$on('cancel', function () {
+        console.log('$on(cancel)取消设置 ....');
+        // 取消设置
+        // 这里可以触发关闭设置窗口
+    })
 
-                // we need to copy it, so that multiple events don't have a reference to the same object
-                var copiedEventObject = $.extend({}, originalEventObject);
-
-                // assign it the date that was reported
-                copiedEventObject.start = date;
-                copiedEventObject.allDay = allDay;
-
-                // render the event on the calendar
-                // the last `true` argument determines if the event "sticks" (http://arshaw.com/fullcalendar/docs/event_rendering/renderEvent/)
-                $('#calendar').fullCalendar('renderEvent', copiedEventObject, true);
-
-                // is the "remove after drop" checkbox checked?
-                if ($('#drop-remove').is(':checked')) {
-                    // if so, remove the element from the "Draggable Events" list
-                    $(this).remove();
-                }
-
-            },
-            events: [
-                {
-                    title: '日事件',
-                    start: new Date(y, m, 1)
-                },
-                {
-                    title: '长事件',
-                    start: new Date(y, m, d - 5),
-                    end: new Date(y, m, d - 2),
-                },
-                {
-                    id: 999,
-                    title: '重复事件',
-                    start: new Date(y, m, d - 3, 16, 0),
-                    allDay: false,
-                },
-                {
-                    id: 999,
-                    title: '重复事件',
-                    start: new Date(y, m, d + 4, 16, 0),
-                    allDay: false
-                },
-                {
-                    title: '会议',
-                    start: new Date(y, m, d, 10, 30),
-                    allDay: false
-                },
-                {
-                    title: '午餐',
-                    start: new Date(y, m, d, 12, 0),
-                    end: new Date(y, m, d, 14, 0),
-                    allDay: false
-                },
-                {
-                    title: '生日',
-                    start: new Date(y, m, d + 1, 19, 0),
-                    end: new Date(y, m, d + 1, 22, 30),
-                    allDay: false
-                },
-                {
-                    title: '打开百度',
-                    start: new Date(y, m, 28),
-                    end: new Date(y, m, 29),
-                    url: 'http://baidu.com/'
-                }
-            ],
-        });
-
+    $(function () {
 
     });
+
+    function dateFormat(fmt, date) { //格式化时间
+        let ret;
+        let opt = {
+            "Y+": date.getFullYear().toString(), // 年
+            "m+": (date.getMonth() + 1).toString(), // 月
+            "d+": date.getDate().toString(), // 日
+            "H+": date.getHours().toString(), // 时
+            "M+": date.getMinutes().toString(), // 分
+            "S+": date.getSeconds().toString() // 秒
+            // 有其他格式化字符需求可以继续添加，必须转化成字符串
+        };
+        for (let k in opt) {
+            ret = new RegExp("(" + k + ")").exec(fmt);
+            if (ret) {
+                fmt = fmt.replace(ret[1], (ret[1].length == 1) ? (opt[k]) : (opt[k].padStart(ret[1].length, "0")))
+            }
+            ;
+        }
+        ;
+        return fmt;
+    };
 </script>

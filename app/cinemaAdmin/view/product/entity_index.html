@@ -6,26 +6,21 @@
 <link rel="stylesheet" href="__STATIC__/css/plugins/summernote/summernote.css">
 <link rel="stylesheet" href="__STATIC__/css/plugins/summernote/summernote-bs3.css">
 
-<link href="__STATIC__/css/plugins/iCheck/custom.css" rel="stylesheet">
-<link href="__STATIC__/css/plugins/fullcalendar/fullcalendar.css" rel="stylesheet">
-<link href="__STATIC__/css/plugins/fullcalendar/fullcalendar.print.css" rel="stylesheet">
-
-<!-- iCheck -->
-<script src="__STATIC__/js/plugins/iCheck/icheck.min.js"></script>
-
-<!-- Full Calendar -->
-<script src="__STATIC__/js/plugins/fullcalendar/fullcalendar.min.js"></script>
+<!--<script src="__STATIC__/plugins/date/js/jquery-1.12.4.min.js"></script>-->
+<script src="__STATIC__/plugins/date/js/mock-data.js"></script>
+<script src="__STATIC__/plugins/date/js/calendar-price-jquery.js"></script>
+<link rel="stylesheet" href="__STATIC__/plugins/date/css/calendar-price-jquery.min.css">
 
 <!--<script src="__STATIC__/js/demo/treeview-demo.js"></script>-->
 <div class="col-sm-12">
     <div class="ibox float-e-margins">
         <div class="ibox-content">
-            <div class="col-sm-3">
+            <div class="col-sm-2">
                 <div class="">
                     <div id="treeview1" class="test"></div>
                 </div>
             </div>
-            <div class="col-sm-9" id="container">
+            <div class="col-sm-10" id="container">
 
             </div>
 
@@ -39,7 +34,8 @@
         $.ajax({
             url:"{:url('getEntityHtml')}",
             data:{
-                id : id
+                id : id,
+                product_id : {$id},
             },
             type:'post',
             dataType:'html',
