@@ -10,6 +10,7 @@ use app\common\service\CinemaScreen;
 use app\common\service\Manager;
 use app\common\service\ProductRule as PRoleService;
 use app\common\service\ProductRule;
+use think\exception\ValidateException;
 use think\facade\Validate;
 use think\facade\View;
 use app\common\tool\Session;
@@ -17,11 +18,16 @@ use think\Request;
 
 class Product extends Base
 {
+    private $user = null;
+
+    public function initialize()
+    {
+        $this->user = (new Session())->getData();
+    }
+
     public function index()
     {
-        $user = (new Session())->getData();
-
-        $list = (new CinemaProduct())->getList($user['group_code'],15);
+        $list = (new CinemaProduct($this->user['group_code']))->getList(15);
 
         View::assign('list',$list);
 
@@ -38,8 +44,6 @@ class Product extends Base
     {
         $post = $request->post();
 
-        $user = (new Session())->getData();
-
         $rules = [
             'cate_id'   => 'require',
             'level_id|级别' => 'require',
@@ -54,12 +58,12 @@ class Product extends Base
         $validate = Validate::rule($rules);
 
         try{
-            if (!$validate->check($post)) throw new \Exception($validate->getError());
+            if (!$validate->check($post)) throw new ValidateException($validate->getError());
 
             $productRoleService = (new ProductRule());
 
             //获取影院相关信息
-            $cinemaInfo = (new Manager())->getInfo($user['info_id']);
+            $cinemaInfo = (new Manager())->getInfo($this->user['info_id']);
 
             //获取影厅名称
             $screenName = $post['screen_id'] ? (new CinemaScreen())->get($post['screen_id'])['name'] : '';
@@ -83,7 +87,7 @@ class Product extends Base
 
             //组装数据
             $data = [
-                'cinema_id' => $user['group_code'],
+                'cinema_id' => $this->user['group_code'],
                 'cate_id'   => $post['cate_id'],
                 'screen_id' => $post['screen_id'],
                 'level_id'  => $post['level_id'],
@@ -99,11 +103,122 @@ class Product extends Base
                 'status'    => 2,
             ];
 
-            (new CinemaProduct())->insert($data);
+            (new CinemaProduct($this->user['group_code']))->insert($data);
 
 
-        }catch (\Exception $e){
+        }catch (ValidateException $e){
             return json(['code'=>0,'msg'=>$e->getMessage().$e->getFile().$e->getLine()]);
+        }
+
+        return json(['code'=>1,'msg'=>'success']);
+    }
+
+    public function edit(Request $request)
+    {
+        $productId = $request->param('id');
+
+        $data = (new CinemaProduct($this->user['group_code']))->get($productId);
+
+        $service = new PRoleService();
+
+        //获取规则
+        $rule = $service->getByCateId($data['cate_id']);
+
+        //获取规则级别
+        $level = $service->getLevelByProductId($rule['id']);
+
+        //获取影院影厅数据
+        $screen = (new CinemaScreen())->getList($this->user['group_code']);
+
+        View::assign('rule', $rule);
+
+        View::assign('level', $level);
+
+        View::assign('screen',$screen);
+
+        View::assign('data',$data);
+
+        return view();
+    }
+
+    public function update(Request $request)
+    {
+        $post = $request->post();
+
+        $rules = [
+            'id'            => 'require',
+            'level_id|级别' => 'require',
+            'screen_id|影厅' => 'require',
+//            'sum|数量'        => 'require',
+            'name|名称'       => 'require|max:30',
+            'desc|介绍'       => 'require',
+//            '__token__'      => 'token'
+        ];
+
+
+        $validate = Validate::rule($rules);
+
+        $model = new \app\common\model\CinemaProduct();
+
+        $model->startTrans();
+        try{
+            if (!$validate->check($post)) throw new ValidateException($validate->getError());
+
+            $data = (new CinemaProduct($this->user['group_code']))->get($post['id']);
+            if ($data['status'] == 1) throw new ValidateException('请将产品下架后再编辑');
+
+            $productRoleService = (new ProductRule());
+
+            //获取影院相关信息
+            $cinemaInfo = (new Manager())->getInfo($this->user['info_id']);
+
+            //获取影厅名称
+            $screenName = $post['screen_id'] ? (new CinemaScreen())->get($post['screen_id'])['name'] : '';
+
+            //获取分类名称
+            $cateName = (new Category())->get($post['cate_id'])['name'];
+
+            //获取规则
+            $rule = $productRoleService->getByCateId($post['cate_id']);
+
+            //级别名称
+            $levelName = $post['level_id'] ? $productRoleService->getLevel($post['level_id'])['level_name'] : '';
+
+            //数量类型
+            $type = $rule['type'];
+
+            //数量
+            $sum = $rule['max_sum'];
+
+            //组装数据
+            $data = [
+                'cinema_id' => $this->user['group_code'],
+                'screen_id' => $post['screen_id'],
+                'level_id'  => $post['level_id'],
+                'cinema_name' => $cinemaInfo['name'],
+                'level_name' => $levelName,
+                'name'      => $post['name'],
+                'desc'      => $post['desc'],
+                'screen_name' => $screenName,
+                'cinema_cate_name' => $cateName,
+                'type'      => $type,
+                'select_max_sum' => $rule['select_max_sum'],
+                'sum'       => $sum,
+                'status'    => 2,
+            ];
+
+            $service = (new CinemaProduct($this->user['group_code']));
+
+            //修改需要同步到实体类
+            $service->update($post['id'],$data);
+
+            $model->commit();
+        }catch (ValidateException $e){
+            $model->rollback();
+            return json(['code'=>0,'msg'=>$e->getMessage()]);
+        } catch (\Exception $e){
+            $model->rollback();
+            return json(['code'=>0,$e->getMessage()]);
         }
 
         return json(['code'=>1,'msg'=>'success']);
@@ -112,8 +227,6 @@ class Product extends Base
     public function getFormHtml(Request $request)
     {
         $cateId = $request->param('id');
-
-        $user = (new Session())->getData();
 
         $service = new PRoleService();
 
@@ -124,7 +237,7 @@ class Product extends Base
         $level = $service->getLevelByProductId($rule['id']);
 
         //获取影院影厅数据
-        $screen = (new CinemaScreen())->getList($user['group_code']);
+        $screen = (new CinemaScreen())->getList($this->user['group_code']);
 
         View::assign('rule', $rule);
 
@@ -135,6 +248,17 @@ class Product extends Base
         View::assign('screen',$screen);
 
         return view('add');
+    }
+
+    public function changeStatus(Request $request)
+    {
+        $status = $request->post('status');
+
+        $id = $request->post('id');
+
+        (new CinemaProduct($this->user['group_code']))->changeStatus($id,$status);
+
+        return json(['code'=>1,'msg'=>'success']);
     }
 
     public function entity(Request $request)
@@ -165,18 +289,20 @@ class Product extends Base
         $validate = Validate::rule($rules);
 
         try{
-            if (!$validate->check($post)) throw new \Exception($validate->getError());
+            if (!$validate->check($post)) throw new ValidateException($validate->getError());
 
-            $service = new CinemaProduct($user['group_code']);
+            $service = new CinemaProduct($this->user['group_code']);
 
             //获取影院相关信息
-            $cinemaInfo = (new Manager())->getInfo($user['info_id']);
+            $cinemaInfo = (new Manager())->getInfo($this->user['info_id']);
 
             //获取产品相关信息
             $productInfo = $service->get($post['product_id']);
 
+            if ($productInfo['status'] == 1) throw new ValidateException('请将产品下架后再编辑');
+
             if ($user['group_code'] != $productInfo['cinema_id']){
-                throw new \Exception('你要干嘛');
+                throw new ValidateException('你要干嘛');
             }
             //组装数据
             $data = [
@@ -203,14 +329,23 @@ class Product extends Base
                 $service->updateEntity($post['id'],$data);
             }
 
-        }catch (\Exception $e){
-            return json(['code'=>0,'msg'=>$e->getMessage().$e->getFile().$e->getLine()]);
+        }catch (ValidateException $e){
+            return json(['code'=>0,'msg'=>$e->getMessage()]);
+        } catch (\Exception $e){
+            return json(['code'=>0,'操作失误,请稍后再试']);
         }
 
         return json(['code'=>1,'msg'=>'success']);
     }
 
+    public function entityDelete(Request $request)
+    {
+        $entityId = $request->post('id');
 
+        (new CinemaProduct($this->user['group_code']))->deleteEntity($entityId);
+
+        return json(['code'=>1,'msg'=>'success']);
+    }
 
     public function getEntityHtml(Request $request)
     {
@@ -218,9 +353,7 @@ class Product extends Base
 
         $productId = $request->post('product_id');
 
-        $groupCode = (new Session())->getData()['group_code'];
-
-        $service = new CinemaProduct($groupCode);
+        $service = new CinemaProduct($this->user['group_code']);
 
         $entity = $service->getEntity($id);
 
@@ -238,12 +371,7 @@ class Product extends Base
     {
         $id = $request->param('id');
 
-        $user = (new Session())->getData();
-
-        $groupCode = $user['group_code'];
-
-        $service = new CinemaProduct($groupCode);
-
+        $service = new CinemaProduct($this->user['group_code']);
 
         //获取entity下的数据
         $data = $service->setEntityShowType(true)->getEntityList($id);
@@ -282,7 +410,6 @@ class Product extends Base
             ];
         }
 
-
         return json(['code'=>1,'data'=>$list]);
     }
 
@@ -294,13 +421,4 @@ class Product extends Base
 
     }
 
-    public function changeStatus(Request $request)
-    {
-        $status = $request->post('status');
-        $id = $request->post('id');
-
-        (new CinemaProduct())->changeStatus($id,$status);
-
-        return json(['code'=>1,'msg'=>'success']);
-    }
 }

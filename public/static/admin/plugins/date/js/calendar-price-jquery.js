@@ -611,8 +611,8 @@
         html += '       <div class="bs-content bs-week-chekbox">';
         html += '           <div class="bs-lable">设置星期</div>';
         html += '           <div class="bs-options-wrapper">';
-        html += '               <i class="_checkbox" data-value="[0,1,2,3,4]">平时</i>';
-        html += '               <i class="_checkbox" data-value="[5,6]">周末</i>';
+        html += '               <i class="_checkbox" data-value="[1,2,3,4,5]">平时</i>';
+        html += '               <i class="_checkbox" data-value="[6,0]">周末</i>';
         html += '           </div>';
         html += '       </div>';
         // 当前月份设置

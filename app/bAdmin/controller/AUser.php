@@ -106,7 +106,7 @@ class AUser extends BaseController
             }
 
             if($service->existsUsername($post['username'])){
-                throw new ValidateException('该用户名已存在');
+                throw new ValidateException('账户已存在');
             }
 
             $post['pro_name'] = (new \app\common\model\Category())->get($post['pro_id'])['name'];
@@ -206,7 +206,7 @@ class AUser extends BaseController
             $service = new Service($typeCode);
 
             if ($service->existsUsername($post['username'], $post['id'])) {
-                throw new ValidateException('该用户名已存在');
+                throw new ValidateException('账户已存在');
             }
 
             $oldUser = $service->get($post['id']);

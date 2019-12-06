@@ -17,6 +17,7 @@ class CinemaProduct
 
     private $entityShowType = true;     //true 面向后台数据  false 面向用户数据
 
+
     public function __construct($groupCode = null)
     {
         $this->groupCode = $groupCode;
@@ -34,13 +35,11 @@ class CinemaProduct
         return (new \app\common\model\CinemaProduct())->where(['cinema_id'=>$this->groupCode])->find($id);
     }
 
-    public function getList($groupCode = null,$page = null)
+    public function getList($page = null)
     {
-        $groupCode = $groupCode ?? $this->groupCode;
-
         $handler = new \app\common\model\CinemaProduct();
 
-        $handler->where(['cinema_id'=>$groupCode])->order('id','desc');
+        $handler = $handler->where('cinema_id',$this->groupCode)->order('id','desc');
 
         return $page ? $handler->paginate($page) : $handler->select();
      }
@@ -48,7 +47,7 @@ class CinemaProduct
     public function insert($data)
     {
         $insert = [
-            'cinema_id'         => $data['cinema_id'],
+            'cinema_id'         => $this->groupCode,
             'cate_id'           => $data['cate_id'],
             'screen_id'         => $data['screen_id'],
             'level_id'          => $data['level_id'],
@@ -72,9 +71,43 @@ class CinemaProduct
 
     }
 
+    public function update($id,$data)
+    {
+        $update = [
+            'screen_id'         => $data['screen_id'],
+            'level_id'          => $data['level_id'],
+            'cinema_name'       => $data['cinema_name'],
+            'level_name'        => $data['level_name'],
+            'name'              => $data['name'],
+            'desc'              => $data['desc'],
+            'screen_name'       => $data['screen_name'],
+            'cinema_cate_name'  => $data['cinema_cate_name'],
+            'type'              => $data['type'],
+            'select_max_sum'    => $data['select_max_sum'  ],
+            'sum'               => $data['sum'],
+        ];
+
+        \app\common\model\CinemaProduct::where(['id'=>$id])->update($update);
+
+        //同步到entity
+        $ids = CinemaProductEntity::where(['product_id'=>$id])->column('id');
+
+        CinemaProductEntity::whereIn('id',$ids)->update([
+            'screen_id'         => $data['screen_id'],
+            'level_id'          => $data['level_id'],
+            'cinema_name'       => $data['cinema_name'],
+            'level_name'        => $data['level_name'],
+            'screen_name'       => $data['screen_name'],
+            'cate_name'         => $data['cinema_cate_name'],
+            'product_name'      => $data['name'],
+        ]);
+
+    }
+
     public function changeStatus($id,$status)
     {
-        (new \app\common\model\CinemaProduct())->modify($id,['status'=>$status]);
+
+        (new \app\common\model\CinemaProduct())->where(['cinema_id'=>$this->groupCode,'id'=>$id])->update(['status'=>$status]);
     }
 
 
@@ -82,7 +115,7 @@ class CinemaProduct
     public function insertEntity($data)
     {
         $insert = [
-            'cinema_id'         => $data['cinema_id'  ],
+            'cinema_id'         => $this->groupCode,
             'cate_id'           => $data['cate_id'    ],
             'product_id'        => $data['product_id' ],
             'screen_id'         => $data['screen_id'  ],
@@ -109,9 +142,6 @@ class CinemaProduct
     public function updateEntity($entityId,$data)
     {
         $update = [
-            'cinema_id'         => $data['cinema_id'  ],
-            'cate_id'           => $data['cate_id'    ],
-            'product_id'        => $data['product_id' ],
             'screen_id'         => $data['screen_id'  ],
             'level_id'          => $data['level_id'   ],
             'cate_name'         => $data['cate_name'  ],
@@ -124,7 +154,6 @@ class CinemaProduct
             'price_json'        => $data['price_json' ],
             'price_month'       => $data['price_month'],
             'price_year'        => $data['price_year' ],
-            'create_time'       => time(),
         ];
 
         $model = (new CinemaProductEntity());
@@ -145,5 +174,10 @@ class CinemaProduct
         $this->entityShowType ? $handler->backgroundShowData() : $handler->receptionShowData();
 
         return  $handler->where(['product_id'=>$cProductId,'cinema_id'=>$this->groupCode])->order('sort','desc')->select();
+    }
+
+    public function deleteEntity($entityId)
+    {
+        CinemaProductEntity::where(['id'=>$entityId,'cinema_id'=>$this->groupCode])->update(['delete_time'=>time()]);
     }
 }

@@ -11,9 +11,9 @@ namespace app\common\service;
 
 class CinemaScreen
 {
-    public function getList($cinema_id,$page = null)
+    public function getList($cinemaId,$page = null)
     {
-        $handler = (new \app\common\model\CinemaScreen())->backgroundShowData()->where(['cinema_id'=>$cinema_id])
+        $handler = (new \app\common\model\CinemaScreen())->backgroundShowData()->where(['cinema_id'=>$cinemaId])
             ->order('sort','desc');
 
         return $page ? $handler->paginate($page) : $handler->select();

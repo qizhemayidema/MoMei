@@ -46,6 +46,8 @@ class Login extends BaseController
 
                 if(md5($data['password'].$res['salt']) != $res['password'] )   throw new \Exception('密码错误');
 
+                if ($res['type'] != (new Cinema())->getManagerType()) throw new \Exception('账号或密码错误');
+
                 if ($res['role_id']){
                     $res['role_name'] = (new Role())->getFindRes($res['role_id'])['role_name'];
                 }else{

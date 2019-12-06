@@ -107,7 +107,7 @@ class BasicInformation extends Base
             $service = new ManagerService($typeCode);
 
             if ($service->existsUsername($post['username'], $post['id'])) {
-                throw new ValidateException('该用户名已存在');
+                throw new ValidateException('账户已存在');
             }
 
             $oldUser = $service->get($post['id']); //登录的用户信息

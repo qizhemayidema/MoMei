@@ -14,6 +14,7 @@ use app\common\service\Manager as ManagerService;
 use app\common\typeCode\manager\B as TypeDesc;
 use app\common\service\Role;
 use app\common\tool\Session;
+use app\common\typeCode\manager\B;
 use app\Request;
 use think\Validate;
 class Login extends BaseController
@@ -48,6 +49,8 @@ class Login extends BaseController
                 if ($res['status']==2) throw new \Exception('账号已被冻结');
 
                 if(md5($data['password'].$res['salt']) != $res['password'] )   throw new \Exception('密码错误');
+
+                if ($res['type'] != (new B())->getManagerType()) throw new \Exception('账号或密码错误');
 
                 if ($res['role_id']){
                     $res['role_name'] = (new Role())->getFindRes($res['role_id'])['role_name'];

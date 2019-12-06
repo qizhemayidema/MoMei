@@ -11,6 +11,8 @@ namespace app\aAdmin\controller;
 
 use app\BaseController;
 use app\common\service\Role;
+use app\common\typeCode\manager\Ying;
+use app\common\typeCode\manager\Yuan;
 use app\Request;
 use think\Validate;
 use app\common\tool\Session;
@@ -58,6 +60,10 @@ class Login extends BaseController
                 if ($res['status']==2) throw new \Exception('账号已被冻结');
 
                 if(md5($data['password'].$res['salt']) != $res['password'] )   throw new \Exception('密码错误');
+
+                if(!in_array($res['type'],[(new Ying())->getManagerType(), (new Yuan())->getManagerType()])){
+                    throw new \Exception('账号或者密码错误');
+                }
 
                 if ($res['role_id']){
                     $res['role_name'] = (new Role())->getFindRes($res['role_id'])['role_name'];
