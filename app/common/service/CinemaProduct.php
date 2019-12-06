@@ -15,7 +15,7 @@ class CinemaProduct
 {
     private $groupCode;
 
-    private $entityShowType = true;     //true 面向后台数据  false 面向用户数据
+    private $showType = true;     //true 面向后台数据  false 面向用户数据
 
 
     public function __construct($groupCode = null)
@@ -23,9 +23,9 @@ class CinemaProduct
         $this->groupCode = $groupCode;
     }
 
-    public function setEntityShowType($bool = true)
+    public function setShowType($bool = true)
     {
-        $this->entityShowType = $bool;
+        $this->showType = $bool;
 
         return $this;
     }
@@ -38,6 +38,8 @@ class CinemaProduct
     public function getList($page = null)
     {
         $handler = new \app\common\model\CinemaProduct();
+
+        $handler = $this->showType ? $handler->backgroundShowData() : $handler->receptionShowData();
 
         $handler = $handler->where('cinema_id',$this->groupCode)->order('id','desc');
 
@@ -101,6 +103,17 @@ class CinemaProduct
             'cate_name'         => $data['cinema_cate_name'],
             'product_name'      => $data['name'],
         ]);
+
+    }
+
+    public function delete($id)
+    {
+        $time = time();
+        \app\common\model\CinemaProduct::where(['cinema_id'=>$this->groupCode,'id'=>$id])->update(['delete_time'=>$time]);
+
+        //还需要删除掉 entity相关
+
+        $this->deleteEntityByProductId($id);
 
     }
 
@@ -171,7 +184,7 @@ class CinemaProduct
     {
         $handler = (new CinemaProductEntity());
 
-        $this->entityShowType ? $handler->backgroundShowData() : $handler->receptionShowData();
+        $handler = $this->showType ? $handler->backgroundShowData() : $handler->receptionShowData();
 
         return  $handler->where(['product_id'=>$cProductId,'cinema_id'=>$this->groupCode])->order('sort','desc')->select();
     }
@@ -179,5 +192,16 @@ class CinemaProduct
     public function deleteEntity($entityId)
     {
         CinemaProductEntity::where(['id'=>$entityId,'cinema_id'=>$this->groupCode])->update(['delete_time'=>time()]);
+    }
+
+    public function deleteEntityByProductId($productId)
+    {
+        CinemaProductEntity::where(['product_id'=>$productId,'cinema_id'=>$this->groupCode])->update(['delete_time'=>time()]);
+    }
+
+    public function changeEntityStatus($entityId,$status)
+    {
+        (new \app\common\model\CinemaProductEntity())->where(['cinema_id'=>$this->groupCode,'id'=>$entityId])->update(['status'=>$status]);
+
     }
 }

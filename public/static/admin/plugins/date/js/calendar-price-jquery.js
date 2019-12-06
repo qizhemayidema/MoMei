@@ -425,7 +425,7 @@
             html += '        <button class="btn bg-primary btn-confirm">确定</button>';
 
             html += '        <button class="btn bg-success btn-reset">重置</button>';
-            // html += '        <button class="btn bg-white btn-cancel">返回</button>';
+            html += '        <button class="btn bg-danger btn-danger" onclick="removeEntity()">删除</button>';
             // html += '        <button class="btn bg-success btn-batch">批量操作</button>';
 //            html += '        <button class="btn bg-white btn-cancel">取消</button>';
             html += '    </div>';

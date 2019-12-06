@@ -391,8 +391,6 @@ class Cinema extends Base
 
     }
 
-
-
     public function getArea(Request $request)
     {
         $id = $request->post('p_id');

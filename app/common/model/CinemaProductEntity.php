@@ -67,6 +67,7 @@ class CinemaProductEntity extends Model implements BasicImpl,ShowImpl
         $alias = $alias ? $alias . '.' : '';
 
         return $this->where([
+            $alias . 'status' => 1,
             $alias . 'delete_time' => 0,
         ]);
     }

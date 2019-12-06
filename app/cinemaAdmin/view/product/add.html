@@ -105,7 +105,9 @@
                     layer.msg(data.msg, {icon: 5})
                 } else {
                     layer.msg('提交成功', {icon: 1})
-                    window.location.href = "{:url('index')}"
+                    setTimeout(function(){
+                        window.location.href = "{:url('index')}"
+                    },700)
                 }
             }
         })

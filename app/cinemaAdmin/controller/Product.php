@@ -27,7 +27,7 @@ class Product extends Base
 
     public function index()
     {
-        $list = (new CinemaProduct($this->user['group_code']))->getList(15);
+        $list = (new CinemaProduct($this->user['group_code']))->setShowType(true)->getList(15);
 
         View::assign('list',$list);
 
@@ -224,6 +224,15 @@ class Product extends Base
         return json(['code'=>1,'msg'=>'success']);
     }
 
+    public function delete(Request $request)
+    {
+        $id = $request->post('id');
+
+        (new CinemaProduct($this->user['group_code']))->delete($id);
+
+        return json(['code'=>1,'msg'=>'success']);
+    }
+
     public function getFormHtml(Request $request)
     {
         $cateId = $request->param('id');
@@ -260,6 +269,7 @@ class Product extends Base
 
         return json(['code'=>1,'msg'=>'success']);
     }
+
 
     public function entity(Request $request)
     {
@@ -299,7 +309,7 @@ class Product extends Base
             //获取产品相关信息
             $productInfo = $service->get($post['product_id']);
 
-            if ($productInfo['status'] == 1) throw new ValidateException('请将产品下架后再编辑');
+//            if ($productInfo['status'] == 1) throw new ValidateException('请将产品下架后再编辑');
 
             if ($user['group_code'] != $productInfo['cinema_id']){
                 throw new ValidateException('你要干嘛');
@@ -326,6 +336,10 @@ class Product extends Base
             if (!$post['id'] || $post['id'] == 0){   //修改
                 $service->insertEntity($data);
             }else{
+                //获取实体状态
+                $entity = $service->getEntity($post['id']);
+                if ($entity['status'] == 1) throw new ValidateException('请将产品实体下架后再编辑');
+
                 $service->updateEntity($post['id'],$data);
             }
 
@@ -374,7 +388,7 @@ class Product extends Base
         $service = new CinemaProduct($this->user['group_code']);
 
         //获取entity下的数据
-        $data = $service->setEntityShowType(true)->getEntityList($id);
+        $data = $service->setShowType(true)->getEntityList($id);
 
         //获取数量最大值
         $product = $service->get($id);
@@ -419,6 +433,16 @@ class Product extends Base
 
         return json(['code' => 1, 'data' => $list]);
 
+    }
+
+    public function changeEntityStatus(Request $request)
+    {
+        $status = $request->post('status');
+        $id = $request->post('id');
+
+        (new CinemaProduct($this->user['group_code']))->changeEntityStatus($id,$status);
+
+        return json(['code'=>1,'msg'=>'success']);
     }
 
 }
