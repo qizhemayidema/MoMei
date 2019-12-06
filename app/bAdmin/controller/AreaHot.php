@@ -49,8 +49,6 @@ class AreaHot extends Base
 
                 $addIds = array_diff(array_unique($post['adddata']),$cityAllIds);
 
-
-
                 if(!empty($addIds)){
                     $addCity = [];
                     foreach ($addIds as $v){
@@ -60,8 +58,7 @@ class AreaHot extends Base
                 }
                 $areaConfigService->updateInAll($post['adddata'],['is_hot'=>1]);
             }
-
-
+            
             return json(['code'=>1,'msg'=>'success']);
         }catch (\Exception $e){
             return json(['code'=>0,'msg'=>$e->getMessage()]);
