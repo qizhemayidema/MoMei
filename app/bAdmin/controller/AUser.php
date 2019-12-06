@@ -36,12 +36,22 @@ class AUser extends BaseController
     {
         $id = $request->param('id');
 
-        $service = (new Service());
+        $service = (new Service(new CinemaTypeDesc()));
 
 
         $user = $service->get($id);
 
         $info = $service->getInfo($user['info_id']);
+
+        //查询影院关联总数等
+        $countResult  = $service->getCinemaAmountCount($info['info_id']);
+
+        //查询直系影院总数
+        $getLinealCinemaAmountCount = $service->getLinealCinemaAmountCount($info['info_id']);
+
+        View::assign('getLinealCinemaAmountCount',$getLinealCinemaAmountCount);
+
+        View::assign('countResult',$countResult);
 
         View::assign('user',$user);
 

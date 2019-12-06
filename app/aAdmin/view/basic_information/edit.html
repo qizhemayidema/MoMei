@@ -16,23 +16,31 @@
 <script type="text/javascript" src="__STATIC__/js/plugins/layui/2.5.4/layui.js"></script>
 
 <style>
-    body{padding:10px;}
-    .pick-area{display: inline-block;}
-    .a{float:left;width:100%;margin:10px;}
-    .a a{float:left;margin:10px;}
-    .a input{float:left;width:400px;padding:10px;margin:10px;outline-color: gold;}
-    h1{text-align: center;}
-    h3{margin:5px;color:#333;}
-    h4{margin:5px;color:#666;padding:0 20px;font-weight: 100;}
-    .blank{float:left;width:50%;height:400px;background:cyan;border-top:1px solid #333;margin-top:50px;}
-    .blank2{float:left;width:50%;height:400px;background:lightpink;border-top:1px solid #333;padding-top:50px;}
-    .box{width:100%;overflow: hidden;background:lightgreen;}
+    .table-responsive {margin-left: 107px;}
 </style>
 
 <link href="__STATIC__/plugins/area/pick-pcc.min.1.0.1.css" rel="stylesheet" type="text/css">
 <script type="text/javascript" src="__STATIC__/plugins/area/pick-pcc.min.1.0.1.js" charset="utf-8"></script>
 
 <div class="col-sm-12">
+    <div class="ibox-content p-xl">
+        <div class="table-responsive m-t">
+            <h4 style="">统计信息</h4>
+            <br/>
+            <strong>影院总数：</strong> {$countResult.0.cinemaCount}
+            <br/>
+            <br/>
+            <strong>直属影院数：</strong> {$getLinealCinemaAmountCount}
+            <br/>
+            <br/>
+            <strong>银幕数（厅数量）总数：</strong> {$countResult.0.screenSum}
+            <br/>
+            <br/>
+            <strong>座位总数：</strong> {$countResult.0.seatSum}
+            <br/>
+            <br/>
+        </div>
+    </div>
     <div class="ibox-content">
         <form action="" class="form-horizontal">
             {:token_field()}
@@ -220,34 +228,6 @@
                 <label class="col-sm-2 control-label">年人均票价</label>
                 <div class="col-sm-8">
                     <input name="ticket_price_for_average" required value="{$managerInfoData.ticket_price_for_average}" type="text" class="form-control">
-                </div>
-            </div>
-
-            <hr>
-            <div class="form-group">
-                <label class="col-sm-2 control-label">影院总数</label>
-                <div class="col-sm-8">
-                    <input  disabled value="{$countResult.0.cinemaCount}" type="text" class="form-control">
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="col-sm-2 control-label">直属影院数</label>
-                <div class="col-sm-8">
-                    <input  disabled value="{$getLinealCinemaAmountCount}" type="text" class="form-control">
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label class="col-sm-2 control-label">银幕数（厅数量）总数</label>
-                <div class="col-sm-8">
-                    <input  disabled value="{$countResult.0.screenSum}" type="text" class="form-control">
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label class="col-sm-2 control-label">座位总数</label>
-                <div class="col-sm-8">
-                    <input  disabled value="{$countResult.0.seatSum}" type="text" class="form-control">
                 </div>
             </div>
 
