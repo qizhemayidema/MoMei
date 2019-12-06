@@ -407,6 +407,8 @@ class Product extends Base
                 'price_month' => $value['price_month'],
                 'price_year'  => $value['price_year'],
                 'sort'        => $value['sort'],
+                'status'      => $value['status'],
+
             ];
             $k ++ ;
         }
@@ -421,6 +423,7 @@ class Product extends Base
                 'price_month' => '',
                 'price_year'  => '',
                 'sort'        => '',
+                'status'      => 0,
             ];
         }
 

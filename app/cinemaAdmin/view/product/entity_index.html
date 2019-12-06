@@ -59,12 +59,21 @@
                 var defaultData = [];
 
                 $(data.data).each(function(k,v){
-                    defaultData.push({
+                    console.log(v)
+                    var obj = {
                         text: v.entity_name,
                         href: '#parent1',
                         // tags: ['4'],
                         id : v.id,
-                    })
+                    }
+
+                    if (v.status == 1){
+                        obj.color = "#23c6c8"
+                    }else if (v.status == 2){
+                        obj.color = "#ed5565"
+                    }
+
+                    defaultData.push(obj)
                 })
 
                 $('#treeview1').treeview({
