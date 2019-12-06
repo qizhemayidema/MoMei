@@ -75,6 +75,10 @@ class BoxOffice
         return $this->pageLength ? $handler->paginate($this->pageLength) : $handler->select();
     }
 
+    public function get($id){
+        return (new BoxOfficeStatisticsModel())->get($id);
+    }
+
     public function insert($data)
     {
         if (!($this->boxOfficeImpl instanceof BoxOfficeImpl)){
@@ -91,5 +95,41 @@ class BoxOffice
             'create_time'=>time()
         ];
         return (new BoxOfficeStatisticsModel())->add($addData);
+    }
+
+    public function update($data){
+        $updateData = [
+            'value'=>$data['value'],
+        ];
+
+        return (new BoxOfficeStatisticsModel())->modify($data['id'],$updateData);
+    }
+
+    public function delete($id)
+    {
+        return (new BoxOfficeStatisticsModel())->rm($id);
+    }
+
+    /**
+     * 查询某影院今日有没有添加过票房收入  观影人数
+     * @param $groupCode
+     * @return array|null|\think\Model
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     * $data times
+     */
+    public function getToday($groupCode)
+    {
+        if (!($this->boxOfficeImpl instanceof BoxOfficeImpl)){
+            throw new \Exception('请在构造器中传入'.boxOfficeImpl::class);
+        }
+
+        $handler = new BoxOfficeStatisticsModel();
+
+        $todayStart = strtotime(date('Y-m-d').' 00:00:00');
+        $todayEnd = strtotime(date('Y-m-d').' 23:59:59');
+
+        return  $handler->where('type',$this->boxOfficeImpl->getBoxType())->where('cinema_id',$groupCode)->where('create_time','between',[$todayStart,$todayEnd])->find();
     }
 }

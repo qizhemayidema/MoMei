@@ -28,7 +28,7 @@ class BoxOfficeIncome extends Base
             $boxOfficeService = $boxOfficeService->setWhere('tou_id',$info['group_code']);
         }
 
-        $data = $boxOfficeService->order('create_time','desc')->pageLength(20)->getList();
+        $data = $boxOfficeService->order('create_time','desc')->pageLength(15)->getList();
 
         View::assign('data',$data);
 

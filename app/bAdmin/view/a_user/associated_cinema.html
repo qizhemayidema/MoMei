@@ -1,0 +1,46 @@
+{include file="common/source"}
+<div class="col-sm-12">
+    <div class="ibox float-e-margins">
+        <div class="ibox-title">
+            <h5>
+            </h5>
+        </div>
+        <div class="ibox-content">
+            <div class="example">
+
+                <table class="table table-bordered table-hover text-center">
+                    <thead>
+                    <tr class="text-center">
+                        <th style="text-align: center;">影院名称</th>
+                        <th style="text-align: center;">行业名称</th>
+                        <th style="text-align: center;">所在地区</th>
+                        <th style="text-align: center;">操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {foreach $data as $key=>$value}
+                    <tr>
+                        <td style="text-align: center;">{$value.name}</td>
+                        <td>{$value.pro_name}</td>
+                        <td>{$value.province}</td>
+                        <td>
+                            <div class="btn-group">
+                                <button data-toggle="dropdown" class="btn btn-primary dropdown-toggle" aria-expanded="false">更多 <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a href="{:url('cinema/info',['id'=>$value.id])}">查看详情</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                    {/foreach}
+                    </tbody>
+                </table>
+            </div>
+            <div style="text-align: center">
+                {$data|raw}
+            </div>
+        </div>
+    </div>
+</div>

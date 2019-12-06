@@ -5,9 +5,9 @@
             <div class="example">
                 <div class="ibox-title">
                     <h5>
-                        {if condition="$pidResult[0]['level'] eq 3"}
-                        <button type="button" onclick="window.location.href='{:url('index',['pid'=>$threePid])}'"
-                                class="btn btn-w-m btn-primary">返回上一级
+                        {if condition="$pidResult[0]['level'] eq 1"}
+                        <button type="button" onclick="window.location.href='{:url('AreaHot/edit')}'"
+                                class="btn btn-w-m btn-primary">编辑热门城市
                         </button>
                         {elseif condition="$pidResult[0]['level'] eq 2"}
                         <button type="button" onclick="window.location.href='{:url('index')}'"
