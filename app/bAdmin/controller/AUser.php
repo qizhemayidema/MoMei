@@ -12,6 +12,7 @@ use app\common\typeCode\cate\ABus as ABusTypeDesc;
 use app\common\typeCode\cate\ABus;
 use app\common\typeCode\manager\Yuan;
 use app\common\typeCode\manager\Ying;
+use app\common\typeCode\manager\Cinema as CinemaTypeDesc;
 use think\exception\ValidateException;
 use think\Validate;
 use think\facade\View;
@@ -241,6 +242,27 @@ class AUser extends BaseController
         (new Service())->delete($id);
 
         return json(['code'=>1,'msg'=>'success']);
+    }
+
+    public function associatedCinema(Request $request)
+    {
+        $param = $request->param();
+
+        //查询属于该资源方下的影院
+        $managerService = '';
+        $field = '';
+        $managerService = new Service(new CinemaTypeDesc());
+        if($param['type']==2){  //院线
+            $field = 'yuan_id';
+        }elseif ($param['type']==3){ //影投
+            $field = 'tou_id';
+        }
+
+        $data = $managerService->setWhere('info',$field,$param['id'])->showType(true)->pageLength()->getInfoList();
+
+        View::assign('data',$data);
+
+        return view();
     }
 
     public function changeStatus(Request $request)

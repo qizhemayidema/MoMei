@@ -55,7 +55,7 @@
                                 <ul class="dropdown-menu">
                                     <li><a href="{:url('info',['id'=>$value.id])}">查看详情</a>
                                     </li>
-                                    <li><a href="buttons.html#" class="font-bold">关联影院</a>
+                                    <li><a href="{:url('associatedCinema',['id'=>$value.group_code,'type'=>$value.type])}" class="font-bold">关联影院</a>
                                     </li>
                                 </ul>
                             </div>

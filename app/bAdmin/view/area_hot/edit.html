@@ -1,0 +1,127 @@
+{include file="common/source"}
+<style>
+    .alert{
+        display: block;
+        float: left;
+        margin-right: 15px;
+    }
+    .ibox-title{
+        border: none;
+    }
+</style>
+<div class="col-sm-12">
+    <div class="ibox-content">
+        <form action="" class="form-horizontal">
+            <div class="form-group">
+                <label class="col-sm-1 control-label">地区</label>
+                <div class="col-sm-3">
+                    <select class="form-control m-b" id="province" onchange="changeCity();">
+                        <option >请选择</option>
+                        {foreach $area as $key => $value}
+                        <option value="{$value.id}">{$value.name}</option>
+                        {/foreach}
+                    </select>
+                </div>
+                <div class="col-sm-3">
+                    <select class="form-control m-b" id="city"  >
+                        <option >请选择</option>
+                    </select>
+                </div>
+                <button type="button" class="btn btn-w-m btn-success" onclick="addCity();">添加</button>
+            </div>
+            {:token_field()}
+            <div class="col-sm-15">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>热门城市</h5>
+                    </div>
+                    <div class="ibox-content">
+                        {foreach $data as $key=>$v}
+                        <div class="alert alert-success alert-dismissable">
+                            <input type="hidden" name="updata[]" value="{$v.id}">
+                            <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+                            {$v.name}
+                        </div>
+                        {/foreach}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-15">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>新增热门城市</h5>
+                    </div>
+                    <div class="ibox-content" id="add-hot-city">
+
+                    </div>
+                </div>
+            </div>
+
+            <div style="clear: both"></div>
+            <div class="col-sm-5" style="margin-left: 5px; ">
+                <button type="button" class="btn btn-w-m btn-success" onclick="save()">编辑</button>
+            </div>
+        </form>
+    </div>
+
+</div>
+
+<script>
+
+    var save = function () {
+        var formData = new FormData($('form')[0]);
+
+        $.ajax({
+            url: "{:url('update')}",
+            type: 'post',
+            dataType: 'json',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (data) {
+                // console.log(data);return
+                if (data.code == 0) {
+                    layer.msg(data.msg, {icon: 5})
+                } else {
+                    layer.msg('修改成功', {icon: 1});
+                    setTimeout(function () {
+                        window.location.href = "{:url('edit')}";
+                    }, 600)
+                }
+            }
+        })
+    }
+
+    function changeCity(obj) {
+        var id = $("#province option:selected").val();
+        $.ajax({
+            url: "{:url('getAreaByPid')}",
+            type: 'post',
+            dataType: 'json',
+            data: {"id":id},
+            contentType: false,
+            success: function (data) {
+                var len = data.res.length;
+                var content = '';
+                for (var a=0; a<len; a++) {
+                    var cid = data.res[a]['id'];
+                    var name = data.res[a]['name'];
+                    content+= "<option value="+cid+">"+name+"</option>";
+                }
+                $("#city").html(content);
+            }
+        })
+    }
+    
+    function addCity() {
+        var id = $("#city option:selected").val();
+        var name = $("#city option:selected").text();
+        var btn = "<div class='alert alert-info alert-dismissable' >" +
+            "<input type='hidden' name='adddata[]' value='"+id+"'>" +
+            "<button aria-hidden='true' data-dismiss='alert' class='close' type='button'>×</button>" +
+            name +
+            "</div>";
+        $("#add-hot-city").append(btn);
+    }
+</script>

@@ -1,0 +1,54 @@
+{include file="common/source"}
+<div class="col-sm-12">
+    <div class="ibox-content">
+        <form action="" class="form-horizontal">
+            {:token_field()}
+            <input type="hidden" name="id" value="{$data.id}">
+            <div class="form-group">
+                <label class="col-sm-2 control-label">观影人数</label>
+                <div class="col-sm-8">
+                    <input name="value" required  value="{$data.value}" type="text" class="form-control">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">日期</label>
+                <div class="col-sm-8">
+                    <input disabled required   value="{$data.create_time|date='Y-m-d'}" type="text" class="form-control">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label"></label>
+                <div class="col-sm-5">
+                    <button type="button" class="btn btn-w-m btn-success" onclick="save()">编辑</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+</div>
+
+<script>
+
+    var save = function () {
+        var formData = new FormData($('form')[0]);
+
+        $.ajax({
+            url: "{:url('update')}",
+            type: 'post',
+            dataType: 'json',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (data) {
+                if (data.code == 0) {
+                    layer.msg(data.msg, {icon: 5})
+                } else {
+                    layer.msg('添加成功', {icon: 1});
+                    setTimeout(function () {
+                        window.location.href = "{:url('index')}";
+                    }, 600)
+                }
+            }
+        })
+    }
+</script>
