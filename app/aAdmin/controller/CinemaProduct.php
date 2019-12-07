@@ -18,37 +18,99 @@ use app\common\service\Manager as ManagerService;
 
 class CinemaProduct extends Base
 {
-    public function index()
+    public function index(Request $request)
     {
-        $info = (new Session())->getData();
+        $cinemaId = $request->param('cinema_id');   //接收影院的id(group_code)
 
-        $managerService = new ManagerService(new CinemaTypeDesc());
+        $productResult = (new CinemaProductService($cinemaId))->setShowType(true)->getList(15);  //该资源方下全部影院的全部产品
 
-        $field = '';
-        if($info['type']==2){  //院线
-            $field = 'yuan_id';
-        }elseif ($info['type']==3){ //影投
-            $field = 'tou_id';
-        }
-
-        $cinemaData = $managerService->setWhere('info',$field,$info['group_code'])->getInfoList(); //属于该影投/院线的影院
-
-        $cinemaIds = array_column($cinemaData,'group_code');   //这里是所属的全部影院的group_code
-
-        $productResult = (new CinemaProductService())->getList(15);  //该资源方下全部影院的全部产品
+        View::assign('group_code',$cinemaId);
 
         View::assign('data',$productResult);
 
         return view();
     }
 
-    public function getDetail(Request $request)
+    public function info(Request $request)
     {
-        $productId = $request->param('product_id');
+        $id = $request->param('id');
 
-        //查询此产品id去查询实体产品 价格等
-        $productEntityResult = 1;
+        $groupCode = $request->param('group_code');
+
+        View::assign('group_code',$groupCode);
+
+        View::assign('id',$id);
 
         return view();
+    }
+
+    public function getEntityHtml(Request $request)
+    {
+        $id = $request->post('id');
+
+        $productId = $request->post('product_id');
+
+        $groupCode = $request->post('group_code');
+
+        $service = new CinemaProductService($groupCode);
+
+        $entity = $service->getEntity($id);
+
+//        dump($entity);die;
+
+        View::assign('data',$entity);
+
+        View::assign('product_id',$productId);
+
+        return \view('entity');
+
+    }
+
+    public function getEntityList(Request $request)
+    {
+        $id = $request->param('id');
+
+        $groupCode = $request->post('group_code');
+
+        $service = new CinemaProductService($groupCode);
+
+        //获取entity下的数据
+        $data = $service->setShowType(true)->getEntityList($id);
+
+        //获取数量最大值
+        $product = $service->get($id);
+
+        $maxListNum = $product['sum'];
+
+        $k = 0;
+
+        $list = [];
+
+        foreach ($data as $key => $value){
+            $list[] = [
+                'id'    => $value['id'],
+                'entity_name' => $value['entity_name'],
+                'price_json' => $value['price_json'],
+                'price_month' => $value['price_month'],
+                'price_year'  => $value['price_year'],
+                'sort'        => $value['sort'],
+            ];
+            $k ++ ;
+        }
+
+        $length = $maxListNum - $k;
+
+        for($i = 0;$i < $length;$i ++){
+            $list[] = [
+                'id'    => 0,
+                'entity_name' => '暂未添加',
+                'price_json'  => '',
+                'price_month' => '',
+                'price_year'  => '',
+                'sort'        => '',
+            ];
+        }
+
+        return json(['code'=>1,'data'=>$list]);
     }
 }
