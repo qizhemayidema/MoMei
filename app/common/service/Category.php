@@ -79,6 +79,7 @@ class Category
             'type'  => $cateImpl->getCateType(),
             'name'  => $data['name'],
             'order_num' => $data['order_num'],
+            'icon'  => $data['icon'] ?? '',
             'is_show' => $data['is_show'] ?? 1,
         ];
 
@@ -98,6 +99,7 @@ class Category
             'name'  => $data['name'],
             'p_id'  => $data['p_id'] ?? 0,
             'order_num' => $data['order_num'],
+            'icon'  => $data['icon'] ?? '',
             'is_show' => $data['is_show'] ?? 1,
         ];
 

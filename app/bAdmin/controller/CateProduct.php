@@ -4,6 +4,7 @@ declare (strict_types = 1);
 namespace app\bAdmin\controller;
 
 use app\common\service\Category;
+use app\common\tool\Upload;
 use app\common\typeCode\cate\Product as TypeDesc;
 use think\facade\Validate;
 use think\facade\View;
@@ -44,6 +45,7 @@ class CateProduct extends Base
             $validate = Validate::rule([
                 'name|分类名称'  => 'require|max:60',
                 'order_num|排序' => 'require|between:0,999',
+                'icon|图标'      => 'require',
                 '__token__'     => 'token',
             ]);
 
@@ -85,6 +87,7 @@ class CateProduct extends Base
                 'id'       => 'require',
                 'name|分类名称'  => 'require|max:60',
                 'order_num|排序' => 'require|between:0,999',
+                'icon|图标'      => 'require',
                 '__token__'     => 'token',
             ]);
 
@@ -107,4 +110,11 @@ class CateProduct extends Base
 
         return json(['code'=>1,'msg'=>'success']);
     }
+
+    public function uploadPic()
+    {
+        return json((new Upload())->uploadOnePic('product/'));
+    }
+
+
 }
