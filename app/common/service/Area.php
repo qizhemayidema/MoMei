@@ -12,6 +12,10 @@ namespace app\common\service;
 class Area
 {
 
+    public function getListByIds(array $ids)
+    {
+        return (new \app\common\model\Area())->whereIn('id',$ids)->select();
+    }
     /**
      * @param int $pId  父级id
      * @param bool $page    是否分页 true 分 false 否
