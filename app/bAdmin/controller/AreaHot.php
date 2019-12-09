@@ -36,13 +36,12 @@ class AreaHot extends Base
             if(empty($post['updata'])){
                 $post['updata'][] = 0;
             }
-
             $areaConfigService = new AreaConfigService();
             $areaService = new Area();
             $areaConfigService->updateNotInAll($post['updata'],['is_hot'=>2]);
 
             if(!empty($post['adddata'])){
-                $cityAll = $areaConfigService->getList(); //表中全部的存储过的城市
+                $cityAll = (new AreaConfigService())->getList(); //表中全部的存储过的城市
 
                 $cityAllIds = [];
 

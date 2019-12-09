@@ -13,7 +13,7 @@ class AreaConfig
 {
     private $pageLength = null;
 
-    private $idIn = [];
+//    private $idIn = [];
 
     public function pageLength($pageLength = 15)
     {
@@ -31,7 +31,7 @@ class AreaConfig
     public function getList($hot = false)
     {
         $handler = new AreaConfigModel();
-        $handler = $handler->alias('a')->join('area b','a.city_id=b.id');
+//        $handler = $handler->alias('a')->join('area b','a.city_id=b.id');
         if($hot) $handler = $handler->where('is_hot',$hot);
 //        $this->idIn && $handler = $handler->whereIn('id',$this->idIn);
         return $this->pageLength ? $handler->paginate($this->pageLength) : $handler->select()->toArray();

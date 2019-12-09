@@ -38,9 +38,9 @@
                     <div class="ibox-content">
                         {foreach $data as $key=>$v}
                         <div class="alert alert-success alert-dismissable">
-                            <input type="hidden" name="updata[]" value="{$v.id}">
+                            <input type="hidden" name="updata[]" value="{$v.city_id}">
                             <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
-                            {$v.name}
+                            {$v.city_name}
                         </div>
                         {/foreach}
                     </div>
@@ -80,7 +80,7 @@
             processData: false,
             contentType: false,
             success: function (data) {
-                // console.log(data);return
+                console.log(data);return
                 if (data.code == 0) {
                     layer.msg(data.msg, {icon: 5})
                 } else {
