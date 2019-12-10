@@ -10,6 +10,8 @@ namespace app\common\service;
 
 
 use app\common\model\CinemaProductEntity;
+use app\common\model\CinemaProductEntityStatus;
+use app\common\model\Product;
 
 class CinemaProduct
 {
@@ -203,5 +205,49 @@ class CinemaProduct
     {
         (new \app\common\model\CinemaProductEntity())->where(['cinema_id'=>$this->groupCode,'id'=>$entityId])->update(['status'=>$status]);
 
+    }
+
+/*------------------------------------------------------------------------------*/
+
+    //如果不存在此日期则插入
+    public function insertEntityDayPriceStatus($entityId,$dayJsonStr)
+    {
+        $insert = [];
+
+        $date = (new CinemaProductEntityStatus())->where(['entity_id'=>$entityId])->column('date');
+
+        $arr = json_decode($dayJsonStr,true);
+
+        foreach ($arr as $key => $value){
+            if (!in_array(strtotime($value['date']),$date)){
+                $insert[] = [
+                    'entity_id' => $entityId,
+                    'date'      => strtotime($value['date']),
+                    'status'    => 0,
+                ];
+            }
+        }
+
+        (new CinemaProductEntityStatus())->insertAll($insert);
+    }
+
+
+    public function updateEntityDayPriceStatus($entityId,$dayJsonStr)
+    {
+        $insert = [];
+
+        (new CinemaProductEntity())->where(['entity_id'=>$entityId])->column('');
+
+        $arr = json_decode($dayJsonStr);
+
+        foreach ($arr as $key => $value){
+            $insert[] = [
+                'entity_id' => $entityId,
+                'date'      => strtotime($value['date']),
+                'status'    => 0,
+            ];
+        }
+
+        (new CinemaProductEntityStatus())->insertAll($insert);
     }
 }

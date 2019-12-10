@@ -4,6 +4,7 @@ declare (strict_types = 1);
 namespace app\cinemaAdmin\controller;
 
 use app\BaseController;
+use app\common\model\CinemaProductEntity;
 use app\common\service\Category;
 use app\common\service\CinemaProduct;
 use app\common\service\CinemaScreen;
@@ -295,9 +296,11 @@ class Product extends Base
             'price_day|日价格'       => 'require',
         ];
 
-
         $validate = Validate::rule($rules);
 
+        $model = new CinemaProductEntity();
+
+        $model->startTrans();
         try{
             if (!$validate->check($post)) throw new ValidateException($validate->getError());
 
@@ -334,18 +337,27 @@ class Product extends Base
             ];
 
             if (!$post['id'] || $post['id'] == 0){   //修改
-                $service->insertEntity($data);
+
+                $id = $service->insertEntity($data);
+
             }else{
                 //获取实体状态
+                $id = $post['id'];
                 $entity = $service->getEntity($post['id']);
                 if ($entity['status'] == 1) throw new ValidateException('请将产品实体下架后再编辑');
 
                 $service->updateEntity($post['id'],$data);
             }
 
+            //插入实体类状态
+            $service->insertEntityDayPriceStatus($id,$data['price_json']);
+
+            $model->commit();
         }catch (ValidateException $e){
+            $model->rollback();
             return json(['code'=>0,'msg'=>$e->getMessage()]);
         } catch (\Exception $e){
+            $model->rollback();
             return json(['code'=>0,'操作失误,请稍后再试']);
         }
 

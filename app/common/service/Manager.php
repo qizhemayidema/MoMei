@@ -90,6 +90,16 @@ class Manager
         return $this;
     }
 
+    public function getManagerImpl()
+    {
+        return $this->managerImpl;
+    }
+
+    public function getShowType()
+    {
+        return $this->showType;
+    }
+
     /**
      * 包含info 全部返回
      * @return mixed
@@ -192,7 +202,7 @@ class Manager
         $managerModel = (new ManagerModel());
         $managerInfoModel = new ManagerInfoModel();
 
-        if ($this->managerImpl->isInfo()){
+        if ($this->managerImpl->isInfo() && !isset($data['info_id'])){
 
             $data['add_time'] = $createTime;
             $data['create_time'] = $createTime;
@@ -205,6 +215,8 @@ class Manager
                 if (isset($data[$value])) $insert[$value] = $data[$value];
             }
 
+            $insert['type'] = $this->managerImpl->getManagerType();
+
             $managerInfoModel->insert($insert);
 
             $infoId = $managerInfoModel->getLastInsID();
@@ -215,9 +227,12 @@ class Manager
         $managerModel->insert($managerInsert);
 
         $data['id'] = $managerModel->getLastInsID();
-        if ($this->managerImpl->isInfo()){
+
+        if ($this->managerImpl->isInfo() && !isset($data['info_id'])){
 
             $id = $managerModel->getLastInsID();
+
+            $managerInfoModel->where(['id'=>$infoId])->update(['master_user_id'=>$id]);
 
             if (!isset($data['group_code'])){
                 $data['group_code'] = $id;
