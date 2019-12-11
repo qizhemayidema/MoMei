@@ -1,23 +1,24 @@
 {include file="common/source"}
-<div class="col-sm-12">
+<body class="gray-bg">
+    <div class="wrapper wrapper-content animated fadeInRight">
+        <div class="row">
+            <div class="col-sm-12">
     <div class="ibox float-e-margins">
         <div class="ibox-title">
-            <h5>
                 <button type="button" onclick="window.location.href='{:url('add')}'"
                         class="btn btn-w-m btn-primary">添加用户
                 </button>
-            </h5>
-        </div>
+        </div>    
         <div class="ibox-content">
             <div class="example">
 
-                <table class="table table-bordered table-hover text-center">
+                <table class="table table-bordered table-hover text-center fz13">
                     <thead>
                     <tr class="text-center">
                         <th style="text-align: center;">用户名</th>
                         <th style="text-align: center;">角色</th>
                         <th style="text-align: center;">当前状态</th>
-                        <th style="text-align: center;">操作</th>
+                        <th style="text-align: center;width:180px;">操作</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -47,9 +48,9 @@
                             {/if}
                         </td>
                         <td>
-                            <button onclick="window.location.href='{:url('edit',['userid'=>$value.id])}'" class="btn btn-info" type="button"><i class="fa fa-paste"></i> 编辑</button>
+                            <button onclick="window.location.href='{:url('edit',['userid'=>$value.id])}'" class="btn btn-info btn-xs" type="button"><i class="fa fa-paste"></i> 编辑</button>
                             {if condition="$value.role_id neq 0"}
-                            <button onclick="removeArticle(this,'{$value.id}')" class="btn btn-danger" type="button"><i class="fa fa-remove"></i> <span class="bold">删除</span></button>
+                            <button onclick="removeArticle(this,'{$value.id}')" class="btn btn-danger btn-xs" type="button"><i class="fa fa-remove"></i> <span class="bold">删除</span></button>
                             {/if}
                         </td>
                     </tr>
@@ -64,6 +65,9 @@
         </div>
     </div>
 </div>
+</div>
+</div>
+</body>
 <script>
 
     checkStatus = function(_this,change_status,id) {
