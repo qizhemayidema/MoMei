@@ -1,10 +1,10 @@
 {include file="common/source"}
-<div class="col-sm-12">
+<body class="gray-bg">
+    <div class="wrapper wrapper-content animated fadeInRight">
+        <div class="row">
+            <div class="col-sm-12">
     <div class="ibox float-e-margins">
-        <div class="ibox-content">
-            <div class="example">
-                <div class="ibox-title">
-                    <h5>
+        <div class="ibox-title">
                         {if condition="$pidResult[0]['level'] eq 1"}
                         <button type="button" onclick="window.location.href='{:url('AreaHot/edit')}'"
                                 class="btn btn-w-m btn-primary">编辑热门城市
@@ -14,14 +14,16 @@
                                 class="btn btn-w-m btn-primary">返回上一级
                         </button>
                         {/if}
-                    </h5>
                 </div>
+        <div class="ibox-content">
+            <div class="example">
+                
                 <table class="table table-bordered table-hover text-center" >
                     <thead>
                     <tr class="text-center">
                         <th style="text-align: center;">地区</th>
                         <th style="text-align: center;">其余选项</th>
-                        <th style="text-align: center;">操作</th>
+                        <th style="text-align: center;width:180px;">操作</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -29,17 +31,20 @@
                     <tr>
                         <td style="text-align: center;">{$value.name}</td>
                         <td>
+
                             {foreach $attrResult as $key1 => $value1}
+
                                 {if condition="$value1.object_id eq $value.id"}
-                                    {$value1.cate_name}:{$value1.attr_value}&nbsp;&nbsp;
+                          <span class="label label-info btn-xs">{$value1.attr_value}</span>
+
                                 {/if}
                             {/foreach}
                         </td>
                         <td>
                             {if condition="$value.level neq 2"}
-                            <button onclick="window.location.href='{:url('index',['pid'=>$value.id])}'" class="btn btn-info" type="button"><i class="fa fa-paste"></i> 查看下级</button>
+                            <button onclick="window.location.href='{:url('index',['pid'=>$value.id])}'" class="btn btn-info btn-xs" type="button"><i class="fa fa-paste"></i> 查看下级</button>
                             {/if}
-                            <button onclick="window.location.href='{:url('edit',['city_id'=>$value.id])}'" class="btn btn-info" type="button"><i class="fa fa-paste"></i> 编辑</button>
+                            <button onclick="window.location.href='{:url('edit',['city_id'=>$value.id])}'" class="btn btn-info btn-xs" type="button"><i class="fa fa-paste"></i> 编辑</button>
                         </td>
                     </tr>
                     {/foreach}
@@ -50,3 +55,6 @@
         </div>
     </div>
 </div>
+</div>
+</div>
+</body>

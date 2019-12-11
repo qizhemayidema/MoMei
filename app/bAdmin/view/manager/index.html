@@ -1,69 +1,73 @@
 {include file="common/source"}
-<div class="col-sm-12">
-    <div class="ibox float-e-margins">
-        <div class="ibox-title">
-            <h5>
-                <button type="button" onclick="window.location.href='{:url('add')}'"
-                        class="btn btn-w-m btn-primary">添加用户
-                </button>
-            </h5>
-        </div>
-        <div class="ibox-content">
-            <div class="example">
+            <body class="gray-bg">
+    <div class="wrapper wrapper-content animated fadeInRight">
+        <div class="row">
+            <div class="col-sm-12">
+                <!-- <div class="ibox float-e-margins"> -->
+                <div class="ibox ">
+                    <div class="ibox-title">
+                        <button type="button" onclick="window.location.href='{:url('add')}'"
+                                class="btn btn-w-m btn-primary">添加用户
+                        </button>
+                    </div>
+                    <div class="ibox-content">
+                        <div class="example ">
+                            <table class="table table-striped table-bordered table-hover dataTables-example fz13">
+                                <thead>
+                                <tr>
+                                    <th>用户名</th>
+                                    <th>角色</th>
+                                    <th>当前状态</th>
+                                    <th>操作</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {foreach $userData as $key => $value}
+                                <tr>
+                                    <td>{$value.username}</td>
+                                    <td>
+                                        {if condition="$value.role_id eq 0"}
+                                        超级管理员
+                                        {else}
+                                        {$value.role_name}
+                                        {/if}
+                                    </td>
+                                    <td>
+                                        {if condition="$value.role_id neq 0"}
+                                        {if $value.status == 1}
+                                        <a href="javascript:void(0);" onclick="checkStatus(this,2,'{$value.id}')">
+                                            <span class="label label-info">正常</span>
+                                        </a>
+                                        {else}
+                                        <a href="javascript:void(0);" onclick="checkStatus(this,1,'{$value.id}')">
+                                            <span class="label label-danger">冻结</span>
+                                        </a>
+                                        {/if}
+                                        {else}
+                                        <span class="label label-info">正常</span>
+                                        {/if}
+                                    </td>
+                                    <td width="180">
+                                        <button onclick="window.location.href='{:url('edit',['userid'=>$value.id])}'" class="btn btn-info btn-xs" type="button"><i class="fa fa-paste"></i> 编辑</button>
+                                        {if condition="$value.role_id neq 0"}
+                                        <button onclick="removeArticle(this,'{$value.id}')" class="btn btn-danger btn-xs" type="button"><i class="fa fa-remove"></i> <span class="bold">删除</span></button>
+                                        {/if}
+                                    </td>
+                                </tr>
+                                {/foreach}
+                                </tbody>
+                            </table>
+                        </div>
+                        <div style="text-align: center">
+                            {$userData|raw}
+                        </div>
 
-                <table class="table table-bordered table-hover text-center">
-                    <thead>
-                    <tr class="text-center">
-                        <th style="text-align: center;">用户名</th>
-                        <th style="text-align: center;">角色</th>
-                        <th style="text-align: center;">当前状态</th>
-                        <th style="text-align: center;">操作</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {foreach $userData as $key => $value}
-                    <tr>
-                        <td style="text-align: center;">{$value.username}</td>
-                        <td>
-                            {if condition="$value.role_id eq 0"}
-                            超级管理员
-                            {else}
-                            {$value.role_name}
-                            {/if}
-                        </td>
-                        <td>
-                            {if condition="$value.role_id neq 0"}
-                                {if $value.status == 1}
-                                <a href="javascript:void(0);" onclick="checkStatus(this,2,'{$value.id}')">
-                                    <p><span class="label label-info">正常</span></p>
-                                </a>
-                                {else}
-                                <a href="javascript:void(0);" onclick="checkStatus(this,1,'{$value.id}')">
-                                    <p><span class="label label-danger">冻结</span></p>
-                                </a>
-                                {/if}
-                            {else}
-                                <p><span class="label label-info">正常</span></p>
-                            {/if}
-                        </td>
-                        <td>
-                            <button onclick="window.location.href='{:url('edit',['userid'=>$value.id])}'" class="btn btn-info" type="button"><i class="fa fa-paste"></i> 编辑</button>
-                            {if condition="$value.role_id neq 0"}
-                            <button onclick="removeArticle(this,'{$value.id}')" class="btn btn-danger" type="button"><i class="fa fa-remove"></i> <span class="bold">删除</span></button>
-                            {/if}
-                        </td>
-                    </tr>
-                    {/foreach}
-                    </tbody>
-                </table>
+                    </div>
+                </div>
             </div>
-            <div style="text-align: center">
-                {$userData|raw}
-            </div>
-
         </div>
     </div>
-</div>
+</body>
 <script>
 
     checkStatus = function(_this,change_status,id) {

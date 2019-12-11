@@ -24,7 +24,14 @@
         background: #00a2d4;
     }
 </style>
-<div class="col-sm-12">
+<body class="gray-bg">
+    <div class="wrapper wrapper-content animated fadeInRight">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="ibox-title">
+                    <h5>添加新闻 <small></small></h5>
+
+                </div>
     <div class="ibox float-e-margins">
         <div class="ibox-content">
             <div class="example">
@@ -75,9 +82,9 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-3 control-label"></label>
-                        <div class="col-sm-5">
-                            <button type="button" class="btn btn-w-m btn-success" onclick="save()">添加</button>
+                        <div class="col-sm-4 col-sm-offset-2">
+                            <button class="btn btn-primary" type="button"  onclick="save()">保存内容</button>
+                            <button class="btn btn-white" type="button" onclick="javascript:history.go(-1)">取消</button>
                         </div>
                     </div>
                 </form>
@@ -86,6 +93,9 @@
         </div>
     </div>
 </div>
+</div>
+</div>
+</body>
 <script>
     // 头像缩略图
     $('#pic').change(function() {

@@ -14,6 +14,6 @@ class Index extends Base
 
     public function firstPage()
     {
-
+        return view();
     }
 }

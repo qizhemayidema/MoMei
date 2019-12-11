@@ -1,17 +1,18 @@
 {include file="common/source"}
-<div class="col-sm-12">
+<body class="gray-bg">
+    <div class="wrapper wrapper-content animated fadeInRight">
+        <div class="row">
+            <div class="col-sm-12">
     <div class="ibox float-e-margins">
         <div class="ibox-title">
-            <h5>
                 <button type="button" onclick="window.location.href='{:url('add')}'"
                         class="btn btn-w-m btn-primary">添加 院线/影投
                 </button>
-            </h5>
-        </div>
+         </div>   
         <div class="ibox-content">
             <div class="example">
 
-                <table class="table table-bordered table-hover text-center">
+                <table class="table table-bordered table-hover text-center fz13">
                     <thead>
                     <tr class="text-center">
                         <th style="text-align: center;">名称</th>
@@ -19,7 +20,7 @@
                         <th style="text-align: center;">所属行业</th>
                         <th style="text-align: center;">账号</th>
                         <th style="text-align: center;">当前状态</th>
-                        <th style="text-align: center;">操作</th>
+                        <th style="text-align: center;width:250px;">操作</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -47,10 +48,10 @@
                             {/if}
                         </td>
                         <td>
-                            <button onclick="window.location.href='{:url('edit',['id'=>$value.id])}'" class="btn btn-info" type="button"><i class="fa fa-paste"></i> 编辑</button>
-                            <button onclick="removeArticle(this,'{$value.id}')" class="btn btn-danger" type="button"><i class="fa fa-remove"></i> <span class="bold">删除</span></button>
+                            <button onclick="window.location.href='{:url('edit',['id'=>$value.id])}'" class="btn btn-info btn-xs" type="button"><i class="fa fa-paste"></i> 编辑</button>
+                            <button onclick="removeArticle(this,'{$value.id}')" class="btn btn-danger btn-xs" type="button"><i class="fa fa-remove"></i> <span class="bold">删除</span></button>
                             <div class="btn-group">
-                                <button data-toggle="dropdown" class="btn btn-primary dropdown-toggle" aria-expanded="false">更多 <span class="caret"></span>
+                                <button data-toggle="dropdown" class="btn btn-primary btn-xs dropdown-toggle" aria-expanded="false">更多 <span class="caret"></span>
                                 </button>
                                 <ul class="dropdown-menu">
                                     <li><a href="{:url('info',['id'=>$value.id])}">查看详情</a>
@@ -69,6 +70,9 @@
         </div>
     </div>
 </div>
+</div>
+</div>
+</body>
 <script>
 
 

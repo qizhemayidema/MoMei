@@ -12,7 +12,10 @@
     .blank2{float:left;width:50%;height:400px;background:lightpink;border-top:1px solid #333;padding-top:50px;}
     .box{width:100%;overflow: hidden;background:lightgreen;}
 </style>
-<div class="col-sm-12">
+<body class="gray-bg">
+    <div class="wrapper wrapper-content animated fadeInRight">
+        <div class="row">
+            <div class="col-sm-12">
     <div class="">
         <form action="" class="form-horizontal">
             {:token_field()}
@@ -81,15 +84,17 @@
 
 
             <div class="form-group">
-                <label class="col-sm-3 control-label"></label>
-                <div class="col-sm-5">
-                    <button type="button" class="btn btn-w-m btn-success" onclick="save()">提交</button>
+                <div class="col-sm-4 col-sm-offset-2">
+                    <button class="btn btn-primary" type="button"  onclick="save()">保存内容</button>
                 </div>
             </div>
         </form>
     </div>
 
 </div>
+</div>
+</div>
+</body>
 
 <script>
 

@@ -9,7 +9,14 @@
         border: none;
     }
 </style>
-<div class="col-sm-12">
+<body class="gray-bg">
+    <div class="wrapper wrapper-content animated fadeInRight">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="ibox-title">
+                    <h5>编辑热门城市 <small></small></h5>
+
+                </div>
     <div class="ibox-content">
         <form action="" class="form-horizontal">
             <div class="form-group">
@@ -58,15 +65,17 @@
                 </div>
             </div>
 
-            <div style="clear: both"></div>
             <div class="col-sm-5" style="margin-left: 5px; ">
-                <button type="button" class="btn btn-w-m btn-success" onclick="save()">编辑</button>
+                <button class="btn btn-primary" type="button"  onclick="save()">保存内容</button>
             </div>
+            <div style="clear: both"></div>
         </form>
     </div>
 
 </div>
-
+</div>
+</div>
+</body>
 <script>
 
     var save = function () {
@@ -80,7 +89,6 @@
             processData: false,
             contentType: false,
             success: function (data) {
-                console.log(data);return
                 if (data.code == 0) {
                     layer.msg(data.msg, {icon: 5})
                 } else {
