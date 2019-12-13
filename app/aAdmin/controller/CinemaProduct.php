@@ -22,7 +22,7 @@ class CinemaProduct extends Base
     {
         $cinemaId = $request->param('cinema_id');   //接收影院的id(group_code)
 
-        $productResult = (new CinemaProductService($cinemaId))->setShowType(true)->getList(15);  //该资源方下全部影院的全部产品
+        $productResult = (new CinemaProductService($cinemaId))->setShowType(true)->getEntityList(15);  //该资源方下全部影院的全部产品
 
         View::assign('group_code',$cinemaId);
 

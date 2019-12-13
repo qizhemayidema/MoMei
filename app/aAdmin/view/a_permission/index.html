@@ -59,24 +59,26 @@
 <script>
 
     var removeArticle = function (_this, article_id) {
-        $.ajax({
-            url: "{:url('delete')}",
-            type: 'post',
-            dataType: 'json',
-            data:{
-                rule_id : article_id,
-            },
-            success: function (data) {
-                if (data.code == 0) {
-                    layer.msg(data.msg,{icon: 5})
-                } else {
-                    layer.msg('删除成功',{icon : 1})
-                    setTimeout(function () {
-                        window.location.href = "{:url('index')}";
-                    }, 600)
-                }
+        layer.confirm('您确定删除吗',function() {
+            $.ajax({
+                url: "{:url('delete')}",
+                type: 'post',
+                dataType: 'json',
+                data: {
+                    rule_id: article_id,
+                },
+                success: function (data) {
+                    if (data.code == 0) {
+                        layer.msg(data.msg, {icon: 5})
+                    } else {
+                        layer.msg('删除成功', {icon: 1})
+                        setTimeout(function () {
+                            window.location.href = "{:url('index')}";
+                        }, 600)
+                    }
 
-            }
+                }
+            })
         })
     }
 
