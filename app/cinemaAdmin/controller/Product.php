@@ -26,11 +26,30 @@ class Product extends Base
         $this->user = (new Session())->getData();
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $list = (new CinemaProduct($this->user['group_code']))->setShowType(true)->getList(15);
+        $service = new CinemaProduct($this->user['group_code']);
 
-        View::assign('list',$list);
+        $cateId = $request->param('cate_id') ?? 0;
+
+        $levelId = ($cateId && $request->param('level_id')) ? $request->param('level_id') : 0;
+
+        $screenId = $request->param('screen_id') ?? 0;
+
+
+        //获取所有分类
+        $cate = (new Category())->getList((new \app\common\typeCode\cate\Product()));
+
+        //获取所有级别
+        $level = $cateId ? (new ProductRule())->getLevelList($cateId) : [];
+
+        //获取所有影厅
+        $screen = (new CinemaScreen())->getList($this->user['group_code']);
+
+        //获取entity下的数据
+        $list = $service->setShowType(true)->getEntityList(15,$cateId,$levelId,$screenId);
+
+        View::assign(compact('list','cateId','levelId','screenId','cate','level','screen'));
 
         return view();
 
@@ -38,6 +57,9 @@ class Product extends Base
 
     public function add()
     {
+        $list = (new Category())->getList((new \app\common\typeCode\cate\Product()));
+
+        View::assign('cate',$list);
         return view('add_index');
     }
 
@@ -45,26 +67,45 @@ class Product extends Base
     {
         $post = $request->post();
 
+        $user = (new Session())->getData();
+
         $rules = [
-            'cate_id'   => 'require',
+            'cate_id|分类' => 'require',
             'level_id|级别' => 'require',
             'screen_id|影厅' => 'require',
-//            'sum|数量'        => 'require',
-            'name|名称'       => 'require|max:30',
-            'desc|介绍'       => 'require',
-//            '__token__'      => 'token'
+            'price_month|包月价格' => 'require|float|max:10',
+            'price_year|包年价格'   => 'require|float|max:10',
+            'price_json|每日价格'   => 'require',
+            'desc'          => 'require',
         ];
-
 
         $validate = Validate::rule($rules);
 
+        $model = new CinemaProductEntity();
+
+        $service = new CinemaProduct($this->user['group_code']);
+
+
+        //获取规则
+        $rule = (new ProductRule())->getByCateId($post['cate_id']);
+
+        //数量
+        $sum = $rule['max_sum'];
+
+        $model->startTrans();
         try{
             if (!$validate->check($post)) throw new ValidateException($validate->getError());
 
-            $productRoleService = (new ProductRule());
+
+            //判断数量
+            $count = $service->getSum($post['cate_id'],$post['level_id'],$post['screen_id']);
+            if ($count + 1 > $sum) throw new ValidateException('无法修改,组合数量达到上限');
+
 
             //获取影院相关信息
             $cinemaInfo = (new Manager())->getInfo($this->user['info_id']);
+
+
 
             //获取影厅名称
             $screenName = $post['screen_id'] ? (new CinemaScreen())->get($post['screen_id'])['name'] : '';
@@ -72,43 +113,41 @@ class Product extends Base
             //获取分类名称
             $cateName = (new Category())->get($post['cate_id'])['name'];
 
-            //获取规则
-            $rule = $productRoleService->getByCateId($post['cate_id']);
 
             //级别名称
-            $levelName = $post['level_id'] ? $productRoleService->getLevel($post['level_id'])['level_name'] : '';
-
-            //数量类型
-            $type = $rule['type'];
-
-            //数量
-            $sum = $rule['max_sum'];
-
-
+            $levelName = $post['level_id'] ?  (new ProductRule())->getLevel($post['level_id'])['level_name'] : '';
 
             //组装数据
             $data = [
-                'cinema_id' => $this->user['group_code'],
+                'cinema_id' => $user['group_code'],
                 'cate_id'   => $post['cate_id'],
                 'screen_id' => $post['screen_id'],
                 'level_id'  => $post['level_id'],
+                'cate_name' => $cateName,
                 'cinema_name' => $cinemaInfo['name'],
-                'level_name' => $levelName,
-                'name'      => $post['name'],
-                'desc'      => $post['desc'],
                 'screen_name' => $screenName,
-                'cinema_cate_name' => $cateName,
-                'type'      => $type,
-                'select_max_sum' => $rule['select_max_sum'],
-                'sum'       => $sum,
-                'status'    => 2,
+                'level_name' => $levelName,
+                'entity_name'  => $post['entity_name'],
+                'price_json' => $post['price_json'],
+                'price_month' => $post['price_month'],
+                'price_year' => $post['price_year'],
+                'desc'       => $post['desc'],
             ];
 
-            (new CinemaProduct($this->user['group_code']))->insert($data);
 
+            $id = $service->insert($data);
 
+            //插入实体类状态
+            $service->insertEntityDayPriceStatus($id,$data['price_json']);
+
+            $model->commit();
         }catch (ValidateException $e){
-            return json(['code'=>0,'msg'=>$e->getMessage().$e->getFile().$e->getLine()]);
+            $model->rollback();
+            return json(['code'=>0,'msg'=>$e->getMessage()]);
+        } catch (\Exception $e){
+            $model->rollback();
+
+            return json(['code'=>0,'msg'=>'操作失误,请稍后再试']);
         }
 
         return json(['code'=>1,'msg'=>'success']);
@@ -116,10 +155,12 @@ class Product extends Base
 
     public function edit(Request $request)
     {
-        $productId = $request->param('id');
+        $entityId = $request->param('id');
 
-        $data = (new CinemaProduct($this->user['group_code']))->get($productId);
+        //获取数据
+        $data = (new CinemaProduct($this->user['group_code']))->getEntity($entityId);
 
+//        dump($data->toArray());die; 包月 包年 每日
         $service = new PRoleService();
 
         //获取规则
@@ -150,8 +191,10 @@ class Product extends Base
             'id'            => 'require',
             'level_id|级别' => 'require',
             'screen_id|影厅' => 'require',
-//            'sum|数量'        => 'require',
-            'name|名称'       => 'require|max:30',
+            'price_month|包月价格' => 'require|float',
+            'price_year|包年价格'   => 'require|float',
+            'price_json|每日价格'   => 'require',
+            'entity_name|名称'       => 'require|max:30',
             'desc|介绍'       => 'require',
 //            '__token__'      => 'token'
         ];
@@ -160,12 +203,13 @@ class Product extends Base
         $validate = Validate::rule($rules);
 
         $model = new \app\common\model\CinemaProduct();
+        $service = (new CinemaProduct($this->user['group_code']));
 
         $model->startTrans();
         try{
             if (!$validate->check($post)) throw new ValidateException($validate->getError());
 
-            $data = (new CinemaProduct($this->user['group_code']))->get($post['id']);
+            $data = $service->getEntity($post['id']);
             if ($data['status'] == 1) throw new ValidateException('请将产品下架后再编辑');
 
             $productRoleService = (new ProductRule());
@@ -179,32 +223,38 @@ class Product extends Base
             //获取分类名称
             $cateName = (new Category())->get($post['cate_id'])['name'];
 
-            //获取规则
-            $rule = $productRoleService->getByCateId($post['cate_id']);
 
             //级别名称
             $levelName = $post['level_id'] ? $productRoleService->getLevel($post['level_id'])['level_name'] : '';
 
-            //数量类型
-            $type = $rule['type'];
+            //获取规则
+            $rule = $productRoleService->getByCateId($data['cate_id']);
 
             //数量
             $sum = $rule['max_sum'];
 
+            //判断数量
+            $count = $service->getSum($data['cate_id'],$post['level_id'],$post['screen_id'],[$post['id']]);
+            if ($count + 1 > $sum) throw new ValidateException('无法修改,组合数量达到上限');
+
+
             //组装数据
             $data = [
-                'cinema_id' => $this->user['group_code'],
+//                'cinema_id' => $this->user['group_code'],
                 'screen_id' => $post['screen_id'],
                 'level_id'  => $post['level_id'],
                 'cinema_name' => $cinemaInfo['name'],
                 'level_name' => $levelName,
-                'name'      => $post['name'],
+                'entity_name'      => $post['entity_name'],
                 'desc'      => $post['desc'],
                 'screen_name' => $screenName,
-                'cinema_cate_name' => $cateName,
-                'type'      => $type,
-                'select_max_sum' => $rule['select_max_sum'],
-                'sum'       => $sum,
+                'cate_name' => $cateName,
+                'price_json'        => $post['price_json' ],
+                'price_month'       => $post['price_month'],
+                'price_year'        => $post['price_year' ],
+//                'type'      => $type,
+//                'select_max_sum' => $rule['select_max_sum'],
+//                'sum'       => $sum,
                 'status'    => 2,
             ];
 
@@ -219,7 +269,7 @@ class Product extends Base
             return json(['code'=>0,'msg'=>$e->getMessage()]);
         } catch (\Exception $e){
             $model->rollback();
-            return json(['code'=>0,$e->getMessage()]);
+            return json(['code'=>0,'msg'=>$e->getMessage()]);
         }
 
         return json(['code'=>1,'msg'=>'success']);
@@ -263,7 +313,6 @@ class Product extends Base
     public function changeStatus(Request $request)
     {
         $status = $request->post('status');
-
         $id = $request->post('id');
 
         (new CinemaProduct($this->user['group_code']))->changeStatus($id,$status);
@@ -272,176 +321,6 @@ class Product extends Base
     }
 
 
-    public function entity(Request $request)
-    {
-        $id = $request->param('id');
-
-        View::assign('id',$id);
-
-        return view('entity_index');
-    }
-
-    public function entitySave(Request $request)
-    {
-        $post = $request->post();
-
-        $user = (new Session())->getData();
-
-        $rules = [
-            'id'   => 'require',
-            'product_id' => 'require',
-            'entity_name|名称' => 'require|max:64',
-            'price_month|包月价格' => 'require',
-            'price_year|名称'     => 'require',
-            'price_day|日价格'       => 'require',
-        ];
-
-        $validate = Validate::rule($rules);
-
-        $model = new CinemaProductEntity();
-
-        $model->startTrans();
-        try{
-            if (!$validate->check($post)) throw new ValidateException($validate->getError());
-
-            $service = new CinemaProduct($this->user['group_code']);
-
-            //获取影院相关信息
-            $cinemaInfo = (new Manager())->getInfo($this->user['info_id']);
-
-            //获取产品相关信息
-            $productInfo = $service->get($post['product_id']);
-
-//            if ($productInfo['status'] == 1) throw new ValidateException('请将产品下架后再编辑');
-
-            if ($user['group_code'] != $productInfo['cinema_id']){
-                throw new ValidateException('你要干嘛');
-            }
-            //组装数据
-            $data = [
-                'cinema_id' => $user['group_code'],
-                'cate_id'   => $productInfo['cate_id'],
-                'product_id' => $productInfo['id'],
-                'screen_id' => $productInfo['screen_id'],
-                'level_id'  => $productInfo['level_id'],
-                'cate_name' => $productInfo['cinema_cate_name'],
-                'cinema_name' => $cinemaInfo['name'],
-                'screen_name' => $productInfo['screen_name'],
-                'level_name' => $productInfo['level_name'],
-                'product_name' => $productInfo['name'],
-                'entity_name'  => $post['entity_name'],
-                'sort'      => $post['sort'],
-                'price_json' => $post['price_day'],
-                'price_month' => $post['price_month'],
-                'price_year' => $post['price_year'],
-            ];
-
-            if (!$post['id'] || $post['id'] == 0){   //修改
-
-                $id = $service->insertEntity($data);
-
-            }else{
-                //获取实体状态
-                $id = $post['id'];
-                $entity = $service->getEntity($post['id']);
-                if ($entity['status'] == 1) throw new ValidateException('请将产品实体下架后再编辑');
-
-                $service->updateEntity($post['id'],$data);
-            }
-
-            //插入实体类状态
-            $service->insertEntityDayPriceStatus($id,$data['price_json']);
-
-            $model->commit();
-        }catch (ValidateException $e){
-            $model->rollback();
-            return json(['code'=>0,'msg'=>$e->getMessage()]);
-        } catch (\Exception $e){
-            $model->rollback();
-            return json(['code'=>0,'操作失误,请稍后再试']);
-        }
-
-        return json(['code'=>1,'msg'=>'success']);
-    }
-
-    public function entityDelete(Request $request)
-    {
-        $entityId = $request->post('id');
-
-        (new CinemaProduct($this->user['group_code']))->deleteEntity($entityId);
-
-        return json(['code'=>1,'msg'=>'success']);
-    }
-
-    public function getEntityHtml(Request $request)
-    {
-        $id = $request->post('id');
-
-        $productId = $request->post('product_id');
-
-        $service = new CinemaProduct($this->user['group_code']);
-
-        $entity = $service->getEntity($id);
-
-//        dump($entity);die;
-
-        View::assign('data',$entity);
-
-        View::assign('product_id',$productId);
-
-        return \view('entity');
-
-    }
-
-    public function getEntityList(Request $request)
-    {
-        $id = $request->param('id');
-
-        $service = new CinemaProduct($this->user['group_code']);
-
-        //获取entity下的数据
-        $data = $service->setShowType(true)->getEntityList($id);
-
-        //获取数量最大值
-        $product = $service->get($id);
-
-        $maxListNum = $product['sum'];
-
-        $k = 0;
-
-        $list = [];
-
-        foreach ($data as $key => $value){
-            $list[] = [
-                'id'    => $value['id'],
-                'entity_name' => $value['entity_name'],
-                'price_json' => $value['price_json'],
-                'price_month' => $value['price_month'],
-                'price_year'  => $value['price_year'],
-                'sort'        => $value['sort'],
-                'status'      => $value['status'],
-
-            ];
-            $k ++ ;
-        }
-
-        $length = $maxListNum - $k;
-
-        for($i = 0;$i < $length;$i ++){
-            $list[] = [
-                'id'    => 0,
-                'entity_name' => '暂未添加',
-                'price_json'  => '',
-                'price_month' => '',
-                'price_year'  => '',
-                'sort'        => '',
-                'status'      => 0,
-            ];
-        }
-
-        return json(['code'=>1,'data'=>$list]);
-    }
-
     public function getCateList()
     {
         $list = (new Category())->getList((new \app\common\typeCode\cate\Product()));
@@ -449,15 +328,4 @@ class Product extends Base
         return json(['code' => 1, 'data' => $list]);
 
     }
-
-    public function changeEntityStatus(Request $request)
-    {
-        $status = $request->post('status');
-        $id = $request->post('id');
-
-        (new CinemaProduct($this->user['group_code']))->changeEntityStatus($id,$status);
-
-        return json(['code'=>1,'msg'=>'success']);
-    }
-
 }

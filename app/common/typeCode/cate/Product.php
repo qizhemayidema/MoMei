@@ -13,7 +13,7 @@ class Product implements \app\common\typeCode\CateImpl,\app\common\typeCode\Cach
 {
     private $type = 6;
 
-    private $Level = 2;
+    private $Level = 1;
 
     private $masterId = 0;
 

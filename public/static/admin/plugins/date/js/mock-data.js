@@ -12,9 +12,8 @@ function createMockData () {
   for (var i = 0; i < 100; i++) {
     mockData.push({
       date: date.getFullYear() + '-' + fd(i % 12 + 1) + '-' + fd(randNum(30)),
-      dayPrice: "100.00",
-      monthPrice: "90.00",
-      yearPrice: "99.00"
+      dayPrice: "99999",
+      sold:"无档期"
     });
   }
   return mockData

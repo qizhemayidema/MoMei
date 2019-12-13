@@ -15,14 +15,14 @@
 
             <input type="hidden" name="id" value="{$cate.id}">
             <input type="hidden" name="icon" value="{$cate.icon}">
-            <div class="form-group">
+            <div class="form-group" style="display: none;">
                 <label class="col-sm-2 control-label">所属节点</label>
                 <div class="col-sm-8">
                     <select class="form-control m-b" name="p_id" id="">
-                        <option value="0">顶级节点</option>
+                        <option value="0" selected>顶级节点</option>
                         {foreach $list as $key => $value}
                         {if $value.id != $cate.id}
-                        <option value="{$value.id}" {if $value.id == $cate.p_id} selected {/if}>{$value.name}</option>
+                        <option value="{$value.id}">{$value.name}</option>
                         {/if}
                         {/foreach}
                     </select>

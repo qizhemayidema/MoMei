@@ -37,111 +37,20 @@ class CinemaProduct
         return (new \app\common\model\CinemaProduct())->where(['cinema_id'=>$this->groupCode])->find($id);
     }
 
-    public function getList($page = null)
-    {
-        $handler = new \app\common\model\CinemaProduct();
-
-        $handler = $this->showType ? $handler->backgroundShowData() : $handler->receptionShowData();
-
-        $handler = $handler->where('cinema_id',$this->groupCode)->order('id','desc');
-
-        return $page ? $handler->paginate($page) : $handler->select();
-     }
-
     public function insert($data)
     {
         $insert = [
             'cinema_id'         => $this->groupCode,
-            'cate_id'           => $data['cate_id'],
-            'screen_id'         => $data['screen_id'],
-            'level_id'          => $data['level_id'],
-            'cinema_name'       => $data['cinema_name'],
-            'level_name'        => $data['level_name'],
-            'name'              => $data['name'],
-            'desc'              => $data['desc'],
-            'screen_name'       => $data['screen_name'],
-            'cinema_cate_name'  => $data['cinema_cate_name'],
-            'type'              => $data['type'],
-            'select_max_sum'    => $data['select_max_sum'  ],
-            'sum'               => $data['sum'],
-            'status'            => $data['status'],
-            'create_time'       => time(),
-        ];
-        $model = (new \app\common\model\CinemaProduct());
-
-        $model->insert($insert);
-
-        return $model->getLastSql();
-
-    }
-
-    public function update($id,$data)
-    {
-        $update = [
-            'screen_id'         => $data['screen_id'],
-            'level_id'          => $data['level_id'],
-            'cinema_name'       => $data['cinema_name'],
-            'level_name'        => $data['level_name'],
-            'name'              => $data['name'],
-            'desc'              => $data['desc'],
-            'screen_name'       => $data['screen_name'],
-            'cinema_cate_name'  => $data['cinema_cate_name'],
-            'type'              => $data['type'],
-            'select_max_sum'    => $data['select_max_sum'  ],
-            'sum'               => $data['sum'],
-        ];
-
-        \app\common\model\CinemaProduct::where(['id'=>$id])->update($update);
-
-        //同步到entity
-        $ids = CinemaProductEntity::where(['product_id'=>$id])->column('id');
-
-        CinemaProductEntity::whereIn('id',$ids)->update([
-            'screen_id'         => $data['screen_id'],
-            'level_id'          => $data['level_id'],
-            'cinema_name'       => $data['cinema_name'],
-            'level_name'        => $data['level_name'],
-            'screen_name'       => $data['screen_name'],
-            'cate_name'         => $data['cinema_cate_name'],
-            'product_name'      => $data['name'],
-        ]);
-
-    }
-
-    public function delete($id)
-    {
-        $time = time();
-        \app\common\model\CinemaProduct::where(['cinema_id'=>$this->groupCode,'id'=>$id])->update(['delete_time'=>$time]);
-
-        //还需要删除掉 entity相关
-
-        $this->deleteEntityByProductId($id);
-
-    }
-
-    public function changeStatus($id,$status)
-    {
-
-        (new \app\common\model\CinemaProduct())->where(['cinema_id'=>$this->groupCode,'id'=>$id])->update(['status'=>$status]);
-    }
-
-
-    /*-----------------------------------------------------*/
-    public function insertEntity($data)
-    {
-        $insert = [
-            'cinema_id'         => $this->groupCode,
             'cate_id'           => $data['cate_id'    ],
-            'product_id'        => $data['product_id' ],
             'screen_id'         => $data['screen_id'  ],
             'level_id'          => $data['level_id'   ],
             'cate_name'         => $data['cate_name'  ],
             'cinema_name'       => $data['cinema_name'],
             'screen_name'       => $data['screen_name'],
             'level_name'        => $data['level_name' ],
-            'product_name'      => $data['product_name'],
             'entity_name'       => $data['entity_name'],
-            'sort'              => $data['sort'       ],
+            'desc'              => $data['desc'],
+//            'sort'              => $data['sort'       ],
             'price_json'        => $data['price_json' ],
             'price_month'       => $data['price_month'],
             'price_year'        => $data['price_year' ],
@@ -152,60 +61,88 @@ class CinemaProduct
         $model->insert($insert);
 
         return $model->getLastInsID();
+
     }
 
-    public function updateEntity($entityId,$data)
+    public function update($id,$data)
     {
         $update = [
-            'screen_id'         => $data['screen_id'  ],
-            'level_id'          => $data['level_id'   ],
-            'cate_name'         => $data['cate_name'  ],
-            'cinema_name'       => $data['cinema_name'],
-            'screen_name'       => $data['screen_name'],
-            'level_name'        => $data['level_name' ],
-            'product_name'      => $data['product_name'],
-            'entity_name'       => $data['entity_name'],
-            'sort'              => $data['sort'       ],
+            'screen_id' => $data['screen_id'],
+            'level_id'  => $data['level_id'],
+            'cinema_name' => $data['cinema_name'],
+            'level_name' => $data['level_name'],
+            'entity_name'      => $data['entity_name'],
+            'desc'      => $data['desc'],
+            'screen_name' => $data['screen_name'],
+            'cate_name' => $data['cate_name'],
             'price_json'        => $data['price_json' ],
             'price_month'       => $data['price_month'],
             'price_year'        => $data['price_year' ],
+            'status'    => 2,
         ];
 
-        $model = (new CinemaProductEntity());
-
-        $model->where(['id'=>$entityId])->update($update);
+        \app\common\model\CinemaProductEntity::where(['id'=>$id])->update($update);
 
     }
+
+    public function delete($entityId)
+    {
+        CinemaProductEntity::where(['id'=>$entityId,'cinema_id'=>$this->groupCode])->update(['delete_time'=>time()]);
+    }
+
+    public function changeStatus($id,$status)
+    {
+
+        (new \app\common\model\CinemaProductEntity())->where(['cinema_id'=>$this->groupCode,'id'=>$id])->update(['status'=>$status]);
+    }
+
+
+    //检查某个组合的数量
+    public function getSum($cate_id,$level_id = 0,$screen_id = 0,$exceptId = [])
+    {
+        $where = [
+            'cinema_id' => $this->groupCode,
+            'cate_id' => $cate_id,
+        ];
+
+        $level_id && $where['level_id'] = $level_id;
+        $screen_id && $where['screen_id'] = $screen_id;
+
+        return (new CinemaProductEntity())->backgroundShowData()->where($where)->whereNotIn('id',$exceptId)->count();
+
+    }
+
+
+    /*-----------------------------------------------------*/
+
 
     public function getEntity($entityId)
     {
         return (new \app\common\model\CinemaProductEntity())->where(['cinema_id'=>$this->groupCode])->find($entityId);
     }
 
-    public function getEntityList($cProductId)
+    public function getEntityList($page = null,$cateId = null,$levelId = null,$screenId = null)
     {
         $handler = (new CinemaProductEntity());
 
+        $where = [];
+
+        $cateId && $where['cate_id'] = $cateId;
+
+        $levelId && $where['level_id'] = $levelId;
+
+        $screenId && $where['screen_id'] = $screenId;
+
         $handler = $this->showType ? $handler->backgroundShowData() : $handler->receptionShowData();
 
-        return  $handler->where(['product_id'=>$cProductId,'cinema_id'=>$this->groupCode])->order('sort','desc')->select();
+        $where && $handler = $handler->where($where);
+
+        $handler = $handler->where(['cinema_id'=>$this->groupCode])->order('sort','desc');
+
+
+        return $page ? $handler->paginate($page) : $handler->select();
     }
 
-    public function deleteEntity($entityId)
-    {
-        CinemaProductEntity::where(['id'=>$entityId,'cinema_id'=>$this->groupCode])->update(['delete_time'=>time()]);
-    }
-
-    public function deleteEntityByProductId($productId)
-    {
-        CinemaProductEntity::where(['product_id'=>$productId,'cinema_id'=>$this->groupCode])->update(['delete_time'=>time()]);
-    }
-
-    public function changeEntityStatus($entityId,$status)
-    {
-        (new \app\common\model\CinemaProductEntity())->where(['cinema_id'=>$this->groupCode,'id'=>$entityId])->update(['status'=>$status]);
-
-    }
 
 /*------------------------------------------------------------------------------*/
 

@@ -34,7 +34,7 @@ class ProductRule
     {
         $insert = [
             'cate_id' => $data['cate_id'],
-            'is_open' => $data['is_open'] ?? 0,
+            'is_open' => $data['is_open'] ?? 1,
             'select_max_sum' => $data['select_max_sum'] ?? 1,
             'cate_name' => $data['cate_name'] ?? '',
             'type' =>  $data['type'] ?? 2,

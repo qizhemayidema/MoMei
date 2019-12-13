@@ -427,7 +427,7 @@
             html += '        <button class="btn bg-success btn-reset">重置</button>';
             html += '        <button class="btn bg-danger btn-danger" onclick="removeEntity()">删除</button>';
             // html += '        <button class="btn bg-success btn-batch">批量操作</button>';
-//            html += '        <button class="btn bg-white btn-cancel">取消</button>';
+            //            html += '        <button class="btn bg-white btn-cancel">取消</button>';
             html += '    </div>';
         }
         html += '</div>';
@@ -525,18 +525,36 @@
         this.calendar.find('.valid-hook').each(function() {
             dayData = me._getDateData($(this).data('id'));
             html = me.dayTemplate().toString();
-
+            // console.log(dayData)
             if (dayData) {
                 for (var key in dayData) {
-                    html = html.replace('{' + key + '}', dayData[key]);
+                    if (key === 'sold') {
+                        // console.log(dayData[key])
+                    } else {
 
+                    }
+                    html = html.replace('{' + key + '}', key == 'sold' ? '' : dayData[key]);
                 }
                 $(this).data('data', JSON.stringify(dayData)).find('.data-hook').html(html);
+                var _price = $(this).find('p').eq(0).html();
+                if (_price >= 10000) {
+                    var _computedPrice = (_price / 10000).toString();
+                    if (_computedPrice.indexOf('.') > -1) {
+                        _computedPrice = _computedPrice.slice(0, _computedPrice.indexOf('.') + 3);
+                    }
+                    $(this).find('p').eq(0).html(_computedPrice + '万元');
+
+                } else {
+                    $(this).find('p').eq(0).html(_price + '元');
+                }
+                // console.log(_price >= 10000)
+                $(this).find('p').eq(1).css({ 'color': '#c0554e' })
             } else {
                 $(this).data('data', '{}');
             }
         });
     };
+
 
     /**
      * 获取day设置数据
@@ -604,7 +622,7 @@
         html += '           <div class="bs-options-wrapper">';
         html += '               <input class="itext" name="startDay" type="date">';
         html += '               <span class="white-space">-</span>';
-        html += '               <input class="itext " name="endDay" type="date" id="endDay" min="' + currentdate + '" max="' + (Number(year)+2) + '-12-31">';
+        html += '               <input class="itext " name="endDay" type="date" id="endDay" min="' + currentdate + '" max="' + (Number(year) + 2) + '-12-31">';
         // html += '               <label class="drw-enable"><input name="enableDateRange" type="checkbox"> 启用</label>';
         html += '           </div>';
         html += '       </div>';
