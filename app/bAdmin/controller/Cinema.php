@@ -367,27 +367,7 @@ class Cinema extends Base
     {
         $id = $request->param('id');
 
-        $service = (new Service(new \app\common\typeCode\manager\Cinema()));
-
-        $user = $service->get($id);
-
-        $info = $service->getInfo($user['info_id']);
-
-        $yingService = (new Service(new \app\common\typeCode\manager\Ying()));
-        $yuanService = (new Service(new \app\common\typeCode\manager\Yuan()));
-
-        $yingUser = $yingService->get($info['tou_id']);
-        $tou = $yingService->getInfo($yingUser['info_id']);
-
-        $yuanUser =  $yuanService->get($info['yuan_id']);
-        $yuan =  $yuanService->getInfo($yuanUser['info_id']);
-
-        $levels = (new CategoryObjHaveAttr(1))->getList($user['group_code']);
-
-
-        View::assign(compact('user','info','tou','yuan','yingUser','yuanUser','levels'));
-
-        return view();
+        return (new \app\common\controller\Cinema())->getInfoPage($id);
 
     }
 

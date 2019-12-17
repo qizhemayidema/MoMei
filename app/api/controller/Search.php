@@ -4,8 +4,8 @@ declare (strict_types=1);
 namespace app\api\controller;
 
 use app\common\model\CategoryObjHaveAttr as CategoryObjHaveAttrModel;
-use app\common\model\CinemaProductEntity as CinemaProductEntityModel;
-use app\common\model\CinemaProductEntityStatus as CinemaProductEntityStatusModel;
+use app\common\model\CinemaProduct as CinemaProductEntityModel;
+use app\common\model\CinemaProductStatus as CinemaProductEntityStatusModel;
 use app\common\model\ManagerInfo as ManagerInfoModel;
 use app\common\model\CinemaScreen as CinemaScreenModel;
 use app\common\model\Manager as ManagerModel;

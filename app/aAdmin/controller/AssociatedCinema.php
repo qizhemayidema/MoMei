@@ -9,6 +9,7 @@ declare (strict_types = 1);
 namespace app\aAdmin\controller;
 
 
+use app\common\controller\Cinema as CommonCinema;
 use app\common\service\Manager as ManagerService;
 use app\common\tool\Session;
 use app\common\typeCode\manager\Cinema as CinemaTypeDesc;
@@ -45,17 +46,6 @@ class AssociatedCinema extends Base
     {
         $id = $request->param('id');
 
-        $service = new ManagerService((new CinemaTypeDesc()));
-
-        //获取数据
-        $user = $service->get($id);
-
-        $data = $service->getInfo($user['info_id']);
-
-        $levels = (new CategoryObjHaveAttr(1))->getList($user['group_code']);
-
-        View::assign(['data'=>$data,'levels'=>$levels]);
-
-        return view();
+       return (new CommonCinema())->getInfoPage($id);
     }
 }
