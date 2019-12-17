@@ -27,6 +27,7 @@ class BasicInformation extends Base
     {
         $info = (new Session())->getData();
 
+
         $managerService = new ManagerService(new Cinema());
 
         $managerData = $managerService->get($info['id']);
@@ -37,12 +38,12 @@ class BasicInformation extends Base
         $busCate = (new CateService())->getList((new ABusTypeDesc()));
 
         //查询影院关联总数等
-        $countResult  = $managerService->getCinemaAmountCount($info['info_id']);
+        $countResult = $managerService->getCinemaAmountCount($info['group_code']);
 
-        //查询直系影院总数
-        $getLinealCinemaAmountCount = $managerService->getLinealCinemaAmountCount($info['info_id']);
-
-        View::assign('getLinealCinemaAmountCount',$getLinealCinemaAmountCount);
+//        //查询直系影院总数
+//        $getLinealCinemaAmountCount = $managerService->getLinealCinemaAmountCount($info['info_id']);
+//
+//        View::assign('getLinealCinemaAmountCount',$getLinealCinemaAmountCount);
 
         View::assign('countResult',$countResult);
 

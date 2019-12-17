@@ -10,20 +10,20 @@ declare (strict_types = 1);
 namespace app\bAdmin\controller;
 
 use app\common\service\Permission;
-use app\common\service\Role;
+use app\common\service\Role as Service;
 use app\common\typeCode\role\B as TypeDesc;
 use app\common\typeCode\permission\B as RuleTypeDesc;
 use app\Request;
 use think\facade\View;
 use think\Validate;
 
-class BRole extends Base
+class Role extends Base
 {
     public function index()
     {
         try{
             //查询平台的全部权限组
-            $roleList = (new Role())->getRoleList(new TypeDesc());
+            $roleList = (new Service())->getRoleList(new TypeDesc());
 
             View::assign('roleList',$roleList);
             return view();
@@ -59,7 +59,7 @@ class BRole extends Base
                 throw new \Exception($valiatde->getError());
             }
 
-            $res = (new Role())->insert(new TypeDesc(),false,$post);
+            $res = (new Service())->insert(new TypeDesc(),false,$post);
             if(!$res) throw new \Exception('添加失败');
             return json(['code'=>1,'msg'=>'success']);
         }catch (\Exception $e){
@@ -71,7 +71,7 @@ class BRole extends Base
     {
         //查出默认的
         $id = $request->param('role_id');
-        $dataRes = (new Role())->getFindRes($id);
+        $dataRes = (new Service())->getFindRes($id);
         $dataRes['permission_ids'] = explode(',',$dataRes['permission_ids']);
         view::assign('dataRes',$dataRes);
 
@@ -100,7 +100,7 @@ class BRole extends Base
                 throw new \Exception($valiatde->getError());
             }
 
-            $res = (new Role())->updateRes(new TypeDesc(),$post);
+            $res = (new Service())->updateRes(new TypeDesc(),$post);
             if(!$res) throw new \Exception('修改失败');
             return json(['code'=>1,'msg'=>'success']);
         }catch (\Exception $e){
@@ -112,7 +112,7 @@ class BRole extends Base
     {
         $roleId =  $request->post('role_id');
         try{
-            $res = (new Role())->delete((new TypeDesc()),$roleId);
+            $res = (new Service())->delete((new TypeDesc()),$roleId);
             if(!$res)  return json(['code'=>0,'msg'=>'删除失败']);
             return json(['code'=>1,'msg'=>'删除成功']);
         }catch (\Exception $e){

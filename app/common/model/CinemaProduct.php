@@ -38,7 +38,6 @@ class CinemaProduct extends Model implements BasicImpl,ShowImpl
     public function modify($id, $data)
     {
         // TODO: Implement modify() method.
-        $this->where(['id'=>$id])->update($data);
     }
 
     /**
@@ -71,7 +70,6 @@ class CinemaProduct extends Model implements BasicImpl,ShowImpl
             $alias . 'status' => 1,
             $alias . 'delete_time' => 0,
         ]);
-        // TODO: Implement receptionShowData() method.
     }
 
     /**
@@ -85,8 +83,6 @@ class CinemaProduct extends Model implements BasicImpl,ShowImpl
         return $this->where([
             $alias . 'delete_time' => 0,
         ]);
-        // TODO: Implement backgroundShowData() method.
     }
-
 
 }

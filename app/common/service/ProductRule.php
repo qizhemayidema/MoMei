@@ -9,25 +9,26 @@
 namespace app\common\service;
 
 
-use app\common\model\Product;
-use app\common\model\ProductLevel;
+use app\common\model\ProductRule as ProductRuleModel;
+use app\common\model\ProductField;
+use app\common\typeCode\ProductFieldImpl;
 
 class ProductRule
 {
     public function get($id)
     {
-         return (new Product())->where(['id'=>$id])->find();
+         return (new ProductRuleModel())->where(['id'=>$id])->find();
 
     }
 
     public function getByCateId($cateId)
     {
-        return (new Product())->where(['cate_id'=>$cateId])->find();
+        return (new ProductRuleModel())->where(['cate_id'=>$cateId])->find();
     }
 
     public function existsCateId($cateId)
     {
-        return ($id = (new Product())->where(['cate_id'=>$cateId])->value('id')) ? $id : 0;
+        return ($id = (new ProductRuleModel())->where(['cate_id'=>$cateId])->value('id')) ? $id : 0;
     }
 
     public function insert($data)
@@ -39,10 +40,12 @@ class ProductRule
             'cate_name' => $data['cate_name'] ?? '',
             'type' =>  $data['type'] ?? 2,
             'is_screen' => $data['is_screen'] ?? 0,
-            'is_level' => $data['is_level'] ?? 0,
+            'is_level' => $data['is_level'] ?? 1,
+            'is_spec'   => $data['is_spec'] ?? 1,
+            'is_text'   => $data['is_text'] ?? 1,
             'max_sum' => $data['max_sum'] ?? 1
         ];
-        $productModel = (new Product());
+        $productModel = (new ProductRuleModel());
 
         $productModel->insert($insert);
 
@@ -57,75 +60,96 @@ class ProductRule
             'cate_name' => $data['cate_name'],
             'type' => $data['type'],
             'is_screen' => $data['is_screen'],
-            'is_level' => $data['is_level'],
+            'is_level' => $data['is_level'] ?? 1,
+            'is_spec'   => $data['is_spec'] ?? 1,
+            'is_text'   => $data['is_text'] ?? 1,
             'max_sum' => $data['type'] == 1 ? 40 : 1,
         ];
-        $productModel = (new Product());
+        $productModel = (new ProductRuleModel());
 
         $productModel->where(['id'=>$id])->update($update);
     }
 
-    public function getLevelByProductId($productId)
+    public function getFieldByRuleId(ProductFieldImpl $impl,$ruleId)
     {
-        return (new ProductLevel())->where(['product_id'=>$productId])->select()->toArray();
+        $type = $impl->getFieldType();
+
+        return (new ProductField())->where(['type'=>$type,'product_rule_id'=>$ruleId])->select()->toArray();
     }
 
-    //获取一个规则的级别
-    public function getLevelList($cateId)
+    //获取一个规则字段列表
+    public function getFieldList(ProductFieldImpl $impl,$cateId)
     {
-        $level = new ProductLevel();
-        return $level->where(['cate_id'=>$cateId])->select();
+        $level = new ProductField();
+
+        $type = $impl->getFieldType();
+
+        return $level->where(['type'=>$type,'cate_id'=>$cateId])->select();
 
     }
 
-    //获取一个级别信息
-    public function getLevel($levelId)
+    //获取一个字段信息
+    public function getField($fieldId)
     {
-        return (new ProductLevel())->find($levelId);
+        $model = new ProductField();
+
+        return is_array($fieldId) ? $model->where(['id'=>$fieldId])->select() : $model->find($fieldId);
     }
 
     //批量新增
-    public function insertLevel($data,$productId)
+    public function insertField(ProductFieldImpl $impl,$data,$ruleId)
     {
         $insert = [];
 
-        foreach ($data['level_name'] as $key => $value){
+        $type = $impl->getFieldType();
+
+        foreach ($data['name'] as $key => $value){
             $insert[] = [
+                'type'      => $type,
                 'cate_id'    => $data['cate_id'],
-                'level_name' => $value,
-                'product_id' => $productId,
+                'name' => $value,
+                'product_rule_id' => $ruleId,
             ];
         }
-        $level = new ProductLevel();
+        $level = new ProductField();
 
         $level->insertAll($insert);
     }
-    //批量修改 ['id'=>1,'level_name'=>'123']
 
-    public function updateLevel($data,$productId)
+    //批量修改 ['id'=>1,'name'=>'123']
+    public function updateField($data,$ruleId)
     {
-        $level = new ProductLevel();
+        $level = new ProductField();
+
         foreach ($data as $key => $value){
-             $level->where(['id'=>$value['id'],'product_id'=>$productId])->update(['level_name'=>$value['level_name']]);
+             $level->where(['id'=>$value['id'],'product_rule_id'=>$ruleId])->update(['name'=>$value['name']]);
         }
     }
-    //获取除ids外的id
 
-    public function getLevelExceptIds($ids,$productId)
+    //获取除ids外的id
+    public function getFieldExceptIds(ProductFieldImpl $impl,$ids,$ruleId)
     {
-        return (new ProductLevel())->where(['product_id'=>$productId])
+        return (new ProductField())->where(['product_rule_id'=>$ruleId,'type'=>$impl->getFieldType()])
             ->whereNotIn('id',$ids)
             ->column('id');
     }
     //批量删除
-
-    public function deleteLevel($ids,$productId)
+    public function deleteField($ids,$ruleId)
     {
-        $levelModel = new ProductLevel();
+        $levelModel = new ProductField();
+
         if (is_string($ids)){
-            $levelModel->where(['id'=>$ids,'product_id'=>$productId])->delete();
+            $levelModel->where(['id'=>$ids,'product_rule_id'=>$ruleId])->delete();
         }else{
-            $levelModel->whereIn('id',$ids)->where(['product_id'=>$productId])->delete();
+            $levelModel->whereIn('id',$ids)->where(['product_rule_id'=>$ruleId])->delete();
         }
+    }
+
+    //删除所有符合impl和ruleId的数据
+    public function deleteFieldAll(ProductFieldImpl $impl,$ruleId)
+    {
+        $levelModel = new ProductField();
+
+        $levelModel->where(['type'=>$impl->getFieldType(),'product_rule_id'=>$ruleId])->delete();
     }
 }

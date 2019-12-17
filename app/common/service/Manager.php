@@ -328,7 +328,7 @@ class Manager
             $query->where('tou_id',$id)->whereOr('yuan_id',$id);
         });
 
-        return $ManagerInfoModel->field('count(*) as cinemaCount,sum(screen_sum) as screenSum,sum(seat_sum) as seatSum')->select()->toArray();
+        return $ManagerInfoModel->field('count(*) as cinemaCount,sum(screen_sum) as screenSum,sum(seat_sum) as seatSum')->select();
     }
 
     /**

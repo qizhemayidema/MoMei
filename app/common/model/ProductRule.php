@@ -8,7 +8,7 @@ use think\Model;
 /**
  * @mixin think\Model
  */
-class CinemaProductEntityStatus extends Model
+class ProductRule extends Model
 {
     //
 }

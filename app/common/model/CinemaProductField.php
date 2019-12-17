@@ -8,7 +8,7 @@ use think\Model;
 /**
  * @mixin think\Model
  */
-class Product extends Model
+class CinemaProductField extends Model
 {
     //
 }

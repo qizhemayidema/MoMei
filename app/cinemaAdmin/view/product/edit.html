@@ -1,6 +1,7 @@
 {include file="common/source"}
 <script src="__STATIC__/js/plugins/treeview/bootstrap-treeview.js"></script>
-
+<link rel="stylesheet" href="__STATIC__/js/plugins/webuploader/webuploader.css">
+<script src="__STATIC__/js/plugins/webuploader/webuploader.js"></script>
 <script src="__STATIC__/js/plugins/summernote/summernote.min.js"></script>
 <script src="__STATIC__/js/plugins/summernote/summernote-zh-CN.js"></script>
 <link rel="stylesheet" href="__STATIC__/css/plugins/summernote/summernote.css">
@@ -21,7 +22,7 @@
     }
 </style>
 <body class="gray-bg">
-<div class="wrapper wrapper-content animated fadeInRight">
+<div class="wrapper wrapper-content animated">
     <div class="row">
 
 <div class="col-sm-12">
@@ -34,6 +35,8 @@
         <form action="" class="form-horizontal">
             <input type="hidden" name="id" value="{$data.id}">
             <input type="hidden" name="cate_id" value="{$data.cate_id}">
+            <input type="hidden" name="pic" value="{$data.pic}">
+            <input type="hidden" name="roll_pic" value="{$data.roll_pic}">
             {:token_field()}
             <div class="form-group">
                 <label class="col-sm-2 control-label">所属分类</label>
@@ -43,21 +46,6 @@
                     </select>
                 </div>
             </div>
-            {if $rule.is_level == 1}
-            <div class="form-group">
-                <label class="col-sm-2 control-label">选择级别</label>
-                <div class="col-sm-8">
-                    <select class="form-control m-b" name="level_id">
-                        <option value="0">没有级别</option>
-                        {foreach $level as $key => $value}
-                        <option value="{$value.id}" {if isset($data.level_id) && $data.level_id == $value.id} selected {/if}>{$value.level_name}</option>
-                        {/foreach}
-                    </select>
-                </div>
-            </div>
-            {else}
-            <input type="hidden" name="level_id" value="0">
-            {/if}
 
             {if $rule.is_screen != 0}
             <div class="form-group">
@@ -76,10 +64,79 @@
             {else}
             <input type="hidden" name="screen_id" value="0">
             {/if}
+            {if $rule.is_level == 1}
+            <div class="form-group">
+                <label class="col-sm-2 control-label">选择级别</label>
+                <div class="col-sm-8">
+                    <select class="form-control m-b" name="level_id">
+                        <option value="0">无</option>
+                        {foreach $level as $key => $value}
+                        <option value="{$value.id}" {if isset($cinema_level[$value.id])} selected {/if}>{$value.name}</option>
+                        {/foreach}
+                    </select>
+                </div>
+            </div>
+            {else}
+            <input type="hidden" name="level_id" value="0">
+            {/if}
+            {if $rule.is_spec == 1}
+            {foreach $spec as $key => $value}
+            <div class="form-group">
+                <label class="col-sm-2 control-label">{$value.name}</label>
+                <div class="col-sm-8">
+                    <input name="spec[{$value.id}]" value="{if isset($cinema_spec[$value.id])}{$cinema_spec[$value.id]['value']}{/if}" required  type="text" class="form-control">
+                </div>
+            </div>
+            {/foreach}
+            {/if}
+
             <div class="form-group">
                 <label class="col-sm-2 control-label">产品名称</label>
                 <div class="col-sm-8">
                     <input name="entity_name" value="{$data.entity_name ?? ''}" required  type="text" class="form-control">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">封面图</label>
+                <div class="col-sm-8">
+                    <!--dom结构部分-->
+                    <div id="uploader-demo2">
+                        <div id="filePicker2" style="margin-bottom: 10px;">选择图片</div>
+                        <!--用来存放item-->
+                        <div id="fileList2" class="uploader-list">
+                            {if $data.pic}
+                            <div class="file-item thumbnail upload-state-done">
+                                <img src="{$data.pic}" onclick="removePic(this,'$data.pic','pic')" style="width: 150px;">
+                            </div>
+                            {/if}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">轮播图</label>
+                <div class="col-sm-8">
+                    <!--dom结构部分-->
+                    <div id="uploader-demo1">
+                        <div id="filePicker1" style="margin-bottom: 10px;">选择图片</div>
+                        <!--用来存放item-->
+                        <div id="fileList1" class="uploader-list">
+                            {foreach :explode(',',$data.roll_pic) as $key => $value}
+                            {if $value}
+                            <div class="file-item thumbnail upload-state-done">
+                                <img src="{$value}" onclick="removePic(this,'{$value}','roll_pic')" style="width: 150px;">
+                            </div>
+                            {/if}
+                            {/foreach}
+                        </div>
+                        <span class="help-block m-b-none">点击删除旧图片</span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">优惠价格</label>
+                <div class="col-sm-8">
+                    <input name="price_discount" value="{$data.price_discount}" required  type="text" class="form-control">
                 </div>
             </div>
             <div class="form-group">
@@ -128,6 +185,23 @@
 
 <script>
 
+    removePic = function(_this,pic,name){
+
+        var val = $('input[name='+name+']').val()
+
+        var arr = val.split(',')
+
+        var res = []
+
+        $(arr).each(function(k,v){
+            if (v != pic){
+                res.push(v)
+            }
+        })
+
+        $('input[name='+name+']').val(res.join(','))
+        $(_this).parents('.thumbnail').remove()
+    }
     var date = new Date();
     var d = new Date()
     d.setMonth(d.getMonth() + 18); //结束日期
@@ -344,4 +418,193 @@
             ;
             return fmt;
         };
+        var $list2 = $("#fileList2");
+        // 初始化Web Uploader
+        var uploader = WebUploader.create({
+
+            // 选完文件后，是否自动上传。
+            auto: true,
+
+            // swf文件路径
+            swf: "__STATIC__/js/plugins/webuploader/Uploader.swf",
+
+
+            // 文件接收服务端。
+            server: "{:url('uploadPic')}",
+
+            // 选择文件的按钮。可选。
+            // 内部根据当前运行是创建，可能是input元素，也可能是flash.
+            pick: '#filePicker2',
+
+            // 只允许选择图片文件。
+            accept: {
+                title: 'Images',
+                extensions: 'gif,jpg,jpeg,bmp,png',
+                mimeTypes: 'image/*'
+            }
+        });
+        uploader.on( 'fileQueued', function( file ) {
+            var $li = $(
+                '<div id="' + file.id + '" class="file-item thumbnail">' +
+                '<img>' +
+                // '<div class="info">' + file.name + '</div>' +
+                '</div>'
+                ),
+                $img = $li.find('img');
+
+
+            // $list为容器jQuery实例
+            $list2.html( $li );
+            // $list2.append( $li );
+
+            // 创建缩略图
+            // 如果为非图片文件，可以不用调用此方法。
+            // thumbnailWidth x thumbnailHeight 为 100 x 100
+            uploader.makeThumb( file, function( error, src ) {
+                if ( error ) {
+                    $img.replaceWith('<span>不能预览</span>');
+                    return;
+                }
+
+                $img.attr( 'src', src );
+            }, 100, 100 );
+        });
+
+        uploader.on( 'uploadProgress', function( file, percentage ) {
+            // var $li = $( '#'+file.id ),
+            //     $percent = $li.find('.progress span');
+            //
+            // // 避免重复创建
+            // if ( !$percent.length ) {
+            //     $percent = $('<p class="progress"><span></span></p>')
+            //         .appendTo( $li )
+            //         .find('span');
+            // }
+            //
+            // $percent.css( 'width', percentage * 100 + '%' );
+        });
+
+        // 文件上传成功，给item添加成功class, 用样式标记上传成功。
+        uploader.on( 'uploadSuccess', function( file ,response) {
+
+            $('input[name=pic]').val(response.msg)
+            $( '#'+file.id ).addClass('upload-state-done');
+        });
+
+        // 文件上传失败，显示上传出错。
+        uploader.on( 'uploadError', function( file ) {
+            var $li = $( '#'+file.id ),
+                $error = $li.find('div.error');
+
+            // 避免重复创建
+            if ( !$error.length ) {
+                $error = $('<div class="error"></div>').appendTo( $li );
+            }
+
+            $error.text('上传失败');
+        });
+
+        // 完成上传完了，成功或者失败，先删除进度条。
+        uploader.on( 'uploadComplete', function( file ) {
+            $( '#'+file.id ).find('.progress').remove();
+        });
+
+
+        var $list1 = $("#fileList1");
+        // 初始化Web Uploader
+        var uploader = WebUploader.create({
+
+            // 选完文件后，是否自动上传。
+            auto: true,
+
+            // swf文件路径
+            swf: "__STATIC__/js/plugins/webuploader/Uploader.swf",
+
+
+            // 文件接收服务端。
+            server: "{:url('uploadPic')}",
+
+            // 选择文件的按钮。可选。
+            // 内部根据当前运行是创建，可能是input元素，也可能是flash.
+            pick: '#filePicker1',
+
+            // 只允许选择图片文件。
+            accept: {
+                title: 'Images',
+                extensions: 'gif,jpg,jpeg,bmp,png',
+                mimeTypes: 'image/*'
+            }
+        });
+        uploader.on( 'fileQueued', function( file ) {
+            var $li = $(
+                '<div id="' + file.id + '" class="file-item thumbnail">' +
+                '<img>' +
+
+                '</div>'
+                ),
+                $img = $li.find('img');
+
+
+            // $list为容器jQuery实例
+            // $list2.html( $li );
+            $list1.append( $li );
+
+            // 创建缩略图
+            // 如果为非图片文件，可以不用调用此方法。
+            // thumbnailWidth x thumbnailHeight 为 100 x 100
+            uploader.makeThumb( file, function( error, src ) {
+                if ( error ) {
+                    $img.replaceWith('<span>不能预览</span>');
+                    return;
+                }
+
+                $img.attr( 'src', src );
+            }, 100, 100 );
+        });
+
+        uploader.on( 'uploadProgress', function( file, percentage ) {
+            // var $li = $( '#'+file.id ),
+            //     $percent = $li.find('.progress span');
+            //
+            // // 避免重复创建
+            // if ( !$percent.length ) {
+            //     $percent = $('<p class="progress"><span></span></p>')
+            //         .appendTo( $li )
+            //         .find('span');
+            // }
+            //
+            // $percent.css( 'width', percentage * 100 + '%' );
+        });
+
+        // 文件上传成功，给item添加成功class, 用样式标记上传成功。
+        uploader.on( 'uploadSuccess', function( file ,response) {
+
+            var str = $('input[name=roll_pic]').val()
+            if (!str){
+                str = response.msg
+            }else{
+                str += ',' + response.msg
+            }
+            $('input[name=roll_pic]').val(str)
+
+            $( '#'+file.id ).addClass('upload-state-done');
+        });
+
+        // 文件上传失败，显示上传出错。
+        uploader.on( 'uploadError', function( file ) {
+            var $li = $( '#'+file.id ),
+                $error = $li.find('div.error');
+
+            // 避免重复创建
+            if ( !$error.length ) {
+                $error = $('<div class="error"></div>').appendTo( $li );
+            }
+
+            $error.text('上传失败');
+        });
+
+        // 完成上传完了，成功或者失败，先删除进度条。
+        uploader.on( 'uploadComplete', function( file ) {
+            $( '#'+file.id ).find('.progress').remove();
+        });
 </script>

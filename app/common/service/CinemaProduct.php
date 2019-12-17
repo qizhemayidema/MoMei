@@ -9,9 +9,13 @@
 namespace app\common\service;
 
 
-use app\common\model\CinemaProductEntity;
-use app\common\model\CinemaProductEntityStatus;
-use app\common\model\Product;
+use app\common\model\CinemaProduct as CinemaProductModel;
+use app\common\model\CinemaProductField;
+use app\common\model\CinemaProductStatus;
+use app\common\model\ProductRule;
+
+use app\common\model\ProductField;
+use app\common\typeCode\ProductFieldImpl;
 
 class CinemaProduct
 {
@@ -34,7 +38,7 @@ class CinemaProduct
 
     public function get($id)
     {
-        return (new \app\common\model\CinemaProduct())->where(['cinema_id'=>$this->groupCode])->find($id);
+        return (new CinemaProductModel())->where(['cinema_id'=>$this->groupCode])->find($id);
     }
 
     public function insert($data)
@@ -43,21 +47,23 @@ class CinemaProduct
             'cinema_id'         => $this->groupCode,
             'cate_id'           => $data['cate_id'    ],
             'screen_id'         => $data['screen_id'  ],
-            'level_id'          => $data['level_id'   ],
             'cate_name'         => $data['cate_name'  ],
             'cinema_name'       => $data['cinema_name'],
             'screen_name'       => $data['screen_name'],
-            'level_name'        => $data['level_name' ],
             'entity_name'       => $data['entity_name'],
+            'pic'               => $data['pic'],
+            'roll_pic'          => $data['roll_pic'],
             'desc'              => $data['desc'],
 //            'sort'              => $data['sort'       ],
             'price_json'        => $data['price_json' ],
             'price_month'       => $data['price_month'],
             'price_year'        => $data['price_year' ],
+            'price_discount'    => $data['price_discount'] ?? 0,
+            'status'            => 2,
             'create_time'       => time(),
         ];
 
-        $model = (new CinemaProductEntity());
+        $model = (new CinemaProductModel());
         $model->insert($insert);
 
         return $model->getLastInsID();
@@ -67,33 +73,34 @@ class CinemaProduct
     public function update($id,$data)
     {
         $update = [
-            'screen_id' => $data['screen_id'],
-            'level_id'  => $data['level_id'],
-            'cinema_name' => $data['cinema_name'],
-            'level_name' => $data['level_name'],
-            'entity_name'      => $data['entity_name'],
-            'desc'      => $data['desc'],
-            'screen_name' => $data['screen_name'],
-            'cate_name' => $data['cate_name'],
+            'screen_id'         => $data['screen_id'],
+            'cinema_name'       => $data['cinema_name'],
+            'entity_name'       => $data['entity_name'],
+            'desc'              => $data['desc'],
+            'screen_name'       => $data['screen_name'],
+            'cate_name'         => $data['cate_name'],
             'price_json'        => $data['price_json' ],
             'price_month'       => $data['price_month'],
             'price_year'        => $data['price_year' ],
+            'pic'               => $data['pic'],
+            'roll_pic'          => $data['roll_pic'],
+            'price_discount'    => $data['price_discount'] ?? 0,
             'status'    => 2,
         ];
 
-        \app\common\model\CinemaProductEntity::where(['id'=>$id])->update($update);
+        \app\common\model\CinemaProduct::where(['id'=>$id])->update($update);
 
     }
 
     public function delete($entityId)
     {
-        CinemaProductEntity::where(['id'=>$entityId,'cinema_id'=>$this->groupCode])->update(['delete_time'=>time()]);
+        CinemaProductModel::where(['id'=>$entityId,'cinema_id'=>$this->groupCode])->update(['delete_time'=>time()]);
     }
 
     public function changeStatus($id,$status)
     {
 
-        (new \app\common\model\CinemaProductEntity())->where(['cinema_id'=>$this->groupCode,'id'=>$id])->update(['status'=>$status]);
+        (new CinemaProductModel())->where(['cinema_id'=>$this->groupCode,'id'=>$id])->update(['status'=>$status]);
     }
 
 
@@ -105,31 +112,29 @@ class CinemaProduct
             'cate_id' => $cate_id,
         ];
 
-        $level_id && $where['level_id'] = $level_id;
+//        $level_id && $where['level_id'] = $level_id;
         $screen_id && $where['screen_id'] = $screen_id;
 
-        return (new CinemaProductEntity())->backgroundShowData()->where($where)->whereNotIn('id',$exceptId)->count();
+        return (new CinemaProductModel())->backgroundShowData()->where($where)->whereNotIn('id',$exceptId)->count();
 
     }
 
 
-    /*-----------------------------------------------------*/
+/*-----------------------------------------------------*/
 
 
     public function getEntity($entityId)
     {
-        return (new \app\common\model\CinemaProductEntity())->where(['cinema_id'=>$this->groupCode])->find($entityId);
+        return (new \app\common\model\CinemaProduct())->where(['cinema_id'=>$this->groupCode])->find($entityId);
     }
 
-    public function getEntityList($page = null,$cateId = null,$levelId = null,$screenId = null)
+    public function getEntityList($page = null,$cateId = null,$screenId = null)
     {
-        $handler = (new CinemaProductEntity());
+        $handler = (new CinemaProductModel());
 
         $where = [];
 
         $cateId && $where['cate_id'] = $cateId;
-
-        $levelId && $where['level_id'] = $levelId;
 
         $screenId && $where['screen_id'] = $screenId;
 
@@ -151,7 +156,7 @@ class CinemaProduct
     {
         $insert = [];
 
-        $date = (new CinemaProductEntityStatus())->where(['entity_id'=>$entityId])->column('date');
+        $date = (new CinemaProductStatus())->where(['entity_id'=>$entityId])->column('date');
 
         $arr = json_decode($dayJsonStr,true);
 
@@ -165,7 +170,7 @@ class CinemaProduct
             }
         }
 
-        (new CinemaProductEntityStatus())->insertAll($insert);
+        (new CinemaProductStatus())->insertAll($insert);
     }
 
 
@@ -173,7 +178,7 @@ class CinemaProduct
     {
         $insert = [];
 
-        (new CinemaProductEntity())->where(['entity_id'=>$entityId])->column('');
+        (new CinemaProductModel())->where(['entity_id'=>$entityId])->column('');
 
         $arr = json_decode($dayJsonStr);
 
@@ -185,6 +190,62 @@ class CinemaProduct
             ];
         }
 
-        (new CinemaProductEntityStatus())->insertAll($insert);
+        (new CinemaProductStatus())->insertAll($insert);
     }
+
+/**********************************************************************************/
+
+    //获取自定义字段
+    public function getFieldList(ProductFieldImpl $impl,$productId)
+    {
+        $model = new CinemaProductField();
+
+        $type = $impl->getFieldType();
+
+        $data = $model->where(['product_id'=>$productId,'type'=>$type])->select();
+
+        $return = [];
+
+        foreach ($data as $k => $v){
+            $return[$v['product_field_id']] = $v;
+        }
+
+        return $return;
+    }
+
+    //批量新增
+    public function insertField(ProductFieldImpl $impl,$data,$productId)
+    {
+        $insert = [];
+
+        $type = $impl->getFieldType();
+
+        foreach ($data as $key => $value){
+            $insert[] = [
+                'product_id'      => $productId,
+                'product_field_id' => $value['product_field_id'],
+                'type'      => $type,
+                'name' => $value['name'],
+                'value' => $value['value'],
+            ];
+        }
+        $level = new CinemaProductField();
+
+        $level->insertAll($insert);
+    }
+
+    //批量删除
+    public function deleteField(ProductFieldImpl $impl,$productId,$ids = null)
+    {
+        $model = new CinemaProductField();
+
+        if (is_string($ids)){
+            $model->where(['id'=>$ids,'product_id'=>$productId,'type'=>$impl->getFieldType()])->delete();
+        }else if(!$ids){
+            $model->where(['product_id'=>$productId,'type'=>$impl->getFieldType()])->delete();
+        }else{
+            $model->whereIn('id',$ids)->where(['product_id'=>$productId,'type'=>$impl->getFieldType()])->delete();
+        }
+    }
+
 }

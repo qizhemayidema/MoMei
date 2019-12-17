@@ -1,4 +1,16 @@
 {include file="common/source"}
+<link href="__STATIC__/js/plugins/fancybox/jquery.fancybox.css" rel="stylesheet">
+<script src="__STATIC__/js/plugins/fancybox/jquery.fancybox.js"></script>
+<script>
+    $(document).ready(function () {
+        $('.fancybox').fancybox({
+            // openEffect: 'none',
+            // closeEffect: 'none',
+            width: '75%',
+            height: '75%',
+        });
+    });
+</script>
 <body class="gray-bg">
 <div class="wrapper wrapper-content animated">
     <div class="row">
@@ -13,7 +25,7 @@
        <div class="row">
            <div class="input-group">
 
-               <div class="col-sm-4">
+               <div class="col-sm-6">
                    <select class="form-control m-b" name="cate">
                        <option value="0">所有分类</option>
                        {foreach $cate as $k => $v}
@@ -22,16 +34,7 @@
                    </select>
                </div>
 
-               <div class="col-sm-4">
-                   <select class="form-control m-b" name="level">
-                       <option value="0">所有级别</option>
-                       {foreach $level as $k => $v}
-                       <option value="{$v.id}" {if $v.id == $levelId}selected{/if}>{$v.level_name}</option>
-                       {/foreach}
-                   </select>
-               </div>
-
-               <div class="col-sm-4">
+               <div class="col-sm-6">
                    <select class="form-control m-b" name="screen">
                        <option value="0">所有影厅</option>
                        {foreach $screen as $k => $v}
@@ -50,8 +53,9 @@
                     <thead>
                     <tr class="text-center">
                         <th style="text-align: center;">产品名称</th>
+                        <th style="text-align: center;">产品封面</th>
                         <th style="text-align: center;">所属分类</th>
-                        <th style="text-align: center;">级别名称</th>
+                        <!--<th style="text-align: center;">级别名称</th>-->
                         <th style="text-align: center;">所属影厅</th>
                         <th style="text-align: center;">当前状态</th>
                         <th style="text-align: center;">创建时间</th>
@@ -62,8 +66,12 @@
                     {foreach $list as $key => $value}
                     <tr>
                         <td>{$value.entity_name}</td>
+                        <td>
+                            <a class="fancybox" href="{$value.pic}" title="">
+                                <img alt="image" src="{$value.pic}" style="width: 40px;" />
+                            </a>
+                        </td>
                         <td>{$value.cate_name}</td>
-                        <td>{$value.level_name}</td>
                         <td>{$value.screen_name}</td>
                         <td>
                             {if $value.status == 1}
@@ -118,12 +126,12 @@
 
     $('select').change(function(){
         var cate_id = $('select[name=cate]').val();
-        var level_id = $('select[name=level]').val();
+        // var level_id = $('select[name=level]').val();
         var screen_id = $('select[name=screen]').val();
 
-        console.log(cate_id,level_id,screen_id)
+        console.log(cate_id,screen_id)
 
-        window.location.href = "{:url('index')}?cate_id="+cate_id+"&level_id="+level_id+"&screen_id="+screen_id
+        window.location.href = "{:url('index')}?cate_id="+cate_id+"&screen_id="+screen_id
     })
 
     checkStatus = function(_this,change_status,id) {

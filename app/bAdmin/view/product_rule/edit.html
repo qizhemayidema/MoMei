@@ -37,6 +37,7 @@
                             <option value="2" {if isset($data.type) && $data.type == 2} selected {/if}>单个</option>
                             <option value="1" {if isset($data.type) && $data.type == 1} selected {/if}>多个</option>
                         </select>
+                        <span class="help-block m-b-none">单个:如有影厅则每个影厅1个,如没有则每个影院一个,多个同理</span>
                     </div>
                 </div>
                 <div class="form-group">
@@ -52,34 +53,62 @@
                         <select class="form-control m-b" name="is_screen">
                             <option value="0" {if isset($data.is_screen) && $data.is_screen == 0} selected {/if}>否</option>
                             <option value="1" {if isset($data.is_screen) && $data.is_screen == 1} selected {/if}>是</option>
-                            <option value="2" {if isset($data.is_screen) && $data.is_screen == 2} selected {/if}>可选</option>
+                            <!--<option value="2" {if isset($data.is_screen) && $data.is_screen == 2} selected {/if}>可选</option>-->
                         </select>
                     </div>
                 </div>
-                <div class="form-group">
-                    <label class="col-sm-2 control-label">是否开启级别</label>
-                    <div class="col-sm-8">
-                        <select class="form-control m-b" name="is_level">
-                            <option value="0" {if isset($data.is_level) && $data.is_level == 0} selected {/if}>否</option>
-                            <option value="1" {if isset($data.is_level) && $data.is_level == 1} selected {/if}>是</option>
-                        </select>
-                    </div>
-                </div>
+            <div class="hr-line-dashed"></div>
 
-                <div id="level" class="form-group" {if $data.is_level == 0} style="display: none;" {/if}>
-                <label class="col-sm-2 control-label"><a class="btn btn-info" onclick="add_level()">添加级别</a></label>
-                <div class="col-sm-8" id="level_list">
-                    {foreach $level as $k => $v}
-                    <div class="lv">
-                        <input type="hidden" name="old_level_id[]" value="{$v.id}">
-                        <input name="old_level_name[]" placeholder="级别名称" style="display:inline;width:80%;margin-bottom: 20px;" value="{$v.level_name}" required  type="text" class="form-control">
-                        <a href="javascript:void(0);" onclick="close_level(this)">
-                            <i class="glyphicon glyphicon-remove"></i>
-                        </a>
+                <div id="level" class="form-group">
+                    <label class="col-sm-2 control-label"><a class="btn btn-info" onclick="add_level()">添加级别</a></label>
+                    <div class="col-sm-8" id="level_list">
+                        {foreach $level as $k => $v}
+                        <div class="lv">
+                            <input type="hidden" name="old_level_id[]" value="{$v.id}">
+                            <input name="old_level_name[]" placeholder="级别名称" style="display:inline;width:80%;margin-bottom: 20px;" value="{$v.name}" required  type="text" class="form-control">
+                            <a href="javascript:void(0);" onclick="close_level(this)">
+                                <i class="glyphicon glyphicon-remove"></i>
+                            </a>
+                        </div>
+                        {/foreach}
                     </div>
-                    {/foreach}
+                    <span class="help-block m-b-none">产品的级别</span>
+
                 </div>
-            </div>
+                <div class="hr-line-dashed"></div>
+                <div id="spec" class="form-group">
+                    <label class="col-sm-2 control-label"><a class="btn btn-info" onclick="add_spec()">添加规格</a></label>
+                    <div class="col-sm-8" id="spec_list">
+                        {foreach $spec as $k => $v}
+                        <div class="lv">
+                            <input type="hidden" name="old_spec_id[]" value="{$v.id}">
+                            <input name="old_spec_name[]" placeholder="规格名称" style="display:inline;width:80%;margin-bottom: 20px;" value="{$v.name}" required  type="text" class="form-control">
+                            <a href="javascript:void(0);" onclick="close_level(this)">
+                                <i class="glyphicon glyphicon-remove"></i>
+                            </a>
+                        </div>
+                        {/foreach}
+                    </div>
+                    <span class="help-block m-b-none">产品的自定义规格</span>
+                </div>
+            <div class="hr-line-dashed"></div>
+
+
+                <div id="text" class="form-group" >
+                <label class="col-sm-2 control-label"><a class="btn btn-info" onclick="add_text()">添加名称</a></label>
+                <div class="col-sm-8" id="text_list">
+                        {foreach $text as $k => $v}
+                        <div class="lv">
+                            <input type="hidden" name="old_text_id[]" value="{$v.id}">
+                            <input name="old_text_name[]" placeholder="内容名称" style="display:inline;width:80%;margin-bottom: 20px;" value="{$v.name}" required  type="text" class="form-control">
+                            <a href="javascript:void(0);" onclick="close_level(this)">
+                                <i class="glyphicon glyphicon-remove"></i>
+                            </a>
+                        </div>
+                        {/foreach}
+                    </div>
+                    <span class="help-block m-b-none">购买时添加的内容,例如 冠名名称</span>
+                </div>
             </div>
 
 
@@ -106,6 +135,22 @@
         }
     })
 
+    $('select[name=is_spec]').change(function(){
+        if ($(this).val() == 1){
+            $('#spec').css('display','block')
+        }else{
+            $('#spec').css('display','none')
+        }
+    })
+
+    $('select[name=is_text]').change(function(){
+        if ($(this).val() == 1){
+            $('#text').css('display','block')
+        }else{
+            $('#text').css('display','none')
+        }
+    })
+
     $('select[name=is_open]').change(function(){
         if ($(this).val() == 1){
             $('#content').css('display','block')
@@ -124,6 +169,31 @@
             '                    </div>'
 
         $('#level_list').append(html)
+        return false;
+    }
+
+    var add_spec = function(){
+
+        var html = '<div class="lv">' +
+            '                        <input name="spec_name[]" placeholder="规格名称" style="display:inline;width:80%;margin-bottom: 20px;" value="" required  type="text" class="form-control">' +
+            '                        <a href="javascript:void(0);" onclick="close_level(this)">' +
+            '                            <i class="glyphicon glyphicon-remove"></i>' +
+            '                        </a>' +
+            '                    </div>'
+
+        $('#spec_list').append(html)
+        return false;
+    }
+
+    var add_text = function(){
+        var html = '<div class="lv">' +
+            '                        <input name="text_name[]" placeholder="内容名称" style="display:inline;width:80%;margin-bottom: 20px;" value="" required  type="text" class="form-control">' +
+            '                        <a href="javascript:void(0);" onclick="close_level(this)">' +
+            '                            <i class="glyphicon glyphicon-remove"></i>' +
+            '                        </a>' +
+            '                    </div>'
+
+        $('#text_list').append(html)
         return false;
     }
 

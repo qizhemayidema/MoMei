@@ -18,7 +18,7 @@ use think\Validate;
 use think\facade\View;
 use think\Request;
 
-class AUser extends BaseController
+class AUser extends Base
 {
     public function index()
     {
@@ -44,12 +44,12 @@ class AUser extends BaseController
         $info = $service->getInfo($user['info_id']);
 
         //查询影院关联总数等
-        $countResult  = $service->getCinemaAmountCount($info['info_id']);
+        $countResult  = $service->getCinemaAmountCount($user['group_code']);
 
-        //查询直系影院总数
-        $getLinealCinemaAmountCount = $service->getLinealCinemaAmountCount($info['info_id']);
-
-        View::assign('getLinealCinemaAmountCount',$getLinealCinemaAmountCount);
+//        //查询直系影院总数
+//        $getLinealCinemaAmountCount = $service->getLinealCinemaAmountCount($info['info_id']);
+//
+//        View::assign('getLinealCinemaAmountCount',$getLinealCinemaAmountCount);
 
         View::assign('countResult',$countResult);
 
