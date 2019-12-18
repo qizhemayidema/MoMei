@@ -18,7 +18,7 @@ class NewsCategory extends Base
     public function index()
     {
         try{
-            $data = (new \app\common\service\NewsCategory())->getNewsCategoryLists(new CateDesc(),true);
+            $data = (new \app\common\service\NewsCategory())->getNewsCategoryLists(new CateDesc(),true,3);
 
             View::assign('data',$data);
 
