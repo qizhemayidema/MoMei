@@ -23,7 +23,7 @@ class BoxOfficeIncome extends  Base
     {
         $info = (new Session())->getData();
 
-        $data = (new BoxOffice(new TypeDesc()))->setWhere('cinema_id',$info['group_code'])->order('create_time','desc')->pageLength(15)->getList();
+        $data = (new BoxOffice())->setWhere('cinema_id',$info['group_code'])->order('create_time','desc')->pageLength(15)->getList();
 
         View::assign('data',$data);
 
@@ -41,7 +41,8 @@ class BoxOfficeIncome extends  Base
 
         $validate = new Validate();
         $rules = Array(
-            'value|票房收入'=>'require|max:64',
+            'income_value|票房收入'=>'require|max:64',
+            'number_value|观影人数'=>'require|max:64',
             '__token__'     => 'token',
         );
         $validate->rule($rules);
@@ -95,7 +96,8 @@ class BoxOfficeIncome extends  Base
         $validate = new Validate();
         $rules = Array(
             'id'=>'require',
-            'value|票房收入'=>'require|max:64',
+            'income_value|票房收入'=>'require|max:64',
+            'number_value|观影人数'=>'require|max:64',
             '__token__'     => 'token',
         );
         $validate->rule($rules);

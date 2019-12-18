@@ -59,7 +59,7 @@ class BoxOffice
         return $this;
     }
 
-    public function getList()
+    public function getList($cinemaid=false,$times=false)
     {
         $handler = new BoxOfficeStatisticsModel();
 
@@ -71,6 +71,14 @@ class BoxOffice
 
         $handler = $this->boxOfficeImpl ? $handler->where(['type'=>$this->boxOfficeImpl->getBoxType()]) : $handler;
 
+        if($cinemaid) $handler = $handler->where(['cinema_id'=>$cinemaid]);
+
+        if($times){
+            $start_time = strtotime($times);
+            $end_time = strtotime('+1 day',$start_time);
+            $handler = $handler->where('create_time','between',[$start_time,$end_time]);
+        }
+
 
         return $this->pageLength ? $handler->paginate($this->pageLength) : $handler->select();
     }
@@ -81,17 +89,18 @@ class BoxOffice
 
     public function insert($data)
     {
-        if (!($this->boxOfficeImpl instanceof BoxOfficeImpl)){
-            throw new \Exception('请在构造器中传入'.boxOfficeImpl::class);
-        }
+//        if (!($this->boxOfficeImpl instanceof BoxOfficeImpl)){
+//            throw new \Exception('请在构造器中传入'.boxOfficeImpl::class);
+//        }
 
         $addData = [
             'cinema_id'=>$data['group_code'],
             'cinema_name'=>$data['cinema_name'],
             'tou_id'=>$data['tou_id'] ?? 0,
             'yuan_id'=>$data['yuan_id'] ?? 0,
-            'type'=>$this->boxOfficeImpl->getBoxType(),
-            'value'=>$data['value'],
+//            'type'=>$this->boxOfficeImpl->getBoxType(),
+            'number_value'=>$data['number_value'],
+            'income_value'=>$data['income_value'],
             'create_time'=>time()
         ];
         return (new BoxOfficeStatisticsModel())->add($addData);
@@ -99,7 +108,8 @@ class BoxOffice
 
     public function update($data){
         $updateData = [
-            'value'=>$data['value'],
+            'number_value'=>$data['number_value'],
+            'income_value'=>$data['income_value'],
         ];
 
         return (new BoxOfficeStatisticsModel())->modify($data['id'],$updateData);
@@ -121,15 +131,15 @@ class BoxOffice
      */
     public function getToday($groupCode)
     {
-        if (!($this->boxOfficeImpl instanceof BoxOfficeImpl)){
-            throw new \Exception('请在构造器中传入'.boxOfficeImpl::class);
-        }
+//        if (!($this->boxOfficeImpl instanceof BoxOfficeImpl)){
+//            throw new \Exception('请在构造器中传入'.boxOfficeImpl::class);
+//        }
 
         $handler = new BoxOfficeStatisticsModel();
 
         $todayStart = strtotime(date('Y-m-d').' 00:00:00');
         $todayEnd = strtotime(date('Y-m-d').' 23:59:59');
 
-        return  $handler->where('type',$this->boxOfficeImpl->getBoxType())->where('cinema_id',$groupCode)->where('create_time','between',[$todayStart,$todayEnd])->find();
+        return  $handler->where('cinema_id',$groupCode)->where('create_time','between',[$todayStart,$todayEnd])->find();
     }
 }
