@@ -5,6 +5,7 @@ namespace app\bAdmin\controller;
 
 use app\common\service\Area;
 use app\common\service\Category;
+use app\common\service\CategoryObjHave;
 use app\common\service\CategoryObjHaveAttr;
 use app\common\tool\Upload;
 use app\common\typeCode\manager\Ying;
@@ -125,16 +126,6 @@ class Cinema extends Base
             //查询行业名称
             $post['pro_name'] = (new \app\common\model\Category())->get($post['pro_id'])['name'];
 
-            //处理表变组合
-            if (!$post['area_id']){
-                $post['area_id'] = 0;
-                $post['area_value'] = '';
-            }else{
-                $area = explode('-',$post['area_id']);
-                $post['area_id'] = $area[0];
-                $post['area_value'] = $area[1];
-            }
-
             $province = explode('-',$post['province']);
             $city = explode('-',$post['city']);
             $county = explode('-',$post['county']);
@@ -158,6 +149,25 @@ class Cinema extends Base
 
                 (new CategoryObjHaveAttr(1))->insert($id,$levels,$options);
 
+            }
+
+            if (isset($post['area_around'])){
+
+                $cateObjHaveService = new CategoryObjHave((new \app\common\typeCode\cateObjHave\Cinema()));
+
+                $areaAroundArr = [];
+
+                foreach ($post['area_around'] as $k => $v){
+
+                    $aroundTemp = explode('-',$v);
+
+                    $areaAroundArr[] = [
+                        'cate_id'   => $aroundTemp[0],
+                        'cate_name' => $aroundTemp[1]
+                    ];
+                }
+
+                $cateObjHaveService->insertAll($areaAroundArr,(new CinemaNearby()),$data['group_code']);
             }
 
             $model->commit();
@@ -187,6 +197,9 @@ class Cinema extends Base
         $service = new Service((new \app\common\typeCode\manager\Cinema()));
 
         $area = new Area();
+
+        $cinemaEarByTypeCode = (new CinemaNearby());
+
         //获取数据
         $user = $service->get($id);
 
@@ -211,10 +224,19 @@ class Cinema extends Base
         $ying = (new Service((new Ying())))->showType(true)->getInfoList();
 
         //获取周边分类列表
-        $zhou = $cateService->getList((new CinemaNearby()));
+        $zhou = $cateService->getList($cinemaEarByTypeCode);
 
         //获取级别分类列表
         $level = $cateService->getList((new \app\common\typeCode\cate\CinemaLevel()));
+
+        //获取影院的周边选择
+        $selectAroundList = (new CategoryObjHave((new \app\common\typeCode\cateObjHave\Cinema())))->getList($cinemaEarByTypeCode,$user['group_code']);
+
+        $selectAroundIds = [];
+        foreach ($selectAroundList as $k => $v){
+            $selectAroundIds[] = $v['cate_id'];
+        }
+
 
         foreach ($level as $key => $value){
             $level[$key]['attr'] =  $cateService->getAttrList($value['id']);
@@ -234,6 +256,7 @@ class Cinema extends Base
         View::assign('data',$data);
         View::assign('level',$level);
         View::assign('level_check',$levelCheck);
+        View::assign('select_around_ids',$selectAroundIds);
 
         return view();
     }
@@ -296,18 +319,10 @@ class Cinema extends Base
                 throw new ValidateException('账户已存在');
             }
 
+            $cinemaData = (new \app\common\service\Manager((new \app\common\typeCode\manager\Cinema())))->get($post['id']);
+
             //查询行业名称
             $post['pro_name'] = (new \app\common\model\Category())->get($post['pro_id'])['name'];
-
-            //处理表变组合
-            if (!$post['area_id']){
-                $post['area_id'] = 0;
-                $post['area_value'] = '';
-            }else{
-                $area = explode('-',$post['area_id']);
-                $post['area_id'] = $area[0];
-                $post['area_value'] = $area[1];
-            }
 
             $province = explode('-',$post['province']);
             $city = explode('-',$post['city']);
@@ -334,6 +349,26 @@ class Cinema extends Base
                 $options = $post['level_option'];
 
                 (new CategoryObjHaveAttr(1))->update($user['group_code'],$levels,$options);
+            }
+
+
+            if (isset($post['area_around'])){
+
+                $cateObjHaveService = new CategoryObjHave((new \app\common\typeCode\cateObjHave\Cinema()));
+
+                $areaAroundArr = [];
+
+                foreach ($post['area_around'] as $k => $v){
+
+                    $aroundTemp = explode('-',$v);
+
+                    $areaAroundArr[] = [
+                        'cate_id'   => $aroundTemp[0],
+                        'cate_name' => $aroundTemp[1]
+                    ];
+                }
+
+                $cateObjHaveService->update($areaAroundArr,(new CinemaNearby()),$cinemaData['group_code']);
             }
 
             $model->commit();

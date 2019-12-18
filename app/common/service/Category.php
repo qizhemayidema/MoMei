@@ -120,6 +120,8 @@ class Category
         }
     }
 
+    //判断分类是否正在被某个对象使用
+
     /*------------------attr--------------------------*/
 
     public function getAttrList($cateId)

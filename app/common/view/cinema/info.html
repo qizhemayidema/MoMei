@@ -28,7 +28,10 @@
                             <strong>所属行业：</strong> {$info.pro_name}
                             <br/>
                             <br/>
-                            <strong>影院周边：</strong> {$info.area_value}
+                            <strong>影院周边：</strong>
+                            {foreach $around as $k => $v}
+                            {$v.cate_name}
+                            {/foreach}
                             <br/>
                             <br/>
                             <strong>联系电话：</strong> {$info.tel}

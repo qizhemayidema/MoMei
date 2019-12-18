@@ -82,12 +82,12 @@
             <div class="form-group">
                 <label class="col-sm-2 control-label">周边区域</label>
                 <div class="col-sm-8">
-                    <select class="form-control m-b" name="area_id">
-                        <option value="0">无</option>
                         {foreach $zhou as $key => $value}
-                        <option value="{$value.id}-{$value.name}" {if $value.id == $data.area_id} selected {/if}>{$value.name}</option>
+                        <div class="checkbox i-checks" style="display: inline-block;padding-left: 0;margin-right: 20px;">
+
+                            <input {if in_array($value.id,$select_around_ids)} checked {/if} type="checkbox" name="area_around[]" value="{$value.id}-{$value.name}" > <i></i> {$value.name}
+                        </div>
                         {/foreach}
-                    </select>
                 </div>
             </div>
             <div class="form-group">
@@ -301,6 +301,12 @@
 </div>
 </body>
 <script>
+    $(document).ready(function () {
+        $('.i-checks').iCheck({
+            checkboxClass: 'icheckbox_square-green',
+            radioClass: 'iradio_square-green',
+        });
+    });
     $('select[name=province]').change(function(){
 
         var id = $(this).val()

@@ -22,6 +22,7 @@ class Ying implements ManagerImpl
         'bus_license',
         'bus_license_code',
         'province',
+        'work_type',
         'city',
         'county',
         'contact',

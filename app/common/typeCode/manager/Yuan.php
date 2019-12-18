@@ -23,6 +23,7 @@ class Yuan implements ManagerImpl
         'bus_license_code',
         'province',
         'city',
+        'work_type',
         'county',
         'contact',
         'tel',

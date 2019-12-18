@@ -3,6 +3,8 @@ declare (strict_types = 1);
 
 namespace app\common\controller;
 
+use app\common\service\CategoryObjHave;
+use app\common\typeCode\cate\CinemaNearby;
 use think\Request;
 use app\common\service\Manager as Service;
 use app\common\service\CategoryObjHaveAttr;
@@ -30,8 +32,11 @@ class Cinema
 
         $levels = (new CategoryObjHaveAttr(1))->getList($user['group_code']);
 
+        //查询影院周边
+        $around = (new CategoryObjHave((new \app\common\typeCode\cateObjHave\Cinema())))->getList((new CinemaNearby()),$user['group_code']);
 
-        View::assign(compact('user','info','tou','yuan','yingUser','yuanUser','levels'));
+
+        View::assign(compact('user','info','tou','yuan','yingUser','yuanUser','levels','around'));
 
         return view('common@cinema/info');
 
