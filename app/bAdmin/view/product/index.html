@@ -1,0 +1,195 @@
+{include file="common/source"}
+<link href="__STATIC__/js/plugins/fancybox/jquery.fancybox.css" rel="stylesheet">
+<script src="__STATIC__/js/plugins/fancybox/jquery.fancybox.js"></script>
+<script>
+    $(document).ready(function () {
+        $('.fancybox').fancybox({
+            // openEffect: 'none',
+            // closeEffect: 'none',
+            width: '75%',
+            height: '75%',
+        });
+    });
+</script>
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5 style="line-height:34px;">
+                        产品列表
+                    </h5>
+                    <div class="row">
+                        <div class="col-sm-2">
+                            <select class="form-control" name="cinema">
+                                <option value="0">全部影院</option>
+                                {foreach $cinema as $k => $v}
+                                <option value="{$v.group_code}" {if $v.group_code == $cinemaId}selected{/if}>{$v.name}</option>
+                                {/foreach}
+                            </select>
+                        </div>
+                        <div class="col-sm-2">
+                            <select class="form-control" name="cate">
+                                <option value="0">全部分类</option>
+                                {foreach $cate as $k => $v}
+                                <option value="{$v.id}" {if $v.id == $cateId}selected{/if}>{$v.name}</option>
+                                {/foreach}
+                            </select>
+                        </div>
+                        <div class="col-sm-2">
+                            <select class="form-control" name="screen">
+                                <option value="0">全部影厅</option>
+                                {foreach $screen as $k => $v}
+                                <option value="{$v.id}" {if $v.id == $screenId}selected{/if}>{$v.name}</option>
+                                {/foreach}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <div class="example">
+
+                        <table class="table table-bordered table-hover text-center fz13">
+                            <thead>
+                            <tr class="text-center">
+                                <th style="text-align: center;">所属影院</th>
+                                <th style="text-align: center;">产品名称</th>
+                                <th style="text-align: center;">产品封面</th>
+                                <th style="text-align: center;">所属分类</th>
+                                <!--<th style="text-align: center;">级别名称</th>-->
+                                <th style="text-align: center;">所属影厅</th>
+                                <th style="text-align: center;">当前状态</th>
+                                <th style="text-align: center;">创建时间</th>
+                                <th style="text-align: center;width:130px;">操作</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {foreach $list as $key => $value}
+                            <tr>
+                                <td>{$value.cinema_name}</td>
+                                <td>{$value.entity_name}</td>
+                                <td>
+                                    <a class="fancybox" href="{$value.pic}" title="">
+                                        <img alt="image" src="{$value.pic}" style="width: 40px;" />
+                                    </a>
+                                </td>
+                                <td>{$value.cate_name}</td>
+                                <td>{$value.screen_name}</td>
+                                <td>
+                                    {if $value.status == 1}
+                                    <p><span class="label label-info">上架</span></p>
+                                    {else}
+                                    <p><span class="label label-danger">下架</span></p>
+                                    {/if}
+                                </td>
+                                <td>{$value.create_time|date="Y-m-d H:i:s"}</td>
+                                <td>
+                                    <div class="btn-group">
+                                        <button data-toggle="dropdown" class="btn btn-primary btn-xs dropdown-toggle" aria-expanded="false">更多 <span class="caret"></span>
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li><a href="{:url('info',['id'=>$value.id])}">查看详情</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            {/foreach}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                        {$list->render()|raw}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script>
+    var config = {
+        '.chosen-select': {},
+        '.chosen-select-deselect': {
+            allow_single_deselect: true
+        },
+        '.chosen-select-no-single': {
+            disable_search_threshold: 10
+        },
+        '.chosen-select-no-results': {
+            no_results_text: 'Oops, nothing found!'
+        },
+        '.chosen-select-width': {
+            width: "95%"
+        }
+    }
+    for (var selector in config) {
+        $(selector).chosen(config[selector]);
+    }
+
+    $('select').change(function(){
+        var cate_id = $('select[name=cate]').val();
+        // var level_id = $('select[name=level]').val();
+        var cinema_id = $('select[name=cinema]').val();
+
+        var screen = $('select[name=screen]').val();
+
+
+        window.location.href = "{:url('index')}?cate_id="+cate_id+"&cinema_id="+cinema_id+'&screen_id='+screen
+    })
+
+    checkStatus = function(_this,change_status,id) {
+        $.ajax({
+            url: "{:url('changeStatus')}",
+            type: 'post',
+            dataType: 'json',
+            data:{
+                id : id,
+                status : change_status,
+            },
+            success: function (data) {
+                if (data.code == 0) {
+                    layer.msg(data.msg,{icon: 5})
+                } else {
+                    layer.msg('修改成功')
+                    let str = ``
+                    if (change_status == 1){
+                        str = `<a href="javascript:void(0);" onclick="checkStatus(this,2,${id})">
+                                <p><span class="label label-info">上架</span></p>
+                            </a>`
+                    } else{
+                        str = `<a href="javascript:void(0);" onclick="checkStatus(this,1,'${id}')">
+                                <p><span class="label label-danger">下架</span></p>
+                            </a>`
+                    }
+                    $(_this).parents('td').html(str)
+                }
+            }
+        })
+    }
+
+    var removeArticle = function (_this, article_id) {
+        layer.confirm('您确定删除吗',function(){
+            $.ajax({
+                url: "{:url('delete')}",
+                type: 'post',
+                dataType: 'json',
+                data:{
+                    id : article_id,
+                },
+                success: function (data) {
+                    console.log(data)
+                    if (data.code == 0) {
+                        layer.msg(data.msg,{icon: 5})
+                    } else {
+                        layer.msg('删除成功',{icon : 1})
+                        $(_this).parents('tr').remove();
+                    }
+
+                }
+            })
+        })
+    }
+</script>

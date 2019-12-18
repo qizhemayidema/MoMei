@@ -138,12 +138,13 @@ class CinemaProduct
 
         $screenId && $where['screen_id'] = $screenId;
 
+        $this->groupCode && $where['cinema_id'] = $this->groupCode;
+
         $handler = $this->showType ? $handler->backgroundShowData() : $handler->receptionShowData();
 
         $where && $handler = $handler->where($where);
 
-        $handler = $handler->where(['cinema_id'=>$this->groupCode])->order('sort','desc');
-
+        $handler = $handler->order('sort','desc');
 
         return $page ? $handler->paginate($page) : $handler->select();
     }
