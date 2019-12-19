@@ -75,7 +75,7 @@ class BoxOffice
 
         if($times){
             $start_time = strtotime($times);
-            $end_time = strtotime('+1 day',$start_time);
+            $end_time = strtotime(date('Y-m-d 23:59:59',$start_time));
             $handler = $handler->where('create_time','between',[$start_time,$end_time]);
         }
 
