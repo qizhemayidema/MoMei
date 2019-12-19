@@ -59,6 +59,8 @@ class CinemaProduct
             'price_month'       => $data['price_month'],
             'price_year'        => $data['price_year' ],
             'price_discount'    => $data['price_discount'] ?? 0,
+            'price_discount_month'    => $data['price_discount_month'] ?? 0,
+            'price_discount_year'    => $data['price_discount_year'] ?? 0,
             'status'            => 2,
             'create_time'       => time(),
         ];
@@ -85,6 +87,8 @@ class CinemaProduct
             'pic'               => $data['pic'],
             'roll_pic'          => $data['roll_pic'],
             'price_discount'    => $data['price_discount'] ?? 0,
+            'price_discount_month'    => $data['price_discount_month'] ?? 0,
+            'price_discount_year'    => $data['price_discount_year'] ?? 0,
             'status'    => 2,
         ];
 

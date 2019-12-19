@@ -79,7 +79,9 @@ class Product extends Base
             'price_month|包月价格' => 'require|float|max:10',
             'price_year|包年价格'   => 'require|float|max:10',
             'price_json|每日价格'   => 'require',
-            'price_discount|优惠价格' => 'require|float|max:10',
+            'price_discount|日优惠价格' => 'require|float|max:10',
+            'price_discount_month|月优惠价格' => 'require|float|max:10',
+            'price_discount_year|年优惠价格' => 'require|float|max:10',
             'pic|封面图'           => 'require|max:255',
             'roll_pic|轮播图'      => 'require',
             'desc'          => 'require',
@@ -158,6 +160,8 @@ class Product extends Base
                 'price_month' => $post['price_month'],
                 'price_year' => $post['price_year'],
                 'price_discount'    => $post['price_discount'],
+                'price_discount_month'    => $post['price_discount_month'],
+                'price_discount_year'    => $post['price_discount_year'],
                 'desc'       => $post['desc'],
             ];
 
@@ -267,7 +271,9 @@ class Product extends Base
             'entity_name|名称'       => 'require|max:30',
             'desc|介绍'       => 'require',
             'cate_id|分类' => 'require',
-            'price_discount|优惠价格' => 'require|float|max:10',
+            'price_discount|日优惠价格' => 'require|float|max:10',
+            'price_discount_month|月优惠价格' => 'require|float|max:10',
+            'price_discount_year|年优惠价格' => 'require|float|max:10',
             'pic|封面图'           => 'require|max:255',
             'roll_pic|轮播图'      => 'require',
             'desc'          => 'require',
@@ -313,7 +319,7 @@ class Product extends Base
             }
 
             //判断数量
-            $count = $service->getSum($post['cate_id'],$post['level_id'],$post['screen_id']);
+            $count = $service->getSum($post['cate_id'],$post['level_id'],$post['screen_id'],[$post['id']]);
 
             if ($count + 1 > $sum) throw new ValidateException('该类型产品已达上限,无法继续操作');
 
@@ -347,6 +353,8 @@ class Product extends Base
                 'price_month'       => $post['price_month'],
                 'price_year'        => $post['price_year' ],
                 'price_discount'    => $post['price_discount'],
+                'price_discount_month'    => $post['price_discount_month'],
+                'price_discount_year'    => $post['price_discount_year'],
                 'pic'       => $post['pic'],
                 'roll_pic'  => $post['roll_pic'],
                 'status'    => 2,

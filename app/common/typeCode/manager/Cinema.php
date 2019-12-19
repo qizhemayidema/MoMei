@@ -20,13 +20,10 @@ class Cinema implements ManagerImpl
     private $field = [
         'yuan_id',
         'tou_id' ,
-        'area_id',
-        'area_value',
         'bus_area',
         'property_company',
         'address',
         'bus_license',
-        'bus_license_code',
         'province_id' ,
         'province',
         'city_id',
@@ -43,13 +40,12 @@ class Cinema implements ManagerImpl
         'credit_code',
         'email',
         'name' ,
-        'pro_id' ,
-        'pro_name' ,
         'duty' ,
         'duty_tel' ,
         'add_time',
         'type',
         ];
+
     public function getManagerType()
     {
         // TODO: Implement getManagerType() method.

@@ -33,9 +33,6 @@ class Cinema extends Base
     {
         $cateService = new Category();
 
-        //查询行业分类
-        $cate = $cateService->getList((new ABus()));
-
         //从获取城市列表
         $area = (new Area())->getListByPId();
 
@@ -59,7 +56,6 @@ class Cinema extends Base
         View::assign('area',$area);
         View::assign('yuan',$yuan);
         View::assign('ying',$ying);
-        View::assign('bus_cate',$cate);
         View::assign('zhou',$zhou);
         View::assign('level',$level);
 
@@ -74,7 +70,6 @@ class Cinema extends Base
         $validate = new Validate();
 
         $rules = [
-            'pro_id'          => 'require',
             'yuan_id'         => 'require',
             'tou_id'          => 'require',
 //            'area_id'
@@ -83,12 +78,11 @@ class Cinema extends Base
             're_password|确认密码' => 'require|confirm:password',
             'address|公司详细地址'=>'require|max:128',
             'bus_license|营业执照'=>'require|max:1000',
-            'bus_license_code|营业执照代码'=>'require|max:100',
             'province|地址'=>'require',
             'city|地址'=>'require',
             'county|地址'=>'require',
             'tel|公司电话' => 'require|max:20',
-            'property_company|物业公司电话' => 'require|max:50',
+            'property_company|物业公司名称' => 'require|max:50',
             'contact|联系人姓名'=>'require|max:30',
             'contact_license_code|联系人身份证号'=>'require|max:18',
             'contact_license_pic|联系人身份证照片'=>'require|max:500',
@@ -102,7 +96,6 @@ class Cinema extends Base
             'duty|负责人'      => 'require|max:30',
             'duty_tel|负责人电话'  => 'require|max:30',
 
-            'pro_id|行业分类'=>'require',
 //                '__token__'     => 'token',
         ];
 
@@ -122,9 +115,6 @@ class Cinema extends Base
             {
                 throw new ValidateException('账户已存在');
             }
-
-            //查询行业名称
-            $post['pro_name'] = (new \app\common\model\Category())->get($post['pro_id'])['name'];
 
             $province = explode('-',$post['province']);
             $city = explode('-',$post['city']);
@@ -205,9 +195,6 @@ class Cinema extends Base
 
         $data = $service->getInfo($user['info_id']);
 
-        //查询行业分类
-        $cate = $cateService->getList((new ABus()));
-
         //获取城市一级列表
         $area1 = $area->getListByPId();
 
@@ -250,7 +237,6 @@ class Cinema extends Base
         View::assign('area3',$area3);
         View::assign('yuan',$yuan);
         View::assign('ying',$ying);
-        View::assign('bus_cate',$cate);
         View::assign('zhou',$zhou);
         View::assign('user',$user);
         View::assign('data',$data);
@@ -270,7 +256,6 @@ class Cinema extends Base
 
         $rules = [
             'id'              => 'require',
-            'pro_id'          => 'require',
             'yuan_id'         => 'require',
             'tou_id'          => 'require',
 //            'area_id'
@@ -279,12 +264,11 @@ class Cinema extends Base
             're_password|确认密码' => 'confirm:password',
             'address|公司详细地址'=>'require|max:128',
             'bus_license|营业执照'=>'require|max:1000',
-            'bus_license_code|营业执照代码'=>'require|max:100',
             'province|地址'=>'require',
             'city|地址'=>'require',
             'county|地址'=>'require',
             'tel|公司电话' => 'require|max:20',
-            'property_company|物业公司电话' => 'require|max:50',
+            'property_company|物业公司名称' => 'require|max:50',
             'contact|联系人姓名'=>'require|max:30',
             'contact_license_code|联系人身份证号'=>'require|max:18',
             'contact_license_pic|联系人身份证照片'=>'require|max:500',
@@ -298,7 +282,6 @@ class Cinema extends Base
             'duty|负责人'      => 'require|max:30',
             'duty_tel|负责人电话'  => 'require|max:30',
 
-            'pro_id|行业分类'=>'require',
 //                '__token__'     => 'token',
         ];
 
@@ -320,9 +303,6 @@ class Cinema extends Base
             }
 
             $cinemaData = (new \app\common\service\Manager((new \app\common\typeCode\manager\Cinema())))->get($post['id']);
-
-            //查询行业名称
-            $post['pro_name'] = (new \app\common\model\Category())->get($post['pro_id'])['name'];
 
             $province = explode('-',$post['province']);
             $city = explode('-',$post['city']);
