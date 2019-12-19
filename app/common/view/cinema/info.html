@@ -25,9 +25,7 @@
                             <strong>{$info.name}</strong><br><br/>
                             {$info.province} {$info.city} {$info.county} {$info.address}
                             <br><br/>
-                            <strong>所属行业：</strong> {$info.pro_name}
-                            <br/>
-                            <br/>
+
                             <strong>影院周边：</strong>
                             {foreach $around as $k => $v}
                             {$v.cate_name}
@@ -45,9 +43,6 @@
                             <br/>
 
                             <strong >统一社会信用代码：</strong> {$info.credit_code}
-                            <br/>
-                            <br/>
-                            <strong >营业执照：</strong> {$info.bus_license_code}
                             <br/>
                             <br/>
                             <strong>注册时间：</strong> {$user.create_time}

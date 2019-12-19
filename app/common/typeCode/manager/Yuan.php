@@ -20,7 +20,6 @@ class Yuan implements ManagerImpl
     private $field = [
         'address',
         'bus_license',
-        'bus_license_code',
         'province',
         'city',
         'work_type',

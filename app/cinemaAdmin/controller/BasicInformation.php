@@ -10,6 +10,7 @@ namespace app\cinemaAdmin\controller;
 
 
 use app\common\service\Category;
+use app\common\service\CategoryObjHave;
 use app\common\service\Manager as Service;
 use app\common\service\Area;
 use app\common\typeCode\cate\ABus;
@@ -35,6 +36,8 @@ class BasicInformation extends Base
         $service = new Service((new \app\common\typeCode\manager\Cinema()));
 
         $area = new Area();
+
+        $cinemaEarByTypeCode = (new CinemaNearby());
         //获取数据
         $user = $service->get($id);
 
@@ -54,10 +57,19 @@ class BasicInformation extends Base
 
 
         //获取周边分类列表
-        $zhou = $cateService->getList((new CinemaNearby()));
+        $zhou = $cateService->getList($cinemaEarByTypeCode);
 
         //获取级别分类列表
         $level = $cateService->getList((new \app\common\typeCode\cate\CinemaLevel()));
+
+        //获取影院的周边选择
+        $selectAroundList = (new CategoryObjHave((new \app\common\typeCode\cateObjHave\Cinema())))->getList($cinemaEarByTypeCode,$user['group_code']);
+
+        $selectAroundIds = [];
+        foreach ($selectAroundList as $k => $v){
+            $selectAroundIds[] = $v['cate_id'];
+        }
+
 
         foreach ($level as $key => $value){
             $level[$key]['attr'] =  $cateService->getAttrList($value['id']);
@@ -75,6 +87,7 @@ class BasicInformation extends Base
         View::assign('data',$data);
         View::assign('level',$level);
         View::assign('level_check',$levelCheck);
+        View::assign('select_around_ids',$selectAroundIds);
 
         return view();
     }
@@ -88,7 +101,6 @@ class BasicInformation extends Base
 
         $rules = [
             'id'              => 'require',
-            'pro_id'          => 'require',
 //            'yuan_id'         => 'require',
 //            'tou_id'          => 'require',
 //            'area_id'
@@ -97,12 +109,11 @@ class BasicInformation extends Base
             're_password|确认密码' => 'confirm:password',
             'address|公司详细地址'=>'require|max:128',
             'bus_license|营业执照'=>'require|max:1000',
-            'bus_license_code|营业执照代码'=>'require|max:100',
             'province|地址'=>'require',
             'city|地址'=>'require',
             'county|地址'=>'require',
             'tel|公司电话' => 'require|max:20',
-            'property_company|物业公司电话' => 'require|max:50',
+            'property_company|物业公司名称' => 'require|max:50',
             'contact|联系人姓名'=>'require|max:30',
             'contact_license_code|联系人身份证号'=>'require|max:18',
             'contact_license_pic|联系人身份证照片'=>'require|max:500',
@@ -116,7 +127,6 @@ class BasicInformation extends Base
             'duty|负责人'      => 'require|max:30',
             'duty_tel|负责人电话'  => 'require|max:30',
 
-            'pro_id|行业分类'=>'require',
 //                '__token__'     => 'token',
         ];
 
@@ -137,18 +147,9 @@ class BasicInformation extends Base
                 throw new ValidateException('账户已存在');
             }
 
-            //查询行业名称
-            $post['pro_name'] = (new \app\common\model\Category())->get($post['pro_id'])['name'];
 
-            //处理表变组合
-            if (!$post['area_id']){
-                $post['area_id'] = 0;
-                $post['area_value'] = '';
-            }else{
-                $area = explode('-',$post['area_id']);
-                $post['area_id'] = $area[0];
-                $post['area_value'] = $area[1];
-            }
+            $cinemaData = (new \app\common\service\Manager((new \app\common\typeCode\manager\Cinema())))->get($post['id']);
+
 
             $province = explode('-',$post['province']);
             $city = explode('-',$post['city']);
@@ -169,6 +170,26 @@ class BasicInformation extends Base
             $service->update($post['id'],$post);
 
             $service->updateInfo($oldUser['info_id'],$post);
+
+            //修改周边区域
+            $cateObjHaveService = new CategoryObjHave((new \app\common\typeCode\cateObjHave\Cinema()));
+
+            $areaAroundArr = [];
+
+            if (isset($post['area_around'])){
+
+                foreach ($post['area_around'] as $k => $v){
+
+                    $aroundTemp = explode('-',$v);
+
+                    $areaAroundArr[] = [
+                        'cate_id'   => $aroundTemp[0],
+                        'cate_name' => $aroundTemp[1]
+                    ];
+                }
+            }
+
+            $cateObjHaveService->update($areaAroundArr,(new CinemaNearby()),$cinemaData['group_code']);
 
             $model->commit();
 

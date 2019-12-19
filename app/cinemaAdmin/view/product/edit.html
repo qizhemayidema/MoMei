@@ -394,13 +394,37 @@
             }
         })
     }
-    $(function(){
+        //文本编辑器的
+        $(document).ready(function () {
+            $('.summernote').summernote({
+                lang: 'zh-CN',
+                onImageUpload: function(files, editor, welEditable) {
+                    uploadSummerPic(files[0], editor, welEditable);
+                }
+            });
 
-        $('.summernote').summernote({
-            lang: 'zh-CN'
         });
 
-    })
+        function uploadSummerPic(file, editor, welEditable) {
+            var data = new FormData();
+            data.append("file", file);
+            $.ajax({
+                type:"POST",
+                url:"{:url('uploadPic')}",
+                data: data,
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function (data) {
+
+                    editor.insertImage(welEditable,data.msg);//回显到框内很重要
+                },
+                error:function(){
+                    layer.alert('上传失败!');
+                    return;
+                }
+            });
+        }
 
 
         function dateFormat(fmt, date) { //格式化时间

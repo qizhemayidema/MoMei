@@ -332,11 +332,12 @@ class Cinema extends Base
             }
 
 
+            //修改周边区域
+            $cateObjHaveService = new CategoryObjHave((new \app\common\typeCode\cateObjHave\Cinema()));
+
+            $areaAroundArr = [];
+
             if (isset($post['area_around'])){
-
-                $cateObjHaveService = new CategoryObjHave((new \app\common\typeCode\cateObjHave\Cinema()));
-
-                $areaAroundArr = [];
 
                 foreach ($post['area_around'] as $k => $v){
 
@@ -347,9 +348,9 @@ class Cinema extends Base
                         'cate_name' => $aroundTemp[1]
                     ];
                 }
-
-                $cateObjHaveService->update($areaAroundArr,(new CinemaNearby()),$cinemaData['group_code']);
             }
+
+            $cateObjHaveService->update($areaAroundArr,(new CinemaNearby()),$cinemaData['group_code']);
 
             $model->commit();
 
