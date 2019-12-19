@@ -69,7 +69,7 @@ class BoxOffice
 
         $handler = $this->where ? $handler->where($this->where[0],$this->where[1]) : $handler;
 
-        $handler = $this->boxOfficeImpl ? $handler->where(['type'=>$this->boxOfficeImpl->getBoxType()]) : $handler;
+//        $handler = $this->boxOfficeImpl ? $handler->where(['type'=>$this->boxOfficeImpl->getBoxType()]) : $handler;
 
         if($cinemaid) $handler = $handler->where(['cinema_id'=>$cinemaid]);
 
