@@ -10,12 +10,9 @@ namespace app\common\service;
 
 
 use app\common\model\BoxOfficeStatistics as BoxOfficeStatisticsModel;
-use app\common\typeCode\BoxOfficeImpl;
 
 class BoxOffice
 {
-    private $boxOfficeImpl = null;
-
     private $order = [];
 
     private $pageLength = null;
@@ -24,10 +21,6 @@ class BoxOffice
 
     private $groupCode = 0;
 
-    public function __construct(?BoxOfficeImpl $boxOfficeImpl = null)
-    {
-        $this->boxOfficeImpl = $boxOfficeImpl;
-    }
 
     public function pageLength($pageLength = 15)
     {
@@ -69,8 +62,6 @@ class BoxOffice
 
         $handler = $this->where ? $handler->where($this->where[0],$this->where[1]) : $handler;
 
-//        $handler = $this->boxOfficeImpl ? $handler->where(['type'=>$this->boxOfficeImpl->getBoxType()]) : $handler;
-
         if($cinemaid) $handler = $handler->where(['cinema_id'=>$cinemaid]);
 
         if($times){
@@ -89,16 +80,12 @@ class BoxOffice
 
     public function insert($data)
     {
-//        if (!($this->boxOfficeImpl instanceof BoxOfficeImpl)){
-//            throw new \Exception('请在构造器中传入'.boxOfficeImpl::class);
-//        }
 
         $addData = [
             'cinema_id'=>$data['group_code'],
             'cinema_name'=>$data['cinema_name'],
             'tou_id'=>$data['tou_id'] ?? 0,
             'yuan_id'=>$data['yuan_id'] ?? 0,
-//            'type'=>$this->boxOfficeImpl->getBoxType(),
             'number_value'=>$data['number_value'],
             'income_value'=>$data['income_value'],
             'create_time'=>time()
@@ -131,10 +118,6 @@ class BoxOffice
      */
     public function getToday($groupCode)
     {
-//        if (!($this->boxOfficeImpl instanceof BoxOfficeImpl)){
-//            throw new \Exception('请在构造器中传入'.boxOfficeImpl::class);
-//        }
-
         $handler = new BoxOfficeStatisticsModel();
 
         $todayStart = strtotime(date('Y-m-d').' 00:00:00');
