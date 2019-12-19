@@ -8,6 +8,7 @@
 declare (strict_types = 1);
 namespace app\aAdmin\controller;
 
+use app\common\controller\Product;
 use app\common\service\ProductRule;
 use app\common\tool\Session;
 use app\common\service\CinemaProduct as CinemaProductService;
@@ -22,13 +23,16 @@ class CinemaProduct extends Base
     {
         $cinemaId = $request->param('cinema_id');   //接收影院的id(group_code)
 
-        $productResult = (new CinemaProductService($cinemaId))->setShowType(true)->getEntityList(15);  //该资源方下全部影院的全部产品
+        return (new Product())->getShowListPage($cinemaId);
 
-        View::assign('group_code',$cinemaId);
+//
+//        $productResult = (new CinemaProductService($cinemaId))->setShowType(true)->getEntityList(15);  //该资源方下全部影院的全部产品
+//
+//        View::assign('group_code',$cinemaId);
+//
+//        View::assign('data',$productResult);
 
-        View::assign('data',$productResult);
-
-        return view();
+//        return view();
     }
 
     public function info(Request $request)

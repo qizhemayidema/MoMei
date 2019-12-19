@@ -25,7 +25,6 @@ class AssociatedCinema extends Base
         $info = (new Session())->getData();
 
         //查询属于该资源方下的影院
-        $managerService = '';
         $field = '';
         $managerService = new ManagerService(new CinemaTypeDesc());
         if($info['type']==2){  //院线
