@@ -11,7 +11,6 @@ namespace app\aAdmin\controller;
 
 use app\common\service\BoxOffice as BoxOfficeService;
 use app\common\tool\Session;
-use app\common\typeCode\BoxOffice\BoxOfficeIncome as TypeDesc;
 use app\common\typeCode\manager\Cinema as CinemaTypeDesc;
 use app\common\service\Manager as ManagerService;
 use app\Request;

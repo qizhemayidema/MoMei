@@ -11,7 +11,6 @@ namespace app\cinemaAdmin\controller;
 
 use app\common\service\BoxOffice;
 use app\common\tool\Session;
-use app\common\typeCode\BoxOffice\BoxOfficeIncome as TypeDesc;
 use app\common\service\Manager as ManagerService;
 use think\Validate;
 use think\facade\View;
@@ -53,7 +52,7 @@ class BoxOfficeIncome extends  Base
             $info = (new Session())->getData();
 
 
-            $BoxOffice = new BoxOffice((new TypeDesc()));
+            $BoxOffice = new BoxOffice();
 
             $todayResult = $BoxOffice->getToday($info['group_code']);
 
