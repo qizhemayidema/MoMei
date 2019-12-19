@@ -20,7 +20,11 @@ class Base extends BaseController
 
     public function initialize()
     {
-        if (!$this->checkPermission()) {
+        $this->setMenu();
+
+        View::assign('base',$this);
+
+        if (!$this->checkPermissionWithController()) {
             if (request()->isAjax() || request()->isPost()) {
                 header('Content-type: application/json');
                 exit(json_encode(['code' => 0, 'msg' => '操作越权'], 256));
@@ -29,8 +33,35 @@ class Base extends BaseController
                 return redirect("/Index/index");
             }
         }
+    }
 
-        $this->setMenu();
+    public function checkPermissionWithController($controller = '')
+    {
+
+        $controller = $controller ? $controller : Request()->controller(); //获取控制器名
+
+        $permission = strtolower($controller . '/#');
+
+        $except = [
+            'index/#',
+        ];
+
+        if (in_array($permission,$except)) return true;
+
+        //查询当前用户的权限
+        $adminRes = (new Session())->getData();
+
+        if($adminRes['role_id']==0)  return true;
+
+        if (!$this->userAuth){
+            $authAll = (new Role())->getUserRoleAuth(new A(),$adminRes['role_id']);
+            $this->userAuth = array_column($authAll,'urls');
+        }
+
+
+        if(!in_array($permission,$this->userAuth)) return false;
+
+        return true;
     }
 
     protected function setMenu()

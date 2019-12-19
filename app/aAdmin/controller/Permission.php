@@ -9,18 +9,19 @@ declare (strict_types = 1);
 
 namespace app\aAdmin\controller;
 
-use app\common\service\Permission;
+use app\common\service\Permission as Service;
 use app\common\typeCode\permission\A as TypeDesc;
 use app\Request;
 use think\facade\View;
 use think\Validate;
-class APermission extends Base
+
+class Permission extends Base
 {
     public function index()
     {
         try{
             //查询院线的全部的权限
-            $ruleArr = (new Permission())->getRuleList(new TypeDesc());
+            $ruleArr = (new Service())->getRuleList(new TypeDesc());
             View::assign('ruleArr',$ruleArr);
             return view();
         }catch (\Exception $e){
@@ -31,7 +32,7 @@ class APermission extends Base
     public function add()
     {
         //查询院线的全部的权限
-        $ruleArr = (new Permission())->getRuleList(new TypeDesc());
+        $ruleArr = (new Service())->getRuleList(new TypeDesc());
         View::assign('ruleArr',$ruleArr);
         return view();
     }
@@ -54,7 +55,7 @@ class APermission extends Base
                 throw new \Exception($validate->getError());
             }
 
-            $res = (new Permission())->insert(new TypeDesc(),$data);
+            $res = (new Service())->insert(new TypeDesc(),$data);
             if(!$res) throw new \Exception('添加失败');
             return json(['code'=>1,'msg'=>'success']);
         }catch (\Exception $e){
@@ -66,11 +67,11 @@ class APermission extends Base
     {
         //查询修改的默认
         $id = $request->param('rule_id');
-        $res = (new Permission())->getFindRes($id);
+        $res = (new Service())->getFindRes($id);
         View::assign('data',$res);
 
         //查询院线的全部的权限
-        $ruleArr = (new Permission())->getRuleList(new TypeDesc());
+        $ruleArr = (new Service())->getRuleList(new TypeDesc());
         View::assign('ruleArr',$ruleArr);
 
         return view();
@@ -90,7 +91,7 @@ class APermission extends Base
                 '__token__'     => 'token',
             ));
             if(!$validate->check($post))  throw new \Exception($validate->getError());
-            $res = (new Permission())->updataRes(new TypeDesc(),$post);
+            $res = (new Service())->updataRes(new TypeDesc(),$post);
             if(!$res) throw new \Exception('修改失败');
             return json(['code'=>1,'msg'=>'success']);
         }catch (\Exception $e){
@@ -102,7 +103,7 @@ class APermission extends Base
     {
         $rule_id = $request->post('rule_id');
 
-        $res = (new Permission())->delete((new TypeDesc()),$rule_id);
+        $res = (new Service())->delete((new TypeDesc()),$rule_id);
         if(!$res)  return json(['code'=>0,'msg'=>'删除失败']);
 
         return json(['code'=>1,'msg'=>'success']);

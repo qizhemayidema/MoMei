@@ -51,8 +51,10 @@
                     <ul class="nav nav-second-level">
                         {if isset($value.children)}
                         {foreach $value.children as $key2 => $value2}
+                        {if $base->checkPermissionWithController($value2['controller'])}
                         <li><a class="J_menuItem" href="{:url($value2['controller'].'/'.$value2['action'])}">{$value2.title}</a>
                         </li>
+                        {/if}
                         {/foreach}
                         {/if}
                     </ul>

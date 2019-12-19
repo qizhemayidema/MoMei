@@ -26,7 +26,7 @@ class Base extends BaseController
         $this->setMenu();
 
         View::assign('base',$this);
-//        if (!$this->checkPermission()) {
+
         if (!$this->checkPermissionWithController()) {
             if (request()->isAjax() || request()->isPost()) {
                 header('Content-type: application/json');
