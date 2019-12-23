@@ -46,6 +46,46 @@
             {:token_field()}
             <input type="hidden" name="contact_license_pic" value="{$data.contact_license_pic}">
             <input type="hidden" name="bus_license" value="{$data.bus_license}">
+            <input type="hidden" name="pics" value="{$data.pics}">
+
+            <div class="form-group">
+                <label class="col-sm-2 control-label">影院介绍</label>
+                <div class="col-sm-8">
+                    <textarea name="desc" style= "height:100px;width:100%;overflow:hidden; resize:none; " placeholder="请限制在500字内">{$data.desc}</textarea>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-2 control-label">银幕数（厅数量）</label>
+                <div class="col-sm-8">
+                    <input name="screen_sum" required value="{$data.screen_sum}" type="text" class="form-control">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">座位数</label>
+                <div class="col-sm-8">
+                    <input name="seat_sum" required value="{$data.seat_sum}" type="text" class="form-control">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">年总票房</label>
+                <div class="col-sm-8">
+                    <input name="box_office_for_year" required value="{$data.box_office_for_year}" type="text" class="form-control">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">年人均票价</label>
+                <div class="col-sm-8">
+                    <input name="ticket_price_for_average" required value="{$data.ticket_price_for_average}" type="text" class="form-control">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">年观影人次</label>
+                <div class="col-sm-8">
+                    <input name="watch_mv_sum" required value="{$data.watch_mv_sum}" type="text" class="form-control">
+                </div>
+            </div>
+            <hr>
 
             <div class="form-group">
                 <label class="col-sm-2 control-label">周边区域</label>
@@ -80,6 +120,22 @@
                 <label class="col-sm-2 control-label">影院名称</label>
                 <div class="col-sm-8">
                     <input name="name" required value="{$data.name}" type="text" class="form-control">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">影院照片(多传)</label>
+                <div class="col-sm-8">
+                    <!--dom结构部分-->
+                    <div id="filePicker1" style="margin-bottom: 10px;">选择图片</div>
+                    <div id="fileList1" class="uploader-list">
+
+                        {foreach :explode(',',$data.pics) as $key => $value}
+                        <div class="file-item thumbnail upload-state-done">
+                            <img src="{$value}" onclick="removePic(this,'{$value}','pics')" style="width: 150px;">
+                        </div>
+                        {/foreach}
+                    </div>
+                    <span class="help-block m-b-none">点击删除旧图片</span>
                 </div>
             </div>
             <div class="form-group">
@@ -233,36 +289,6 @@
                 <label class="col-sm-2 control-label">微信号</label>
                 <div class="col-sm-8">
                     <input name="contact_wechat" required value="{$data.contact_wechat}" type="text" class="form-control">
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="col-sm-2 control-label">银幕数（厅数量）</label>
-                <div class="col-sm-8">
-                    <input name="screen_sum" required value="{$data.screen_sum}" type="text" class="form-control">
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="col-sm-2 control-label">座位数</label>
-                <div class="col-sm-8">
-                    <input name="seat_sum" required value="{$data.seat_sum}" type="text" class="form-control">
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="col-sm-2 control-label">年总票房</label>
-                <div class="col-sm-8">
-                    <input name="box_office_for_year" required value="{$data.box_office_for_year}" type="text" class="form-control">
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="col-sm-2 control-label">年人均票价</label>
-                <div class="col-sm-8">
-                    <input name="ticket_price_for_average" required value="{$data.ticket_price_for_average}" type="text" class="form-control">
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="col-sm-2 control-label">年观影人次</label>
-                <div class="col-sm-8">
-                    <input name="watch_mv_sum" required value="{$data.watch_mv_sum}" type="text" class="form-control">
                 </div>
             </div>
             <hr>
@@ -542,6 +568,101 @@
             str += ',' + response.msg
         }
         $('input[name=contact_license_pic]').val(str)
+        $( '#'+file.id ).addClass('upload-state-done');
+        // console.log(response)
+        // $('input[name=contact_license_pic]').val(response.msg)
+        // $( '#'+file.id ).addClass('upload-state-done');
+    });
+
+    // 文件上传失败，显示上传出错。
+    uploader.on( 'uploadError', function( file ) {
+        var $li = $( '#'+file.id ),
+            $error = $li.find('div.error');
+
+        // 避免重复创建
+        if ( !$error.length ) {
+            $error = $('<div class="error"></div>').appendTo( $li );
+        }
+
+        $error.text('上传失败');
+    });
+
+    // 完成上传完了，成功或者失败，先删除进度条。
+    uploader.on( 'uploadComplete', function( file ) {
+        $( '#'+file.id ).find('.progress').remove();
+    });
+
+    var $list = $("#fileList1");
+    // 初始化Web Uploader
+    var uploader = WebUploader.create({
+
+        // 选完文件后，是否自动上传。
+        auto: true,
+
+        // swf文件路径
+        swf: "__STATIC__/js/plugins/webuploader/Uploader.swf",
+
+
+        // 文件接收服务端。
+        server: "{:url('uploadPic')}",
+
+        // 选择文件的按钮。可选。
+        // 内部根据当前运行是创建，可能是input元素，也可能是flash.
+        pick: '#filePicker1',
+
+        // 只允许选择图片文件。
+        accept: {
+            title: 'Images',
+            extensions: 'gif,jpg,jpeg,bmp,png',
+            mimeTypes: 'image/*'
+        }
+    });
+    uploader.on( 'fileQueued', function( file ) {
+        var $li = $(
+            '<div id="' + file.id + '" class="file-item thumbnail">' +
+            '<img>' +
+            '</div>'
+            ),
+            $img = $li.find('img');
+
+
+        // $list为容器jQuery实例
+        $list.append( $li );
+
+        // 创建缩略图
+        // 如果为非图片文件，可以不用调用此方法。
+        // thumbnailWidth x thumbnailHeight 为 100 x 100
+        uploader.makeThumb( file, function( error, src ) {
+            if ( error ) {
+                $img.replaceWith('<span>不能预览</span>');
+                return;
+            }
+            $img.attr( 'src', src );
+        }, 100, 100 );
+    });
+    uploader.on( 'uploadProgress', function( file, percentage ) {
+        var $li = $( '#'+file.id ),
+            $percent = $li.find('.progress span');
+
+        // 避免重复创建
+        if ( !$percent.length ) {
+            $percent = $('<p class="progress"><span></span></p>')
+                .appendTo( $li )
+                .find('span');
+        }
+
+        $percent.css( 'width', percentage * 100 + '%' );
+    });
+
+    // 文件上传成功，给item添加成功class, 用样式标记上传成功。
+    uploader.on( 'uploadSuccess', function( file ,response) {
+        var str = $('input[name=pics]').val()
+        if (!str){
+            str = response.msg
+        }else{
+            str += ',' + response.msg
+        }
+        $('input[name=pics]').val(str)
         $( '#'+file.id ).addClass('upload-state-done');
         // console.log(response)
         // $('input[name=contact_license_pic]').val(response.msg)

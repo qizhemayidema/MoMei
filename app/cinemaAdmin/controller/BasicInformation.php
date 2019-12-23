@@ -104,6 +104,8 @@ class BasicInformation extends Base
 //            'yuan_id'         => 'require',
 //            'tou_id'          => 'require',
 //            'area_id'
+            'pics|影院图片'    => 'require|max:1023',
+            'decs|介绍'        => 'max:500',
             'username|账户名'  => 'require|max:32',
 //            'password|密码'    => '',
             're_password|确认密码' => 'confirm:password',

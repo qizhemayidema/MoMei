@@ -17,4 +17,9 @@ class Product extends Base
 
 
     }
+
+    public function info()
+    {
+
+    }
 }

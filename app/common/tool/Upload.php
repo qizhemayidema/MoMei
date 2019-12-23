@@ -118,6 +118,26 @@ class Upload
         } catch (\Exception $e) {
             return ['code' => 0, 'msg' => '操作失误,请稍后重试'];
         }
+    }
+
+    public function uploadOneFile($file_path = null, $form_name = 'file')
+    {
+        try {
+            $rules = [
+                'fileSize' => 10 * 1024 * 1024,
+            ];
+            $file = request()->file($form_name);
+
+            validate(['file' => $rules])->check(['file' => $file]);
+
+            $savePath = $this->upload($file_path, $file);
+
+            return ['code' => 1, 'msg' => $savePath];
+        } catch (\think\exception\ValidateException $e) {
+            return ['code' => 0, 'msg' => '文件大小最大为10Mb'];
+        } catch (\Exception $e) {
+            return ['code' => 0, 'msg' => '操作失误,请稍后重试'];
+        }
 
 
     }

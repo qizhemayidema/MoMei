@@ -150,7 +150,7 @@ class CinemaProduct
 
         $handler = $handler->order('sort','desc');
 
-        return $page ? $handler->paginate($page) : $handler->select();
+        return $page ? $handler->paginate(['list_rows'=>$page,'query'=>request()->param()]) : $handler->select();
     }
 
 

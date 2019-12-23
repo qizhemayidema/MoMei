@@ -21,6 +21,8 @@ class Cinema implements ManagerImpl
         'yuan_id',
         'tou_id' ,
         'bus_area',
+        'pics',
+        'desc',
         'property_company',
         'address',
         'bus_license',

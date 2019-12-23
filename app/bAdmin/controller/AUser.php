@@ -24,7 +24,7 @@ class AUser extends Base
     {
         $yuan = new Yuan();
         $ying = new Ying();
-        $list = (new Service())->setTypes($ying->getManagerType())->setTypes($yuan->getManagerType())->showType(true)->order('id','desc')->pageLength(15)->getList();
+        $list = (new Service())->setTypes($ying->getManagerType())->setTypes($yuan->getManagerType())->showType(true)->setOrder('id','desc')->pageLength(15)->getList();
 
         View::assign('list',$list);
 

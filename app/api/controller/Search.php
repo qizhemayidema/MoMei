@@ -4,7 +4,7 @@ declare (strict_types=1);
 namespace app\api\controller;
 
 use app\common\model\CategoryObjHaveAttr as CategoryObjHaveAttrModel;
-use app\common\model\CinemaProduct as CinemaProductEntityModel;
+use app\common\model\CinemaProduct as ProductModel;
 use app\common\model\CinemaProductStatus as CinemaProductEntityStatusModel;
 use app\common\model\ManagerInfo as ManagerInfoModel;
 use app\common\model\CinemaScreen as CinemaScreenModel;
@@ -15,6 +15,7 @@ use think\Request;
 
 class Search
 {
+    //首页搜索
     public function index(Request $request)
     {
         $get = $request->get();
@@ -50,16 +51,19 @@ class Search
          * AND cinema_info.city_id IN(1,2,3);
          */
         $rules = [
-            'start_time' => 'require',   //开始时间
+            'start_time' => 'require',   //开始时间product_cate_ids
             'end_time' => 'require',   //结束时间
-//            'product_cate_ids'   => 'require',   //产品分类ids
-//            'cinema_attr_ids'   => 'require',    //影院筛选条件ids
+            'cate_ids'  => 'require',
+            'cinema_attr_ids'   => 'require',    //影院筛选条件ids
             'city_ids' => 'require',//  城市id 数组
             'city_attr_ids' => 'require',// 城市筛选条件attr ids
         ];
 
+
+
         //计算每日的时间戳
-        $startTime = $get['start_time'];
+        $startTime = strtotime(date('Y-m-d',(int) $get['start_time']));
+        $endTime = strtotime(date('Y-m-d',(int) $get['end_time']));
 
         $date = [];
 
@@ -70,24 +74,17 @@ class Search
         }
 
         //初始化选择的城市id
-        $selectCityIds = $get['city_ids'] ?? [];
+        $selectCityIds = isset($get['city_ids']) && count($get['city_ids']) ? $get['city_ids'] :  [];
         //初始化选择的城市属性
-        $selectCityAttrIds = $get['city_attr_ids'] ?? [];
-        //初始化选择分类
-        $cateIds = $get['product_cate_ids'] ?? [];
+        $selectCityAttrIds = isset($get['city_attr_ids']) && count($get['city_attr_ids']) ? $get['city_attr_ids']:  [];
         //初始化影院筛选条件
-        $attrIds = $get['cinema_attr_ids'] ?? [];
+        $attrIds = isset( $get['cinema_attr_ids']) && count( $get['cinema_attr_ids']) ?  $get['cinema_attr_ids'] :  [];
+        //初始化分类ids
+        $cateIds = isset( $get['cate_ids']) && count( $get['cate_ids']) ?  $get['cate_ids'] :  [];
 
-
-        $entityModel = new CinemaProductEntityModel();
-        $areaModel = new AreaModel();
+        $productModel = new ProductModel();
         $haveAttrModel = new CategoryObjHaveAttrModel();
-        $managerModel = new ManagerModel();
-        $cinemaScreenModel = new CinemaScreenModel();
-        $managerInfoModel = new ManagerInfoModel();
 
-
-        $cinemaService = new CinemaService();
 
         //首先根据 city_ids 和 city_attr_ids 筛选出 符合条件的城市id
         $cityTempIds = $haveAttrModel->where(['type' => 2])->whereIn('attr_id', $selectCityAttrIds)->column('object_id');
@@ -96,64 +93,59 @@ class Search
         $cityIds = array_unique(array_merge($cityTempIds, $selectCityIds));
 
 
-        /**
-         * 此处为查询具体商品的地方
-         * $handler = $entityModel->alias('entity')
-         * ->join('cinema_product product','product.id = entity.product_id')
-         * ->join('category_obj_have_attr attr','attr.object_id = entity.cinema_id and attr.type = 1')
-         * ->join('manager cinema','entity.cinema_id = cinema.id and cinema.type = 4')
-         * ->join('manager_info info','info.id = cinema.info_id')
-         * ->whereIn('entity.id',function($query) use ($date){
-         * $query->table('base_cinema_product_entity_status')->field('entity_id')->whereIn('date',$date)
-         * ->where('status',0)->group('entity_id')->select();
-         * })
-         * ->where(['cinema.status'=>1,'cinema.delete_time'=>0])
-         * ->where(['entity.status'=>1,'entity.delete_time'=>0])
-         * ->where(['product.status'=>1,'product.delete_time'=>0]);
-         *
-         * if ($cateIds) $handler = $handler->whereIn('entity.cate_id',$cateIds);
-         * if ($attrIds) $handler = $handler->whereIn('attr.attr_id',$attrIds);
-         * if ($cityIds) $handler = $handler->whereIn('info.city_id',$cityIds);
-         *
-         * echo $handler->buildSql(true);
-         *
-         * [
-         *      city_id,
-         *      city_name,
-         *      cinema => [
-         *
-         *      ],
-         * ]
-         */
 
-        $handler = $entityModel->alias('entity')
-            ->join('cinema_product product', 'product.id = entity.product_id')
-            ->join('category_obj_have_attr attr', 'attr.object_id = entity.cinema_id and attr.type = 1')
-            ->join('manager cinema', 'entity.cinema_id = cinema.id and cinema.type = 4')
+        $handler = $productModel->alias('product')
+            ->join('category cate','cate.id = product.cate_id and cate.type = 6')
+            ->join('product_rule rule','cate.id = rule.cate_id')
+            ->join('category_obj_have_attr attr', 'attr.object_id = product.cinema_id and attr.type = 1')
+            ->join('manager cinema', 'product.cinema_id = cinema.id and cinema.type = 4')
             ->join('manager_info info', 'info.id = cinema.info_id')
-            ->whereIn('entity.id', function ($query) use ($date) {
-                $query->table('base_cinema_product_entity_status')->field('entity_id')->whereIn('date', $date)
+            ->whereIn('product.id', function ($query) use ($date) {
+                $query->table('base_cinema_product_status')->field('entity_id')->whereIn('date', $date)
                     ->where('status', 0)->group('entity_id')->select();
             })
             ->where(['cinema.status' => 1, 'cinema.delete_time' => 0])
-            ->where(['entity.status' => 1, 'entity.delete_time' => 0])
             ->where(['product.status' => 1, 'product.delete_time' => 0]);
 
-        if ($cateIds) $handler = $handler->whereIn('entity.cate_id', $cateIds);
+//        if ($cateIds) $handler = $handler->whereIn('product.cate_id', $cateIds);
         if ($attrIds) $handler = $handler->whereIn('attr.attr_id', $attrIds);
         if ($cityIds) $handler = $handler->whereIn('info.city_id', $cityIds);
+        if ($cateIds) $handler = $handler->whereIn('cate.id', $cateIds);
 
-        $handler = $handler->field('entity.cinema_id,entity.id entity_id,entity.entity_name,entity.product_id,attr.attr_value');
+        $handler = $handler->field('product.cinema_id,product.id product_id,product.entity_name product_name,attr.attr_value');
 
-        $handler = $handler->field('entity.screen_id,entity.screen_name');
+        $handler = $handler->field('product.screen_id,product.screen_name');
 
-        $handler = $handler->field('entity.cate_id,entity.cate_name');
+        $handler = $handler->field('rule.is_screen');
 
-        $handler = $handler->field('info.city_id,info.city,info.name,info.master_user_id');
+        $handler = $handler->field('cate.id cate_id,cate.name cate_name,cate.icon cate_icon');
+
+        $handler = $handler->field('attr.attr_value');
+
+
+        /**
+         *  'province' => $v['province'],
+        'city'      => $v['city'],
+        'county'    => $v['county'],
+        'bus_area' => $v['bus_area'],
+        'address'   => $v['address'],
+        'pics'     => $v['pics'],
+        'email'     => $v['email'],
+        'screen_sum' => $v['screen_sum'],
+        'seat_sum'  => $v['seat_sum'],
+        'watch_mv_sum' => $v['watch_mv_sum'],
+         */
+        $handler = $handler->field('info.province,info.city_id,info.city,info.county,info.address,info.pics info_pics,info.email info_email,info.name cinema_name,info.master_user_id');
+
+        $handler = $handler->field('info.bus_area,info.seat_sum,info.watch_mv_sum,info.screen_sum');
 
         $result = $handler->select()->toArray();
 
-        $return = [];
+
+//        1
+//        $result = $handler->buildSql(true);
+
+//        return json($result);
 
         $cityTemp = [];
 
@@ -161,96 +153,91 @@ class Search
 
         $productTemp = [];
 
-        $screenTemp = [];
+        $cateScreenTemp = [];
 
-        $entityTemp = [];
+        $cateTemp = [];
 
+        $cinemaAttrTemp = [];
 
         $result = array_unique($result,SORT_REGULAR);
 
-
         foreach ($result as $k => $v){
-            //组装实体产品 key为产品id 可能有重复数据
-            $entityTemp[$v['product_id']][] = [
-                'id'     => $v['entity_id'],
-                'name'   => $v['entity_name'],
+            //组装产品 key为产品id 可能有重复数据
+            $productTemp[$v['cinema_id']][$v['cate_id']][$v['screen_id']][] = [
+                'id'        => $v['product_id'],
+                'name'      => $v['product_name'],
+                'is_screen' => $v['is_screen'],
+                'screen_id' => $v['screen_id'],
+                'cate_id'   => $v['cate_id'],
+                'cinema_id' => $v['cinema_id'],
+                'city_id'   => $v['city_id'],
             ];
             //组装影厅数据 key为 产品id 可能有重复数据
-            $screenTemp[$v['product_id']][] = [
+            $cateScreenTemp[$v['cinema_id']][$v['cate_id']][] = [
                 'id'     => $v['screen_id'],
                 'name'   => $v['screen_name'],
             ];
-            //获取产品 key为 产品分类id 可能有重复数据
-            $productTemp[$v['cate_id']][] = [
-                'id'     => $v['screen_id'],
-                'name'   => $v['screen_name'],
+            //组装分类数据 key为 影院id 可能有重复数据
+            $cateTemp[$v['cinema_id']][] = [
+                'id'     => $v['cate_id'],
+                'name'   => $v['cate_name'],
+                'icon'   => $v['cate_icon'],
+                'is_screen' => $v['is_screen'],
             ];
-        }
-
-
-
-
-        //组装城市数据
-        foreach ($result as $k => $v) {
-
+            //组装影院的属性值  可能有重复数据
+            $cinemaAttrTemp[$v['cinema_id']][] = $v['attr_value'];
+            //组装影院数据 key为城市id 可能有重复数据
+            $cinemaTemp[$v['city_id']][] = [
+                'id'     => $v['cinema_id'],
+                'name'   => $v['cinema_name'],
+                'province' => $v['province'],
+                'city'      => $v['city'],
+                'county'    => $v['county'],
+                'bus_area' => $v['bus_area'],
+                'address'   => $v['address'],
+                'pics'     => $v['info_pics'],
+                'email'     => $v['info_email'],
+                'screen_sum' => $v['screen_sum'],
+                'seat_sum'  => $v['seat_sum'],
+                'watch_mv_sum' => $v['watch_mv_sum'],
+            ];
+            //组装城市数据 无key  可能有重复数据
             $cityTemp[] = [
-                'id' => $v['city_id'],
-                'name' => $v['city'],
+                'id'    => $v['city_id'],
+                'name'  => $v['city'],
             ];
-
-
         }
 
+//        return json($cinemaAttrTemp);
 
+//        return json($productTemp);
 
-        //组装影院数据
+        $cityTemp = array_merge(array_unique($cityTemp,SORT_REGULAR));
 
-        //组装每个影院产品数据
-        return json($screenTemp);
+        foreach ($cityTemp as $k => $v){        //这层组装影院
+            $cityTemp[$k]['cinema'] = array_merge(array_unique($cinemaTemp[$v['id']],SORT_REGULAR));
 
-        //组装影厅数据
-
-
-        //组装影院资源分类数据
-
-        //组装实体类数据
-
-
-//        print_r($handler->select()->toArray());die;
-        $result = array_unique($handler->select()->toArray(), SORT_REGULAR);      //如果查询实际商品 不必去重
-
-        //计算影院总量
-        $cinema = array_unique(array_column($result, 'cinema_id'), SORT_REGULAR);
-
-        //计算影厅总量
-        $screen = array_unique(array_column($result, 'screen_id'), SORT_REGULAR);
-
-        foreach ($screen as $k => $v) {
-            if ($v == 0) unset($screen[$k]);
-        }
-
-        //计算每座城市的影院数量
-        $city = [];
-
-        foreach ($result as $key => $value) {
-
-            if (!isset($city[$value['city_id']])) {
-                $city[$value['city_id']] = [
-                    'city_id' => $value['city_id'],
-                    'city_name' => $value['city'],
-                    'sum' => [$value['master_user_id'] => $value['master_user_id']],
-                ];
-            } else {
-                if (!isset($city[$value['city_id']]['sum'][$value['master_user_id']])) {
-                    $city[$value['city_id']]['sum'][$value['master_user_id']] = $value['master_user_id'];
-                }
+            foreach ($cityTemp[$k]['cinema'] as $tempKey => $tempValue){
+                $cityTemp[$k]['cinema'][$k]['attr'] = array_merge(array_unique($cinemaAttrTemp[$tempValue['id']]));
             }
+
+            foreach ($cityTemp[$k]['cinema'] as $k1 => $v1){    //这层组装分类
+                $cityTemp[$k]['cinema'][$k1]['cate'] = array_merge(array_unique($cateTemp[$v1['id']],SORT_REGULAR));
+                foreach ($cityTemp[$k]['cinema'][$k1]['cate']  as $k2 => $v2){  //这层组装影厅 or 产品
+                    if ($v2['is_screen'] == 1){     //说明该分类有影厅
+                        $cityTemp[$k]['cinema'][$k1]['cate'][$k2]['screen'] = array_merge(array_unique($cateScreenTemp[$v1['id']][$v2['id']],SORT_REGULAR));
+                        foreach ($cityTemp[$k]['cinema'][$k1]['cate'][$k2]['screen'] as $k3 => $v3){
+                            $cityTemp[$k]['cinema'][$k1]['cate'][$k2]['screen'][$k3]['product'] =array_merge(array_unique($productTemp[$v1['id']][$v2['id']][$v3['id']],SORT_REGULAR));
+                        }
+                    }else{
+                        $cityTemp[$k]['cinema'][$k1]['cate'][$k2]['product'] = array_merge(array_unique($productTemp[$v1['id']][$v2['id']][0],SORT_REGULAR));
+                    }
+                }
+
+            }
+
         }
 
-        return json(['code' => 1, 'msg' => 'success', 'data' => [
-            'cinema_sum' => count($cinema),
-            'screen_sum' => count($screen),
-            'city' => $city,
-        ]]);
+        return json(['code'=>1,'msg'=>'success','data'=>$cityTemp]);
     }
 }

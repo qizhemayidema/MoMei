@@ -1,22 +1,42 @@
 {include file="common/source"}
+<script src="__STATIC__/js/plugins/layui/2.5.4/layui.all.js"></script>
+<link rel="stylesheet" href="__STATIC__/js/plugins/layui/2.5.4/css/layui.css">
 <body class="gray-bg">
     <div class="wrapper wrapper-content animated fadeInRight">
         <div class="row">
             <div class="col-sm-12">
     <div class="ibox float-e-margins">
         <div class="ibox-title">
-                <button type="button" onclick="window.location.href='{:url('add')}'"
-                        class="btn btn-w-m btn-primary">添加 影院
-                </button>
-        </div>    
+            <button type="button" onclick="window.location.href='{:url('add')}'"
+                    class="btn btn-w-m btn-primary">添加 影院
+            </button>
+            <button type="button"  id="test1"
+                    class="btn btn-w-m btn-primary">从Excel添加影院
+            </button>
+            <button type="button" onclick="window.location.href='{:url('getExcelTemplate')}'"
+                    class="btn btn-w-m btn-primary">导出Excel添加影院信息模板
+            </button>
+            <br/>
+
+        </div>
+
         <div class="ibox-content">
+            {foreach $cate as $k => $v}
+            <div class="col-sm-4">
+                <select class="form-control m-b attr" name="attr_ids[]">
+                    <option value="0">选择全部{$v.name}</option>
+                    {foreach $v.attr as $k1 => $v1}
+                    <option value="{$v1.id}" {if in_array($v1.id,$attr)} selected {/if}>{$v1.value}</option>
+                    {/foreach}
+                </select>
+            </div>
+            {/foreach}
             <div class="example">
 
                 <table class="table table-bordered table-hover text-center fz13">
                     <thead>
                     <tr class="text-center">
                         <th style="text-align: center;">名称</th>
-                        <th style="text-align: center;">所属行业</th>
                         <th style="text-align: center;">账号</th>
                         <th style="text-align: center;">当前状态</th>
                         <th style="text-align: center;width:180px;">操作</th>
@@ -26,7 +46,6 @@
                     {foreach $list as $key => $value}
                     <tr>
                         <td>{$value.name}</td>
-                        <td>{$value.pro_name}</td>
                         <td>{$value.username}</td>
                         <td>
                             {if $value.status == 1}
@@ -63,13 +82,61 @@
 </div>
 </body>
 <script>
+    $('.attr').change(function(){
+        var arr = [];
 
+        $('.attr').each(function(k,v){
+
+            if($(v).val() && $(v).val() != 0)arr.push($(v).val())
+        })
+        var str = '';
+
+        if (arr.length) str =  arr.join(",")
+
+
+        window.location.href = "{:url('index')}?attr_ids="+str
+    })
+    layui.use('upload',function(){
+            var $ = layui.jquery
+            ,upload = layui.upload;
+            var uploadInst = upload.render({
+                elem: '#test1'
+                ,url: '{:url('saveForExcel')}'
+                ,accept: 'file' //普通文件
+                ,exts: 'Xlsx'
+                ,done: function(res){
+                    if (res.code == 1){
+                        layer.msg('操作成功')
+                        setTimeout(function(){
+                            window.locaation.reload()
+                        },700)
+                    } else{
+                        layer.msg(res.msg)
+                    }
+                    console.log(res); return false;
+                    //如果上传失败
+                    if(res.code > 0){
+                        return layer.msg('上传失败');
+                    }
+                    //上传成功
+                }
+                ,error: function(){
+                    //演示失败状态，并实现重传
+                    var demoText = $('#demoText');
+                    demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-xs demo-reload">重试</a>');
+                    demoText.find('.demo-reload').on('click', function(){
+                        uploadInst.upload();
+                    });
+                }
+            });
+    })
 
     checkStatus = function(_this,change_status,id) {
         $.ajax({
             url: "{:url('changeStatus')}",
             type: 'post',
             dataType: 'json',
+
             data:{
                 id : id,
                 status : change_status,

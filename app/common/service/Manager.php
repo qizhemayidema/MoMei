@@ -24,7 +24,7 @@ class Manager
     private $showType = false;
 
     //排序
-    private $order = [];
+    protected $order = [];
 
     //描述类
     private $managerImpl = null;
@@ -59,7 +59,7 @@ class Manager
         return $this;
     }
 
-    public function order($field,$order)
+    public function setOrder($field,$order)
     {
         $this->order[0] = $field;
         $this->order[1] = $order;
@@ -112,7 +112,9 @@ class Manager
 
         $handler = $this->showType ? $handler->backgroundShowData($alias) : $handler->receptionShowData($alias);
 
-        $handler->alias($alias);
+        $handler = $handler->alias($alias);
+
+        $handler = count($this->order) ? $handler->order($alias.'.'.$this->order[0],$this->order[1]) : $handler;
 
         $handler = $this->groupCode ? $handler->where([$alias.'.group_code'=>$this->groupCode]) : $handler;
 
@@ -125,7 +127,6 @@ class Manager
         $handler = $handler->leftJoin($this->infoTableName.' info',$alias.'.info_id = info.id')
             ->field('*,info.id none_id,'.$alias.'.id id,info.type info_type');
 
-        $handler = $this->order ? $handler->order($alias.'.'.$this->order[0],$alias.'.'.$this->order[1]) : $handler;
 
         $handler = $this->where ? $handler->where($this->where[0].'.'.$this->where[1],$this->where[2]) : $handler;
 

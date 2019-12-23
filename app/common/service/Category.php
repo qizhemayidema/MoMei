@@ -124,6 +124,11 @@ class Category
 
     /*------------------attr--------------------------*/
 
+    public function getAttr($attrId)
+    {
+        return (new CategoryAttr())->find($attrId);
+    }
+
     public function getAttrList($cateId)
     {
         return (new CategoryAttr())->where(['cate_id'=>$cateId])

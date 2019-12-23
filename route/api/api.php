@@ -20,4 +20,10 @@ Route::group('/',function(){
         Route::get('condition','Cinema/getCondition');
 
     });
+
+    Route::group('search',function(){
+        //获取影院筛选条件
+        Route::get('/','Search/index');
+
+    });
 });
