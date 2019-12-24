@@ -20,11 +20,16 @@ class BoxOfficeIncome extends  Base
 {
     public function index()
     {
+        $service = new BoxOffice();
+
         $info = (new Session())->getData();
 
         $data = (new BoxOffice())->setWhere('cinema_id',$info['group_code'])->order('create_time','desc')->pageLength(15)->getList();
 
+        $all_sum = $service->getSum('cinema',$info['group_code']);
+
         View::assign('data',$data);
+        View::assign('all_sum',$all_sum);
 
         return view();
     }

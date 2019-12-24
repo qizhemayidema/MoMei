@@ -28,6 +28,7 @@ class ProductRule extends Base
         $rules = [
             'is_open' => 'require',
             'cate_id' => 'require',
+            'sum_unit|数量单位' => 'require|max:12',
             'type|产品数量类型' => 'require|integer',
             'select_max_sum|最多选择数量' => 'require|integer',
             'is_screen|是否影厅' => 'require',

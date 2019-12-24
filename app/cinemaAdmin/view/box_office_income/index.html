@@ -8,6 +8,12 @@
                 <button type="button" onclick="window.location.href='{:url('add')}'"
                         class="btn btn-w-m btn-primary">添加今日票房统计
                 </button>
+            <div class="col-sm-2 pull-right" style="margin-right: 6px;">
+                <p class="pull-right font-bold">
+                    历史票房总数&nbsp;&nbsp;{$all_sum.income_value}<br/>
+                    历史观影人数&nbsp;&nbsp;{$all_sum.number_value}
+                </p>
+            </div>
        </div>    
         <div class="ibox-content">
             <div class="example">

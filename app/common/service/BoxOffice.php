@@ -74,7 +74,8 @@ class BoxOffice
         return $this->pageLength ? $handler->paginate($this->pageLength) : $handler->select();
     }
 
-    public function get($id){
+    public function get($id)
+    {
         return (new BoxOfficeStatisticsModel())->get($id);
     }
 
@@ -124,5 +125,28 @@ class BoxOffice
         $todayEnd = strtotime(date('Y-m-d').' 23:59:59');
 
         return  $handler->where('cinema_id',$groupCode)->where('create_time','between',[$todayStart,$todayEnd])->find();
+    }
+
+    public function getSum($type,$groupCode)
+    {
+        $managerInfoModel = new \app\common\model\ManagerInfo();
+
+        $handler = new BoxOfficeStatisticsModel();
+        //搜索所有影院id
+        switch ($type){
+            case 'ying':
+                $resIds = $managerInfoModel->where(['tou_id'=>$groupCode])->column('master_user_id');
+                $result = $handler->whereIn('cinema_id',$resIds)->field('sum(number_value) number_value,sum(income_value) income_value')->find();
+                break;
+            case 'yuan':
+                $resIds = $managerInfoModel->where(['yuan_id'=>$groupCode])->column('master_user_id');
+                $result = $handler->whereIn('cinema_id',$resIds)->field('sum(number_value) number_value,sum(income_value) income_value')->find();
+                break;
+            case 'cinema':
+                $result = $handler->where(['cinema_id'=>$groupCode])->field('sum(number_value) number_value,sum(income_value) income_value')->find();
+                break;
+        }
+
+        return $result;
     }
 }

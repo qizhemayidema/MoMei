@@ -20,7 +20,7 @@ class BoxOfficeIncome extends Base
 {
     public function index(Request $request)
     {
-        $cinemaid = $request->param('cinemaid') ?? '';
+        $cinemaId = $request->param('cinemaid') ?? '';
 
         $times = $request->param('times') ?? '';
 
@@ -35,20 +35,30 @@ class BoxOfficeIncome extends Base
         if($info['type']==2){  // 院线
             $boxOfficeService = $boxOfficeService->setWhere('yuan_id',$info['group_code']);
             $field = 'yuan_id';
+            $type = 'yuan';
         }elseif ($info['type']==3){   //影投
             $boxOfficeService = $boxOfficeService->setWhere('tou_id',$info['group_code']);
             $field = 'tou_id';
+            $type = 'ying';
         }
 
-        $data = $boxOfficeService->order('create_time','desc')->pageLength(15)->getList($cinemaid,$times);
+        if ($cinemaId){
+            $type = 'cinema';
+        }
+
+        $data = $boxOfficeService->order('create_time','desc')->pageLength(15)->getList($cinemaId,$times);
+
+        $allSum = $boxOfficeService->getSum($type,$cinemaId ? $cinemaId : $info['group_code']);
 
         $cinemaData = $managerService->setWhere('info',$field,$info['group_code'])->showType(true)->getInfoList();
 
-        View::assign(['cinemaid'=>$cinemaid,'times'=>$times]);
+        View::assign(['cinemaid'=>$cinemaId,'times'=>$times]);
 
         View::assign('cinemaData',$cinemaData);
 
         View::assign('data',$data);
+
+        View::assign('all_sum',$allSum);
 
         return view();
     }
