@@ -113,11 +113,15 @@
                     <div id="filePicker1" style="margin-bottom: 10px;">选择图片</div>
                     <div id="fileList1" class="uploader-list">
 
+                        {if $data.pics}
                         {foreach :explode(',',$data.pics) as $key => $value}
                         <div class="file-item thumbnail upload-state-done">
+                            {if $value}
                             <img src="{$value}" onclick="removePic(this,'{$value}','pics')" style="width: 150px;">
+                            {/if}
                         </div>
                         {/foreach}
+                        {/if}
                     </div>
                     <span class="help-block m-b-none">点击删除旧图片</span>
                 </div>
@@ -136,11 +140,15 @@
                     <div id="filePicker2" style="margin-bottom: 10px;">选择图片</div>
                     <div id="fileList2" class="uploader-list">
 
+                        {if $data.bus_license}
                         {foreach :explode(',',$data.bus_license) as $key => $value}
                         <div class="file-item thumbnail upload-state-done">
+                            {if $value}
                             <img src="{$value}" onclick="removePic(this,'{$value}','bus_license')" style="width: 150px;">
+                            {/if}
                         </div>
                         {/foreach}
+                        {/if}
                     </div>
                     <span class="help-block m-b-none">点击删除旧图片</span>
                 </div>
@@ -253,11 +261,13 @@
                             <div id="filePicker" style="margin-bottom: 10px;">选择图片</div>
                             <!--用来存放item-->
                             <div id="fileList" class="uploader-list">
+                                {if $data.contact_license_pic}
                                 {foreach :explode(',',$data.contact_license_pic) as $key => $value}
                                 <div class="file-item thumbnail upload-state-done">
                                     <img src="{$value}" onclick="removePic(this,'{$value}','contact_license_pic')" style="width: 150px;">
                                 </div>
                                 {/foreach}
+                                {/if}
                             </div>
                         </div>
                         <span class="help-block m-b-none">点击删除旧图片</span>

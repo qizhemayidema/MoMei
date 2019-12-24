@@ -36,7 +36,7 @@ class Cinema extends Base
 
 
         $list = (new \app\common\service\Cinema((new \app\common\typeCode\manager\Cinema())))
-            ->setAttrIds($attrIds)->setOrder('id','desc')->showType(true)->getList(15);
+            ->getListByAttr($attrIds,true);
 
         View::assign('list',$list);
         View::assign('cate',$cate);
@@ -343,12 +343,14 @@ class Cinema extends Base
             'username|账户名'  => 'require|max:32',
             'password|密码'    => 'require',
             'address|公司详细地址'=>'require|max:128',
-            'bus_license|营业执照'=>'require|max:1000',
+//            'bus_license|营业执照'=>'require|max:1000',
+            'bus_license|营业执照'=>'max:1000',
             'tel|公司电话' => 'require|max:20',
             'property_company|物业公司名称' => 'require|max:50',
             'contact|联系人姓名'=>'require|max:30',
             'contact_license_code|联系人身份证号'=>'require|max:18',
-            'contact_license_pic|联系人身份证照片'=>'require|max:500',
+//            'contact_license_pic|联系人身份证照片'=>'require|max:500',
+            'contact_license_pic|联系人身份证照片'=>'max:500',
             'contact_sex|联系人性别'=>'require',
             'contact_tel|联系人电话'=>'require|max:20',
             'contact_wechat|联系人微信'=>'require|max:127',
