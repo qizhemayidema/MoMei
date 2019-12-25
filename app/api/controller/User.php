@@ -105,8 +105,9 @@ class User extends Base
 
         if ($user['license_status'] == 2) return json(['code'=>0,'msg'=>'您已提交过认证信息,请耐心等待审核']);
 
+        $post = $request->post();
         /**
-         * `name` varchar(31) not null default
+        `name` varchar(31) not null default
         `sex` tinyint(1) unsigned not null d
         `work_email` varchar(30) not null de
         `ent_name` varchar(128) not null def
@@ -119,18 +120,12 @@ class User extends Base
         `ent_county` varchar(30) not null de
         `ent_county_id` varchar(30) not null
         `ent_address` varchar(128) not null
-         *
-         *
-         *
         `license_name` varchar(31) not null
         `license_type` tinyint(1) not null d
         `license_type_str` varchar(128) not
         `license_number` varchar(60) not nul
         `license_pic_of_top` varchar(128) no
         `license_pic_of_under` varchar(128)
-         *
-         *
-         *
         `ent_license_name` varchar(128) not
         `ent_license_property_type` int(11)
         `ent_license_property_type_str` varc
@@ -138,7 +133,7 @@ class User extends Base
          */
 
         //基本信息认证
-        $rules1 = [
+        $rules = [
             'name|姓名'                      => 'require|max:30',
             'sex|性别'                       => 'require',
             'work_email|工作邮箱'            => 'require|email',
@@ -149,23 +144,23 @@ class User extends Base
             'ent_city_id|市'                 => 'require',
             'ent_county_id|区'               => 'require',
             'ent_address'                    => 'require|max:128',
-        ];
-
-        //个人认证
-        $rules2 = [
             'license_name|证件姓名'     => 'require|max:30',
             'license_type|证件类型'     => 'require',
             'license_number|证件号'     => 'require|max:60',
             'license_pic_of_top|身份证正面' => 'require|max:128',
             'license_pic_of_under|身份证背面' => 'require|max:128',
-        ];
-
-        //公司认证
-        $rules3 = [
             'ent_license_name|公司名称'             => 'require|max:30',
             'ent_license_property_type|公司性质'    => 'require',
             'ent_license_bus_license|营业执照'      => 'require|max:512',
         ];
+
+        $validate = new Validate();
+
+        $validate->rule($rules);
+
+        if (!$validate->check($post)){
+            return json(['code'=>0,'msg'=>$validate->getError()]);
+        }
     }
 
     public function loginWithCode()
