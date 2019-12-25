@@ -27,52 +27,60 @@ class Sms
 
     private $cachePrefix = null;  //缓存前缀
 
-    private function __construct($cachePrefix = '',$validTime = 300)
+    private $config = [
+        'maxRequestNum' => 25,      //每个手机号每天最多请求次数
+    ];
+
+    public function __construct($envPrefix,$cachePrefix = '',$validTime = 300)
     {
-        $this->accessKeyId = env('SMS_ACCESS_KEY_ID');
-        $this->accessKeySecret = env('SMS_ACCESS_KEY_SECRET');
-        $this->signName = env('SMS_SIGN_NAME');
-        $this->templateCode = env('SMS_TEMPLATE_CODE');
+        $this->accessKeyId = env($envPrefix.'.ACCESS_KEY_ID');
+        $this->accessKeySecret = env($envPrefix.'.ACCESS_KEY_SECRET');
+        $this->signName = env($envPrefix.'.SIGN_NAME');
+        $this->templateCode = env($envPrefix.'.TEMPLATE_CODE');
 
         $this->validTime = $validTime;
 
         $this->cachePrefix = $cachePrefix;
     }
 
-    public function getPhoneCode($phone)
+    //获取短信
+    public function sendCodeForPhone($phone)
     {
-        if (!$phone) return ['code'=>0,'msg'=>'error1'];
+
         if (Cache::has($this->cachePrefix.$phone)){
             $after = Cache::get($this->cachePrefix.$phone)['timestamp'];
             if (time() - $after <= $this->validTime){
                 return ['code'=>0,'msg'=>'短信已发信,请耐心等待'];
             }
         }
-        $result = $this->sendPhoneMsg($phone);
+        $checkArr = $this->requestCheck();
 
-        if ($result['status']){
+        if ($checkArr['code'] == 0) return $checkArr;
+
+        $result = $this->sendPhoneCode($phone);
+
+        if ($result['code']){
             //记录发送时间 记录手机号
-            Cache::set($this->cachePrefix.$phone,$result['code'],$this->validTime);
+            $this->requestLog();
             return ['code'=>1,'msg'=>'success'];
         }else{
             return ['code'=>0,'msg'=>'发送失败,请联系网站管理员'];
         }
     }
 
-    public function checkCode($phone,$code){
+    //检查验证码是否有效
+    public function checkPhoneCode($phone,$code){
 
-        $cacheCode = Cache::get($this->cachePrefix.$phone);
+         $oldCode = Cache::get($this->cachePrefix.$phone);
 
-        return $cacheCode == $code;
+         if ($oldCode['code'] != $code) return false;
+
+         return true;
+
     }
 
-    /**
-     * 发送短信
-     * @param $phone
-     * @return array
-     * @throws ClientException
-     */
-    public function sendPhoneMsg($phone)
+    /*发送验证码*/
+    private function sendPhoneCode($phone)
     {
         $code = mt_rand(100000,999999);
 
@@ -95,13 +103,57 @@ class Sms
                     ],
                 ])
                 ->request();
-            Cache::set('');
-            return ['status'=>1,'data'=>$result->toArray(),'code'=>$code];
+
+            Cache::set($this->cachePrefix.$phone,['code'=>$code,'timestamp'=>time()]);
+            return ['code'=>1,'data'=>$code];
         } catch (ClientException $e) {
 //            echo $e->getErrorMessage() . PHP_EOL;
-            return ['status'=>0,'msg'=>$e->getErrorMessage()];
+            return ['code'=>0,'msg'=>$e->getErrorMessage()];
         } catch (ServerException $e) {
-            return ['status'=>0,'msg'=>$e->getErrorMessage()];
+            return ['code'=>0,'msg'=>$e->getErrorMessage()];
         }
+    }
+
+    private function requestCheck()
+    {
+        if ($ip = $this->getIP()){
+            $ipRequestNum = Cache::get($this->cachePrefix.$ip);
+            if ($ipRequestNum){
+                if ($ipRequestNum > $this->config['maxRequestNum']){
+                    return ['code'=>0,'msg'=>'同一ip24小时内只能获取'.$this->config['maxRequestNum'].'次验证码'];
+                }else{
+                    Cache::inc($this->cachePrefix.$ip);
+                }
+            }else{
+                Cache::set($ip,0,86400);
+            }
+        }
+
+        return ['code'=>1,'msg'=>'success'];
+    }
+
+    private function requestLog()
+    {
+        if ($ip = $this->getIP()){
+            $ipRequestNum = Cache::get($this->cachePrefix.$ip);
+            if ($ipRequestNum){
+                Cache::inc($this->cachePrefix.$ip);
+            }else{
+                Cache::set($ip,0,86400);
+            }
+        }
+
+    }
+
+    private function getIP()
+    {
+        $ip = false;
+        if (getenv("HTTP_CLIENT_IP"))
+            $ip = getenv("HTTP_CLIENT_IP");
+        else if(getenv("HTTP_X_FORWARDED_FOR"))
+            $ip = getenv("HTTP_X_FORWARDED_FOR");
+        else if(getenv("REMOTE_ADDR"))
+            $ip = getenv("REMOTE_ADDR");
+        return $ip;
     }
 }

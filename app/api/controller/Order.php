@@ -7,8 +7,15 @@ use think\Request;
 
 class Order
 {
-    public function makeNewOrder()
+    public function makeNewOrder(Request $request)
     {
+        $post = $request->post();
 
+        $rules = [
+
+        ];
+
+
+        //依次判断产品是否合法
     }
 }

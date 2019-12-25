@@ -19,6 +19,11 @@ class User
         return $salt;
     }
 
+    public function makePassword($salt,$password)
+    {
+        return md5($salt.$password);
+    }
+
     //创建token
     public function makeToken($keyword)
     {

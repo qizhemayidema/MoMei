@@ -67,7 +67,7 @@ class Search
 
         $date = [];
 
-        while ($startTime <= $get['end_time']) {
+        while ($startTime <= $endTime) {
             $date[] = $startTime;
 
             $startTime += 86400;
@@ -107,7 +107,6 @@ class Search
             ->where(['cinema.status' => 1, 'cinema.delete_time' => 0])
             ->where(['product.status' => 1, 'product.delete_time' => 0]);
 
-//        if ($cateIds) $handler = $handler->whereIn('product.cate_id', $cateIds);
         if ($attrIds) $handler = $handler->whereIn('attr.attr_id', $attrIds);
         if ($cityIds) $handler = $handler->whereIn('info.city_id', $cityIds);
         if ($cateIds) $handler = $handler->whereIn('cate.id', $cateIds);
@@ -122,30 +121,11 @@ class Search
 
         $handler = $handler->field('attr.attr_value');
 
-
-        /**
-         *  'province' => $v['province'],
-        'city'      => $v['city'],
-        'county'    => $v['county'],
-        'bus_area' => $v['bus_area'],
-        'address'   => $v['address'],
-        'pics'     => $v['pics'],
-        'email'     => $v['email'],
-        'screen_sum' => $v['screen_sum'],
-        'seat_sum'  => $v['seat_sum'],
-        'watch_mv_sum' => $v['watch_mv_sum'],
-         */
         $handler = $handler->field('info.province,info.city_id,info.city,info.county,info.address,info.pics info_pics,info.email info_email,info.name cinema_name,info.master_user_id');
 
         $handler = $handler->field('info.bus_area,info.seat_sum,info.watch_mv_sum,info.screen_sum');
 
         $result = $handler->select()->toArray();
-
-
-//        1
-//        $result = $handler->buildSql(true);
-
-//        return json($result);
 
         $cityTemp = [];
 
@@ -208,36 +188,43 @@ class Search
             ];
         }
 
-//        return json($cinemaAttrTemp);
+        $cinemaSum = 0;
 
-//        return json($productTemp);
+        $screenSum = 0;
 
         $cityTemp = array_merge(array_unique($cityTemp,SORT_REGULAR));
 
         foreach ($cityTemp as $k => $v){        //这层组装影院
             $cityTemp[$k]['cinema'] = array_merge(array_unique($cinemaTemp[$v['id']],SORT_REGULAR));
-
+            //这层组装影院的属性
             foreach ($cityTemp[$k]['cinema'] as $tempKey => $tempValue){
                 $cityTemp[$k]['cinema'][$k]['attr'] = array_merge(array_unique($cinemaAttrTemp[$tempValue['id']]));
             }
-
             foreach ($cityTemp[$k]['cinema'] as $k1 => $v1){    //这层组装分类
+                $cinemaSum ++;
                 $cityTemp[$k]['cinema'][$k1]['cate'] = array_merge(array_unique($cateTemp[$v1['id']],SORT_REGULAR));
                 foreach ($cityTemp[$k]['cinema'][$k1]['cate']  as $k2 => $v2){  //这层组装影厅 or 产品
                     if ($v2['is_screen'] == 1){     //说明该分类有影厅
                         $cityTemp[$k]['cinema'][$k1]['cate'][$k2]['screen'] = array_merge(array_unique($cateScreenTemp[$v1['id']][$v2['id']],SORT_REGULAR));
                         foreach ($cityTemp[$k]['cinema'][$k1]['cate'][$k2]['screen'] as $k3 => $v3){
+                            $screenSum ++;
                             $cityTemp[$k]['cinema'][$k1]['cate'][$k2]['screen'][$k3]['product'] =array_merge(array_unique($productTemp[$v1['id']][$v2['id']][$v3['id']],SORT_REGULAR));
                         }
                     }else{
                         $cityTemp[$k]['cinema'][$k1]['cate'][$k2]['product'] = array_merge(array_unique($productTemp[$v1['id']][$v2['id']][0],SORT_REGULAR));
                     }
                 }
-
             }
 
         }
 
-        return json(['code'=>1,'msg'=>'success','data'=>$cityTemp]);
+        $data = [
+            'result'    => $cityTemp,
+            'cinema_sum' => $cinemaSum,
+            'screen_sum' => $screenSum,
+        ];
+
+
+        return json(['code'=>1,'msg'=>'success','data'=>$data]);
     }
 }

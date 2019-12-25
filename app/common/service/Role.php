@@ -110,4 +110,20 @@ class Role
         $userAuthAllRes = (new \app\common\model\Permission())->userAuthAll($authArrIds);
         return $userAuthAllRes;
     }
+    /**
+     * 查询用户权限 控制器
+     * @param \app\common\typeCode\RoleImpl $Role
+     * @param $uid
+     * $data 2019/11/26 16:30
+     */
+    public function getUserRoleAuthForIds(\app\common\typeCode\RoleImpl $Role,$roleId)
+    {
+        //查询用户所在的权限组
+        $getUserRoleAuthRes = (new \app\common\model\Role())->getUserRoleAuthRes($Role,$roleId);
+        //查询该权限组所拥有的具体权限
+        $authArrIds = explode(',',rtrim($getUserRoleAuthRes['permission_ids'],','));
+
+        return (new \app\common\model\Permission())->whereIn('id',$authArrIds)->select();
+
+    }
 }

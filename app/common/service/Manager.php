@@ -306,6 +306,12 @@ class Manager
         return (new ManagerInfoModel())->get($infoId);
     }
 
+    public function getInfoByGroupCode($groupCode)
+    {
+        return (new ManagerInfoModel())->where(['master_user_id'=>$groupCode])->find();
+
+    }
+
     public function delete($id)
     {
         (new ManagerModel())->softDelete($id);
