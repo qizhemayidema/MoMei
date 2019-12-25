@@ -5,9 +5,19 @@
             <div class="col-sm-12">
     <div class="ibox float-e-margins">
         <div class="ibox-title">
-                <button type="button" onclick="window.location.href='{:url('add')}'"
-                        class="btn btn-w-m btn-primary">添加 院线/影投
-                </button>
+            <div class="row">
+                <div class="col-sm-2" style="width: 12%;" >
+                    <button type="button" onclick="window.location.href='{:url('add')}'"
+                            class="btn btn-w-m btn-primary">添加 院线/影投
+                    </button>
+                </div>
+                <div class="col-sm-2" >
+                    <select class="form-control m-b" name="userType" onchange="changeSearch();">
+                        <option value="1" {if condition="$userType eq 1"}selected{/if}>院线/影投类型</option>
+                        <option value="2" {if condition="$userType eq 2"}selected{/if}>账号类型</option>
+                    </select>
+                </div>
+            </div>
          </div>   
         <div class="ibox-content">
             <div class="example">
@@ -128,5 +138,12 @@
                 }
             })
         })
+    }
+
+    function changeSearch()
+    {
+        var userType = $('select[name=userType]').val();
+        var times = $('#hello').val();
+        window.location.href = "{:url('index')}?userType="+userType
     }
 </script>

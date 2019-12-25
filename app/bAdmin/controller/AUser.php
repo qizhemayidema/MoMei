@@ -20,11 +20,22 @@ use think\Request;
 
 class AUser extends Base
 {
-    public function index()
+    public function index(Request $request)
     {
+        $userType = $request->param('userType',1);
+
         $yuan = new Yuan();
         $ying = new Ying();
-        $list = (new Service())->setTypes($ying->getManagerType())->setTypes($yuan->getManagerType())->showType(true)->setOrder('id','desc')->pageLength(15)->getList();
+
+        $list = (new Service())->setTypes($ying->getManagerType())->setTypes($yuan->getManagerType())->showType(true)->setOrder('id','desc')->pageLength(15);
+
+        if($userType==1){
+            $list = $list->getList();
+        }else{
+            $list = $list->getInfoList();
+        }
+
+        View::assign('userType',$userType);
 
         View::assign('list',$list);
 
