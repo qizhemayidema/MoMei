@@ -134,12 +134,6 @@
                 </div>
             </div>
             <div class="form-group">
-                <label class="col-sm-2 control-label">日优惠价格</label>
-                <div class="col-sm-8">
-                    <input name="price_discount" value="{$data.price_discount}" required  type="text" class="form-control">
-                </div>
-            </div>
-            <div class="form-group">
                 <label class="col-sm-2 control-label">包月价格</label>
                 <div class="col-sm-4">
                     <input name="price_month" value="{$data.price_month}" required  type="text" class="form-control">
@@ -224,7 +218,13 @@
         name: '日价格',
         type: 'number',
         placeholder: '请输入日价格'
-    }
+    },
+        {
+            key: 'priceDiscount',
+            name: '优惠价',
+            type: 'number',
+            placeholder: '请输入优惠价'
+        }
         // ,
         //
         // {
@@ -245,6 +245,9 @@
     var showConfig = [{
         key: 'dayPrice',
         name: '日:￥'
+    },{
+        key: 'priceDiscount',
+        name: '优惠价:￥'
     }
         // ,
         // {

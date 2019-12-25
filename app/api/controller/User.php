@@ -3,7 +3,10 @@ declare (strict_types = 1);
 
 namespace app\api\controller;
 
+use app\common\service\Category;
 use app\common\tool\Sms;
+use app\common\typeCode\cate\CUserLicense;
+use app\common\typeCode\cate\CUserLicenseProperty;
 use think\Request;
 use think\Validate;
 use app\common\service\User as Service;
@@ -166,5 +169,15 @@ class User extends Base
     public function loginWithCode()
     {
 
+    }
+
+    public function getLicenseCate()
+    {
+        return json(['code'=>1,'msg'=>'success','data'=>(new Category())->getList((new CUserLicense()))]);
+    }
+
+    public function getLicensePropertyCate()
+    {
+        return json(['code'=>1,'msg'=>'success','data'=>(new Category())->getList((new CUserLicenseProperty()))]);
     }
 }

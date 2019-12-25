@@ -525,10 +525,10 @@
         var $li = $(
             '<div id="' + file.id + '" class="file-item thumbnail">' +
             '<img>' +
-            '<div >' + file.name + '</div>' +
             '</div>'
             ),
             $img = $li.find('img');
+
 
 
         // $list为容器jQuery实例
@@ -592,7 +592,7 @@
         $( '#'+file.id ).find('.progress').remove();
     });
 
-    var $list = $("#fileList1");
+    var $list1 = $("#fileList1");
     // 初始化Web Uploader
     var uploader = WebUploader.create({
 
@@ -627,7 +627,7 @@
 
 
         // $list为容器jQuery实例
-        $list.append( $li );
+        $list1.append( $li );
 
         // 创建缩略图
         // 如果为非图片文件，可以不用调用此方法。

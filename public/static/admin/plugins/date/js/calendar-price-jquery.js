@@ -545,7 +545,8 @@
                     $(this).find('p').eq(0).html(_computedPrice + '万元');
 
                 } else {
-                    $(this).find('p').eq(0).html(_price + '元');
+                    // $(this).find('p').eq(0).html(_price + '元');
+                    $(this).find('p').eq(0).html(_price );
                 }
                 // console.log(_price >= 10000)
                 $(this).find('p').eq(1).css({ 'color': '#c0554e' })

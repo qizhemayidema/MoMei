@@ -34,11 +34,20 @@
             <form method="" action="/">
                 <h4 class="no-margins">登录：</h4>
                 <p class="m-t-md">欢迎登录后台系统！</p>
-                <input type="text" name="username" class="form-control uname" placeholder="用户名" />
-                <input type="password" name="password" class="form-control pword m-b" placeholder="密码" />
-                <input type="text" name="captcha" class="form-control pword"  placeholder="验证码" />
-                <img src="{:captcha_src()}" onclick="this.src = '{:captcha_src()}?random='+Math.random()" alt="" style="margin-top:15px;width: 230px;">
-                <button class="btn btn-success btn-block" >登录</button>
+                <input type="text" name="username" class="form-control uname" placeholder="用户名"/>
+                <input type="password" name="password" class="form-control pword " placeholder="密码"/>
+                <div class="row">
+                    <div class="col-sm-5">
+                        <input type="text" name="captcha" class="form-control pword" placeholder="验证码"/>
+
+                    </div>
+                    <div class="col-sm-7">
+
+                        <img src="{:captcha_src()}" onclick="this.src = '{:captcha_src()}?random='+Math.random()" alt=""
+                             style="margin-top:15px;width: 122px;">
+                    </div>
+                </div>
+                <button class="btn btn-success btn-block">登录</button>
             </form>
         </div>
     </div>

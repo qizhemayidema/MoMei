@@ -52,7 +52,14 @@ Route::group('/',function(){
         //注册
         Route::post('/','User/register');
         //认证
-        Route::post('auth','User/auth');
+        Route::group('auth',function(){
+            //获取个人认证证件类型
+            Route::get('licenseCate','User/getLicenseCate');
+            //获取公司认证公司性质类型
+            Route::get('licensePropertyCate','User/getLicensePropertyCate');
+            //认证
+            Route::post('/','User/auth');
+        });
         //购物车
         Route::group('shopping',function(){
 

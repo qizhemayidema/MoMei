@@ -130,7 +130,7 @@ class Manager
 
         $handler = $this->where ? $handler->where($this->where[0].'.'.$this->where[1],$this->where[2]) : $handler;
 
-        return $this->pageLength ? $handler->paginate($this->pageLength) : $handler->select();
+        return $this->pageLength ? $handler->paginate(['list_rows'=>$this->pageLength,'query'=>request()->param()]) : $handler->select();
     }
 
     public function getInfoList()
@@ -160,7 +160,7 @@ class Manager
 
         $handler = $this->where ? $handler->where($this->where[0].'.'.$this->where[1],$this->where[2]) : $handler;
 
-        return $this->pageLength ? $handler->paginate($this->pageLength) : $handler->select();
+        return $this->pageLength ? $handler->paginate(['list_rows'=>$this->pageLength,'query'=>request()->param()]) : $handler->select();
     }
 
     public function existsUsername($username,$exceptId = 0)
