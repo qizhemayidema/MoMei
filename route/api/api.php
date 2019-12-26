@@ -58,12 +58,18 @@ Route::group('/',function(){
             //获取公司认证公司性质类型
             Route::get('licensePropertyCate','User/getLicensePropertyCate');
             //认证
-            Route::post('/','User/auth');
+            Route::post('/','User/setAuth');
         });
         //购物车
         Route::group('shopping',function(){
-
+            //获取详情
+            Route::get('info','Shopping/getInfo');
+            //添加商品到购物车
             Route::post('/','Shopping/add');
+            //从购物车删除商品
+            Route::delete('/','Shopping/delete');
+            //获取购物车列表
+            Route::get('/','Shopping/getList');
         });
     });
 

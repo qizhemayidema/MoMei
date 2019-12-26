@@ -32,7 +32,7 @@ class User extends Model implements ShowImpl
      * @param string $alias
      * @return mixed
      */
-    public function backgroundShowData(string $alias)
+    public function backgroundShowData(string $alias = '')
     {
         // TODO: Implement backgroundShowData() method.
 

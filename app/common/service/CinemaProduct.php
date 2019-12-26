@@ -251,4 +251,17 @@ class CinemaProduct
         }
     }
 
+/**********************************************************************************/
+
+    //判断产品是否可用
+    public function checkProductStatus($productId)
+    {
+        $product =(new  CinemaProductModel())->receptionShowData()->find($productId);
+
+        if (!$product) return false;
+
+        return $product;
+
+    }
+
 }

@@ -1,0 +1,113 @@
+{include file="common/source"}
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>申请认证列表 <small></small></h5>
+
+                </div>
+                <div class="ibox-content">
+                    <div class="example">
+
+                        <table class="table table-bordered table-hover text-center fz13">
+                            <thead>
+                            <tr class="text-center">
+                                <th style="text-align: center;">手机号</th>
+                                <th style="text-align: center;">姓名</th>
+                                <th style="text-align: center;width:250px;">操作</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {foreach $list as $key => $value}
+                            <tr>
+                                <td>{$value.phone}</td>
+                                <td >
+                                    {$value.name}
+                                </td>
+
+                                <td>
+                                    <div class="btn-group">
+
+                                        <button onclick="window.location.href='{:url('info',['id'=>$value.id])}'" class="btn btn-primary btn-xs" type="button" style="margin-right: 20px;"> 查看认证信息</button>
+
+                                        <button data-toggle="dropdown" class="btn btn-info btn-xs dropdown-toggle" aria-expanded="false">审核 <span class="caret"></span>
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li><a href="javascript:;" onclick="changeStatus('{$value.id}',3)" class="font-bold">通过</a>
+                                            </li>
+                                            <li><a href="javascript:;" onclick="changeStatus('{$value.id}',4)">不通过</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                            {/foreach}
+                            </tbody>
+                        </table>
+                    </div>
+                    {$list->render()|raw}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script>
+
+
+
+    changeStatus = function(id,change_status) {
+        $.ajax({
+            url: "{:url('changeAuthStatus')}",
+            type: 'post',
+            dataType: 'json',
+            data:{
+                id : id,
+                status : change_status,
+            },
+            success: function (data) {
+                if (data.code == 0) {
+                    layer.msg(data.msg,{icon: 5})
+                } else {
+                    layer.msg('操作成功')
+                    setTimeout(function(){
+                        window.location.reload()
+                    },1000)
+                }
+            }
+        })
+    }
+
+    var removeArticle = function (_this, article_id) {
+        layer.confirm('您确定删除吗',function() {
+
+            $.ajax({
+                url: "{:url('delete')}",
+                type: 'post',
+                dataType: 'json',
+                data: {
+                    id: article_id,
+                },
+                success: function (data) {
+                    console.log(data)
+                    if (data.code == 0) {
+                        layer.msg(data.msg, {icon: 5})
+                    } else {
+                        layer.msg('删除成功', {icon: 1})
+                        $(_this).parents('tr').remove();
+                    }
+
+                }
+            })
+        })
+    }
+
+    function changeSearch()
+    {
+        var userType = $('select[name=userType]').val();
+        var times = $('#hello').val();
+        window.location.href = "{:url('index')}?userType="+userType
+    }
+</script>

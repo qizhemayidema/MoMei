@@ -50,8 +50,11 @@ class Cinema extends Base
     {
         $cateService = new Category();
 
+        $areaService = new Area();
         //从获取城市列表
-        $area = (new Area())->getListByPId();
+        $province = $areaService->getListByPId()->toArray();
+        $city = $areaService->getListByPId($province[0]['id'])->toArray();
+        $county = $areaService->getListByPId($city[0]['id'])->toArray();
 
         //查询院线列表
         $yuan = (new Service((new Yuan())))->showType(true)->getInfoList();
@@ -70,7 +73,9 @@ class Cinema extends Base
         }
 
 //        dump($level);die;
-        View::assign('area',$area);
+        View::assign('province',$province);
+        View::assign('city',$city);
+        View::assign('county',$county);
         View::assign('yuan',$yuan);
         View::assign('ying',$ying);
         View::assign('zhou',$zhou);
@@ -93,6 +98,7 @@ class Cinema extends Base
 //            'area_id'
             'username|账户名'  => 'require|max:32',
             'password|密码'    => 'require',
+            'ent_name|公司名称' => 'require|max:100',
             're_password|确认密码' => 'require|confirm:password',
             'address|公司详细地址'=>'require|max:128',
             'bus_license|营业执照'=>'require|max:1000',
@@ -574,6 +580,7 @@ class Cinema extends Base
 
             'username|账户名'  => 'require|max:32',
 //            'password|密码'    => '',
+            'ent_name|公司名称' => 'require|max:100',
             're_password|确认密码' => 'confirm:password',
             'address|公司详细地址'=>'require|max:128',
             'bus_license|营业执照'=>'require|max:1000',

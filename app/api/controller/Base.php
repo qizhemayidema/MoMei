@@ -21,8 +21,14 @@ class Base extends BaseController
 
     protected function getUserInfo()
     {
-        $token = \Request()->param('token');
 
+        if (\request()->isDelete()){
+            $token = \request()->delete('token');
+        }else if (\request()->isPut()){
+            $token = \request()->put('token');
+        }else{
+            $token = \request()->param('token') ;
+        }
         if ($token) {
             $this->token = $token;
             $this->userInfo = (new \app\common\model\User())->receptionShowData()->where(['token' => $token])->find();
@@ -43,5 +49,13 @@ class Base extends BaseController
             }
             return $this->$name;
         }
+    }
+
+    //检查用户是否拥有互动的权限
+    public function checkUserWriteAuth($user)
+    {
+        if ($user['license_status'] != 3) return ['code'=>0,'msg'=>'账号认证后才可继续操作'];
+
+        return ['code' => 1];
     }
 }

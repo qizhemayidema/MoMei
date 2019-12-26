@@ -153,18 +153,23 @@
                     <span class="help-block m-b-none">点击删除旧图片</span>
                 </div>
             </div>
-
+            <div class="form-group">
+                <label class="col-sm-2 control-label">公司名称</label>
+                <div class="col-sm-8">
+                    <input name="ent_name" required value="{$data.ent_name}"  type="text" class="form-control">
+                </div>
+            </div>
             <div class="form-group">
                 <label class="col-sm-2 control-label">公司地址</label>
                 <div class="col-sm-8">
-                    <div class="col-sm-3">
+                    <div class="col-sm-4">
                         <select class="form-control m-b" name="province">
                             {foreach $area1 as $key => $value}
                             <option value="{$value.id}-{$value.name}" {if $data.province_id == $value.id} selected {/if}>{$value.name}</option>
                             {/foreach}
                         </select>
                     </div>
-                    <div class="col-sm-3">
+                    <div class="col-sm-4">
                         <select class="form-control m-b" name="city" >
                             <option value="">请选择</option>
                             {foreach $area2 as $key => $value}
@@ -173,7 +178,7 @@
                         </select>
 
                     </div>
-                    <div class="col-sm-3">
+                    <div class="col-sm-4">
                         <select class="form-control m-b" name="county">
                             <option value="">请选择</option>
                             {foreach $area3 as $key => $value}
@@ -532,10 +537,36 @@
             mimeTypes: 'image/*'
         }
     });
-    uploader.on( 'fileQueued', function( file ) {
+    uploader.on( 'uploadProgress', function( file, percentage ) {
+        var $li = $( '#'+file.id ),
+            $percent = $li.find('.progress span');
+
+        // 避免重复创建
+        if ( !$percent.length ) {
+            $percent = $('<p class="progress"><span></span></p>')
+                .appendTo( $li )
+                .find('span');
+        }
+
+        $percent.css( 'width', percentage * 100 + '%' );
+    });
+
+    // 文件上传成功，给item添加成功class, 用样式标记上传成功。
+    uploader.on( 'uploadSuccess', function( file ,response) {
+        var inputName = 'contact_license_pic';
+
+        var str = $('input[name='+inputName+']').val()
+        if (!str){
+            str = response.msg
+        }else{
+            str += ',' + response.msg
+        }
+        $('input[name='+inputName+']').val(str)
+        $( '#'+file.id ).addClass('upload-state-done');
+
         var $li = $(
             '<div id="' + file.id + '" class="file-item thumbnail">' +
-            '<img>' +
+            '<img  onclick="removePic(this,\''+response.msg+'\',\''+inputName+'\')" >' +
             '</div>'
             ),
             $img = $li.find('img');
@@ -554,30 +585,7 @@
             }
             $img.attr( 'src', src );
         }, 100, 100 );
-    });
-    uploader.on( 'uploadProgress', function( file, percentage ) {
-        var $li = $( '#'+file.id ),
-            $percent = $li.find('.progress span');
 
-        // 避免重复创建
-        if ( !$percent.length ) {
-            $percent = $('<p class="progress"><span></span></p>')
-                .appendTo( $li )
-                .find('span');
-        }
-
-        $percent.css( 'width', percentage * 100 + '%' );
-    });
-
-    // 文件上传成功，给item添加成功class, 用样式标记上传成功。
-    uploader.on( 'uploadSuccess', function( file ,response) {
-        var str = $('input[name=contact_license_pic]').val()
-        if (!str){
-            str = response.msg
-        }else{
-            str += ',' + response.msg
-        }
-        $('input[name=contact_license_pic]').val(str)
         $( '#'+file.id ).addClass('upload-state-done');
         // console.log(response)
         // $('input[name=contact_license_pic]').val(response.msg)
@@ -602,7 +610,7 @@
         $( '#'+file.id ).find('.progress').remove();
     });
 
-    var $list = $("#fileList1");
+    var $list1 = $("#fileList1");
     // 初始化Web Uploader
     var uploader = WebUploader.create({
 
@@ -627,29 +635,6 @@
             mimeTypes: 'image/*'
         }
     });
-    uploader.on( 'fileQueued', function( file ) {
-        var $li = $(
-            '<div id="' + file.id + '" class="file-item thumbnail">' +
-            '<img>' +
-            '</div>'
-            ),
-            $img = $li.find('img');
-
-
-        // $list为容器jQuery实例
-        $list.append( $li );
-
-        // 创建缩略图
-        // 如果为非图片文件，可以不用调用此方法。
-        // thumbnailWidth x thumbnailHeight 为 100 x 100
-        uploader.makeThumb( file, function( error, src ) {
-            if ( error ) {
-                $img.replaceWith('<span>不能预览</span>');
-                return;
-            }
-            $img.attr( 'src', src );
-        }, 100, 100 );
-    });
     uploader.on( 'uploadProgress', function( file, percentage ) {
         var $li = $( '#'+file.id ),
             $percent = $li.find('.progress span');
@@ -666,13 +651,39 @@
 
     // 文件上传成功，给item添加成功class, 用样式标记上传成功。
     uploader.on( 'uploadSuccess', function( file ,response) {
-        var str = $('input[name=pics]').val()
+        var inputName = 'pics';
+
+        var str = $('input[name='+inputName+']').val()
         if (!str){
             str = response.msg
         }else{
             str += ',' + response.msg
         }
-        $('input[name=pics]').val(str)
+        $('input[name='+inputName+']').val(str)
+        $( '#'+file.id ).addClass('upload-state-done');
+
+        var $li = $(
+            '<div id="' + file.id + '" class="file-item thumbnail">' +
+            '<img  onclick="removePic(this,\''+response.msg+'\',\''+inputName+'\')" >' +
+            '</div>'
+            ),
+            $img = $li.find('img');
+
+
+        // $list为容器jQuery实例
+        $list1.append( $li );
+
+        // 创建缩略图
+        // 如果为非图片文件，可以不用调用此方法。
+        // thumbnailWidth x thumbnailHeight 为 100 x 100
+        uploader.makeThumb( file, function( error, src ) {
+            if ( error ) {
+                $img.replaceWith('<span>不能预览</span>');
+                return;
+            }
+            $img.attr( 'src', src );
+        }, 100, 100 );
+
         $( '#'+file.id ).addClass('upload-state-done');
         // console.log(response)
         // $('input[name=contact_license_pic]').val(response.msg)
@@ -723,31 +734,6 @@
             mimeTypes: 'image/*'
         }
     });
-    uploader.on( 'fileQueued', function( file ) {
-        var $li = $(
-            '<div id="' + file.id + '" class="file-item thumbnail">' +
-            '<img>' +
-            '</div>'
-            ),
-            $img = $li.find('img');
-
-
-        // $list为容器jQuery实例
-        // $list2.html( $li );
-        $list2.append( $li );
-
-        // 创建缩略图
-        // 如果为非图片文件，可以不用调用此方法。
-        // thumbnailWidth x thumbnailHeight 为 100 x 100
-        uploader.makeThumb( file, function( error, src ) {
-            if ( error ) {
-                $img.replaceWith('<span>不能预览</span>');
-                return;
-            }
-
-            $img.attr( 'src', src );
-        }, 100, 100 );
-    });
 
     uploader.on( 'uploadProgress', function( file, percentage ) {
         var $li = $( '#'+file.id ),
@@ -765,13 +751,39 @@
 
     // 文件上传成功，给item添加成功class, 用样式标记上传成功。
     uploader.on( 'uploadSuccess', function( file ,response) {
-        var str = $('input[name=bus_license]').val()
+        var inputName = 'bus_license';
+
+        var str = $('input[name='+inputName+']').val()
         if (!str){
             str = response.msg
         }else{
             str += ',' + response.msg
         }
-        $('input[name=bus_license]').val(str)
+        $('input[name='+inputName+']').val(str)
+        $( '#'+file.id ).addClass('upload-state-done');
+
+        var $li = $(
+            '<div id="' + file.id + '" class="file-item thumbnail">' +
+            '<img  onclick="removePic(this,\''+response.msg+'\',\''+inputName+'\')" >' +
+            '</div>'
+            ),
+            $img = $li.find('img');
+
+
+        // $list为容器jQuery实例
+        $list2.append( $li );
+
+        // 创建缩略图
+        // 如果为非图片文件，可以不用调用此方法。
+        // thumbnailWidth x thumbnailHeight 为 100 x 100
+        uploader.makeThumb( file, function( error, src ) {
+            if ( error ) {
+                $img.replaceWith('<span>不能预览</span>');
+                return;
+            }
+            $img.attr( 'src', src );
+        }, 100, 100 );
+
         $( '#'+file.id ).addClass('upload-state-done');
     });
 

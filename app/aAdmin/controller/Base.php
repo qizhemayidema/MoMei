@@ -46,6 +46,7 @@ class Base extends BaseController
 
         $except = [
             'index',
+            'auser',
         ];
 
         if (in_array($permission,$except)) return true;

@@ -110,29 +110,6 @@ class User extends Base
 
         $post = $request->post();
         /**
-        `name` varchar(31) not null default
-        `sex` tinyint(1) unsigned not null d
-        `work_email` varchar(30) not null de
-        `ent_name` varchar(128) not null def
-        `ent_bus_area_ids` varchar(512) not
-        `ent_type` tinyint(11) not null defa
-        `ent_province` varchar(30) not null
-        `ent_province_id` int(11) not null d
-        `ent_city` varchar(30) not null defa
-        `ent_city_id` varchar(30) not null d
-        `ent_county` varchar(30) not null de
-        `ent_county_id` varchar(30) not null
-        `ent_address` varchar(128) not null
-        `license_name` varchar(31) not null
-        `license_type` tinyint(1) not null d
-        `license_type_str` varchar(128) not
-        `license_number` varchar(60) not nul
-        `license_pic_of_top` varchar(128) no
-        `license_pic_of_under` varchar(128)
-        `ent_license_name` varchar(128) not
-        `ent_license_property_type` int(11)
-        `ent_license_property_type_str` varc
-        `ent_license_bus_license` varchar(12
          */
 
         //基本信息认证
@@ -164,6 +141,10 @@ class User extends Base
         if (!$validate->check($post)){
             return json(['code'=>0,'msg'=>$validate->getError()]);
         }
+
+        (new \app\common\service\User())->auth($user['id'],$post);
+
+        return json(['code'=>1,'msg'=>'success']);
     }
 
     public function loginWithCode()

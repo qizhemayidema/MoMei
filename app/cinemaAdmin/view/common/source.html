@@ -23,3 +23,23 @@
         width: 100px !important;
     }
 </style>
+<script>
+    //删除上传的图片
+    removePic = function(_this,pic,name){
+
+        var val = $('input[name='+name+']').val()
+
+        var arr = val.split(',')
+
+        var res = []
+
+        $(arr).each(function(k,v){
+            if (v != pic){
+                res.push(v)
+            }
+        })
+
+        $('input[name='+name+']').val(res.join(','))
+        $(_this).parents('.thumbnail').remove()
+    }
+</script>

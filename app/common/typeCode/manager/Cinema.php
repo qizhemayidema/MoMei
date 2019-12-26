@@ -46,6 +46,8 @@ class Cinema implements ManagerImpl
         'duty_tel' ,
         'add_time',
         'type',
+        'service_phone',
+        'ent_name',
         ];
 
     public function getManagerType()
