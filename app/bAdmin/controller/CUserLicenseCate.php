@@ -12,6 +12,7 @@ use think\Request;
 
 class CUserLicenseCate extends Base
 {
+    //个人认证证件类型
     public function index()
     {
         try{

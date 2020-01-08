@@ -118,14 +118,17 @@ class User extends Base
             'sex|性别'                       => 'require',
             'work_email|工作邮箱'            => 'require|email',
             'ent_name|公司全称'              => 'require|max:128',
-            'ent_bus_area_ids|投放区域'      => 'require',
+//            'ent_bus_area_ids|投放区域'      => 'require',  //暂时不用
+            'ent_bus_province|投放区域所在省'      => 'require',
+            'ent_bus_city|投放区域所在市'      => 'require',
+            'ent_bus_county|投放区域所在县'      => 'require',
             'ent_type|品牌类型'               => 'require',
-            'ent_province_id|省'             => 'require',
-            'ent_city_id|市'                 => 'require',
-            'ent_county_id|区'               => 'require',
-            'ent_address'                    => 'require|max:128',
+            'ent_province|公司所在省'             => 'require',
+            'ent_city|公司所在市'                 => 'require',
+            'ent_county|公司所在区'               => 'require',
+            'ent_address|详细地址'           => 'require|max:128',
             'license_name|证件姓名'     => 'require|max:30',
-            'license_type|证件类型'     => 'require',
+//            'license_type|证件类型'     => 'require',
             'license_number|证件号'     => 'require|max:60',
             'license_pic_of_top|身份证正面' => 'require|max:128',
             'license_pic_of_under|身份证背面' => 'require|max:128',
@@ -142,7 +145,9 @@ class User extends Base
             return json(['code'=>0,'msg'=>$validate->getError()]);
         }
 
-        (new \app\common\service\User())->auth($user['id'],$post);
+        $result = (new \app\common\service\User())->auth($user['id'],$post);
+
+        if(!$result) return json(['code'=>0,'msg'=>'提交失败']);
 
         return json(['code'=>1,'msg'=>'success']);
     }
@@ -160,5 +165,34 @@ class User extends Base
     public function getLicensePropertyCate()
     {
         return json(['code'=>1,'msg'=>'success','data'=>(new Category())->getList((new CUserLicenseProperty()))]);
+    }
+
+    /**
+     * 修改用户的基础信息  昵称 头像
+     * $data 8/1/2020 下午2:10
+     */
+    public function basics(Request $request)
+    {
+        $user = $this->userInfo;
+
+        $data = $request->put();
+
+        $rules = [
+            'nickname|昵称'        => 'require|max:8',
+        ];
+
+        $validate = new Validate();
+
+        $validate->rule($rules);
+
+        if (!$validate->check($data)){
+            return json(['code'=>0,'msg'=>$validate->getError()]);
+        }
+
+        $result = (new Service)->basics($user['id'],$data);
+
+        if(!$result) return json(['code'=>0,'保存失败']);
+
+        return json(['code'=>1,'msg'=>'success']);
     }
 }

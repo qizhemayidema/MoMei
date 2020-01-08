@@ -51,6 +51,11 @@ Route::group('/',function(){
     Route::group('user',function(){
         //注册
         Route::post('/','User/register');
+        //信息
+        Route::group('info',function (){
+            //修改用户的头像 昵称
+            Route::put('basics','User/basics');
+        });
         //认证
         Route::group('auth',function(){
             //获取个人认证证件类型

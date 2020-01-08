@@ -60,14 +60,17 @@ class User
             'sex'                  => $data['sex'],
             'work_email'           => $data['work_email'],
             'ent_name'             => $data['ent_name'],
-            'ent_bus_area_ids'     => $data['ent_bus_area_ids'],
+//            'ent_bus_area_ids'     => $data['ent_bus_area_ids'],  //暂时不用
+            'ent_bus_province'     => $data['ent_bus_province'],
+            'ent_bus_city'     => $data['ent_bus_city'],
+            'ent_bus_county'     => $data['ent_bus_county'],
             'ent_type'             => $data['ent_type'],
-            'ent_province_id'      => $data['ent_province_id'],
-            'ent_city_id'          => $data['ent_city_id'],
-            'ent_county_id'        => $data['ent_county_id'],
+//            'ent_province_id'      => $data['ent_province_id'],   //没有存省市县的id   只存了省市县的名称
+//            'ent_city_id'          => $data['ent_city_id'],
+//            'ent_county_id'        => $data['ent_county_id'],
             'ent_address'          => $data['ent_address'],
             'license_name'     => $data['license_name'],
-            'license_type'     => $data['license_type'],
+//            'license_type'     => $data['license_type'],  //只有居民身份证类型  所以这个不用了
             'license_number'   => $data['license_number'],
             'license_pic_of_top' => $data['license_pic_of_top'],
             'license_pic_of_under' => $data['license_pic_of_under'],
@@ -79,15 +82,16 @@ class User
         $areaService = new Area();
         $cateService = new Category();
 
-        $auth['ent_province'] = $areaService->getFindById($data['ent_province_id'])['name'];
-        $auth['ent_city'] = $areaService->getFindById($data['ent_city_id'])['name'];
-        $auth['ent_county'] = $areaService->getFindById($data['ent_county_id'])['name'];
-        $auth['license_type_str'] = $cateService->get($data['license_type'])['name'];
+        $auth['ent_province'] = $data['ent_province'];
+        $auth['ent_city'] = $data['ent_city'];
+        $auth['ent_county'] = $data['ent_county'];
+//        $auth['license_type_str'] = $cateService->get($data['license_type'])['name'];
+        $auth['license_type_str'] = '居民身份证';   //这里用户只有居民身份证证件
         $auth['ent_license_property_type_str'] = $cateService->get($data['ent_license_property_type'])['name'];
 
         $auth['license_status'] = 2;
 
-        (new UserModel())->where(['id'=>$userId])->update($auth);
+        return (new UserModel())->where(['id'=>$userId])->update($auth);
 
     }
 
@@ -101,5 +105,20 @@ class User
         $result = (new UserModel())->where(['phone'=>$phone])->find();
 
         return $result ? $result : false;
+    }
+
+    /**
+     * 修改用户的基础信息  头像 昵称
+     * @param $userId
+     * @param $data
+     * @return UserModel
+     * $data 8/1/2020 下午2:57
+     */
+    public function basics($userId,$data)
+    {
+        $upData = [];
+        (isset($data['nickname'])) ? $upData['nickname'] = $data['nickname'] :'';
+        (isset($data['head_portrait'])) ? $upData['head_portrait'] = $data['head_portrait'] :'';
+        return (new UserModel())->where(['id'=>$userId])->update($upData);
     }
 }

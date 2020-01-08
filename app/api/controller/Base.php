@@ -29,10 +29,12 @@ class Base extends BaseController
         }else{
             $token = \request()->param('token') ;
         }
+
         if ($token) {
             $this->token = $token;
             $this->userInfo = (new \app\common\model\User())->receptionShowData()->where(['token' => $token])->find();
         }
+
     }
 
     public function __get($name)

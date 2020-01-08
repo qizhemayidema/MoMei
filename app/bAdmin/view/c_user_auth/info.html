@@ -35,18 +35,19 @@
                                 </div>
                             </address>
 
-                            {$info.ent_province} {$info.ent_city} {$info.ent_county} {$info.address}
+                            {$info.ent_province} {$info.ent_city} {$info.ent_county} {$info.ent_address}
                             <br><br/>
                             <strong>工作邮箱：</strong> {$info.work_email}
                             <br/>
                             <br/>
-                            <strong>企业名称：</strong> {if $info.ent_name == 1} 直营 {else} 加盟 {/if}
+                            <strong>企业名称：</strong>  {$info.ent_name}<!--{if $info.ent_name == 1} 直营 {else} 加盟 {/if}-->
                             <br/>
                             <br/>
                             <strong>业务区域：</strong>
-                            {foreach $bus_area as $k => $v}
-                            {$v.name}&nbsp;&nbsp;&nbsp;
-                            {/foreach}
+<!--                            {foreach $bus_area as $k => $v}-->
+<!--                            {$v.name}&nbsp;&nbsp;&nbsp;-->
+<!--                            {/foreach}-->
+                            {$info.ent_bus_province} {$info.ent_bus_city} {$info.ent_bus_county}
                             <br/>
                             <br/>
 

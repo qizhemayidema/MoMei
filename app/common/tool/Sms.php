@@ -104,6 +104,10 @@ class Sms
                 ])
                 ->request();
 
+            $res = $result->toArray();
+
+            if($res['Code']!='OK') return ['code'=>0,'data'=>'发送失败'];
+
             Cache::set($this->cachePrefix.$phone,['code'=>$code,'timestamp'=>time()]);
             return ['code'=>1,'data'=>$code];
         } catch (ClientException $e) {
