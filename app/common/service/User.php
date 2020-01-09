@@ -9,7 +9,7 @@
 namespace app\common\service;
 
 use app\common\model\User as UserModel;
-
+use app\common\service\Order as OrderServer;
 class User
 {
 
@@ -49,7 +49,35 @@ class User
 
         if ($realPwd != $result['password']) return ['code'=>0,'msg'=>'密码不正确'];
 
-        return ['code'=>1,'msg'=>'success','token'=>$result['token']];
+        //组装登录后要返回的数据
+        $data['nickname'] = $result['nickname'];
+        $data['head_portrait'] = $result['head_portrait'];
+        $data['token'] = $result['token'];
+        $auditStatus = '';
+        switch ($result['license_status']){
+            case 1:
+                $auditStatus = '未认证';
+                break;
+            case 2:
+                $auditStatus = '审核中';
+                break;
+            case 3:
+                $auditStatus = '审核通过';
+                break;
+            case 4:
+                $auditStatus = '审核未通过';
+                break;
+        }
+        $data['audit_status'] = $auditStatus;
+        $subscribeOrder = (new OrderServer())->setWhere('status','=',1)->getOrderCount($result['id']);   //预约订单
+        $officialOrder = (new OrderServer())->setWhere('status','=',2)->getOrderCount($result['id']);   //正式订单
+        $finishOrder = (new OrderServer())->setWhere('status','=',3)->getOrderCount($result['id']);   //完成订单
+        $data['subscribe_order'] = $subscribeOrder;
+        $data['official_order'] = $officialOrder;
+        $data['finish_order'] = $finishOrder;
+
+
+        return ['code'=>1,'msg'=>'success','data'=>$data,'token'=>$result['token']];
 
     }
 

@@ -19,6 +19,11 @@ class CinemaScreen
         return $page ? $handler->paginate($page) : $handler->select();
     }
 
+    public function getListAll()
+    {
+        return (new \app\common\model\CinemaScreen())->backgroundShowData()->order('sort','desc')->select();
+    }
+
     public function get($id)
     {
         return (new \app\common\model\CinemaScreen())->find($id);

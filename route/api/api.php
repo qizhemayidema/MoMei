@@ -20,6 +20,8 @@ Route::group('/',function(){
 
     //影院相关
     Route::group('cinema',function(){
+        //获取影院列表
+        Route::get('/','Cinema/getList');
         //获取影院筛选条件
         Route::get('condition','Cinema/getCondition');
         //info

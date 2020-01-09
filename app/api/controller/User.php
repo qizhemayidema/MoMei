@@ -97,7 +97,7 @@ class User extends Base
 
         if ($result['code'] == 0) return json($result);
 
-        return json(['code'=>1,'msg'=>'success','data'=>$result['token']]);
+        return json(['code'=>1,'msg'=>'success','data'=>$result['data']]);
     }
 
     public function setAuth(Request $request)
@@ -191,7 +191,7 @@ class User extends Base
 
         $result = (new Service)->basics($user['id'],$data);
 
-        if(!$result) return json(['code'=>0,'保存失败']);
+        if(!$result) return json(['code'=>0,'msg'=>'请更改信息后保存']);
 
         return json(['code'=>1,'msg'=>'success']);
     }

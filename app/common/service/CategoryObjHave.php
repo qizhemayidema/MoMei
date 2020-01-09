@@ -29,6 +29,13 @@ class CategoryObjHave
             'cate_type'=>$impl->getCateType()
         ])->select();
     }
+    public function getListAll(CateImpl $impl)
+    {
+        return (new \app\common\model\CategoryObjHave())->where([
+            'object_type'=>$this->objectTypeImpl->getObjType(),
+            'cate_type'=>$impl->getCateType()
+        ])->select();
+    }
 
     public function insertAll($data,CateImpl $impl,$objectId)
     {

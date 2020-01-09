@@ -6,7 +6,9 @@ namespace app\api\controller;
 use app\common\model\CinemaProduct as CinemaProductModel;
 use app\common\model\Category as CateModel;
 use app\common\service\Category;
+use app\common\service\CategoryObjHave;
 use app\common\service\ProductRule;
+use app\common\typeCode\cate\CinemaNearby;
 use app\common\typeCode\cate\Product as ProductCateTypeCode;
 use app\common\service\CategoryObjHaveAttr;
 use app\common\service\Manager;
@@ -97,6 +99,69 @@ class Cinema
             $data[$key]['children'] = $category->getAttrList($value['id']);
         }
         return json(['code' => 1, 'msg' => 'success', 'data' => $data]);
+
+    }
+
+    public function getList()
+    {
+        //查询全部的影院
+        $service = new Manager((new \app\common\typeCode\manager\Cinema()));
+        $dataList = $service->getInfoList()->toArray();
+
+        //获取级别分类列表  这里是需要返回影院的级别的选项
+        $cateService = new Category();
+        $level = $cateService->getList((new \app\common\typeCode\cate\CinemaLevel()));
+        foreach ($level as $key => $value){
+            $level[$key]['attr'] =  $cateService->getAttrList($value['id'])->toArray();
+        }
+        $levelCheck = (new CategoryObjHaveAttr(1))->getList();
+        $newLevelCheck = [];
+        foreach ($levelCheck as $levelCheckKey=>$levelCheckValue){
+            $newLevelCheck[$levelCheckValue['object_id']][$levelCheckValue['cate_id']] = $levelCheckValue['attr_id'];
+        }
+
+        //获取影院的周边选择
+        $cinemaEarByTypeCode = (new CinemaNearby());
+//        $zhou = $cateService->getList($cinemaEarByTypeCode);
+//        $newZhou = array_column($zhou,NULL,'id');
+        //获取全部的影院的周边的选择
+        $selectAroundList = (new CategoryObjHave((new \app\common\typeCode\cateObjHave\Cinema())))->getListAll($cinemaEarByTypeCode)->toArray();
+
+        //组装级别   周边区域
+        foreach ($dataList as $key=>$value){
+            $cinemaLevel = [];
+            $rim = [];
+
+            //级别
+            if(isset($newLevelCheck[$value['id']])){
+                foreach ($level as $levelKey=>$levelValue){
+                    if(isset($newLevelCheck[$value['id']][$levelValue['id']])){
+                        foreach ($levelValue['attr'] as $levelKey1=>$levelValue2){
+                            if($newLevelCheck[$value['id']][$levelValue['id']] == $levelValue2['id']){
+                                $cinemaLevel[$levelValue['name']]=$levelValue2['value'];
+                            }
+                        }
+                    }
+                }
+            }
+            //区域周边
+            foreach ($selectAroundList as $selectAroundListKey=>$selectAroundListValue){
+                if($selectAroundListValue['object_id']==$value['id']){
+                    $rim[] = $selectAroundListValue['cate_name'];
+//                    if(isset($newZhou[$selectAroundListValue['cate_id']])){
+//                        $rim[] = $newZhou[$selectAroundListValue['cate_id']]['name'];
+//                    }
+                }
+            }
+
+            $dataList[$key]['level'] = $cinemaLevel;
+            $dataList[$key]['rim'] = $rim;
+        }
+
+
+        echo "<pre>";
+        print_r($dataList);
+        echo "</pre>";
 
     }
 }
