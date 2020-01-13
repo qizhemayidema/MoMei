@@ -9,10 +9,13 @@
 namespace app\cinemaAdmin\controller;
 
 
+use app\common\service\BoxOffice as BoxOfficeServer;
 use app\common\service\Category;
 use app\common\service\CategoryObjHave;
+use app\common\service\CinemaProduct as CinemaProductServer;
 use app\common\service\Manager as Service;
 use app\common\service\Area;
+use app\common\service\UserShopping as UserShoppingModel;
 use app\common\typeCode\cate\ABus;
 use app\common\typeCode\cate\CinemaNearby;
 use app\common\service\CategoryObjHaveAttr;
@@ -170,6 +173,14 @@ class BasicInformation extends Base
             $post['role_name'] = $oldUser['role_name'];
 
             $service->update($post['id'],$post);
+
+            //查询该影院的基础信息   对比有没有修改影院名称   若修改了 则需要去修改产品表，票房统计表，购物车表存储的影院名称
+            $managerInfoData = $service->getInfo($cinemaData['info_id']);
+            if($managerInfoData['name']!=$post['name']){  //修改产品表，票房统计表，购物车表存储的影院名称
+                (new CinemaProductServer())->updateByCinemaId($cinemaData['group_code'],$post['name']);   //产品表
+                (new BoxOfficeServer())->updateByCinemaId($cinemaData['group_code'],$post['name']);   //票房统计表
+                (new UserShoppingModel())->updateByCinemaId($cinemaData['group_code'],$post['name']);   //票房统计表
+            }
 
             $service->updateInfo($oldUser['info_id'],$post);
 

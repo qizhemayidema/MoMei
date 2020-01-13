@@ -18,6 +18,12 @@ class Shopping extends Base
     {
         $user = $this->userInfo;
 
+        if ($user['license_status'] == 1) return json(['code'=>0,'msg'=>'您的公司审核尚未认证']);
+
+        if ($user['license_status'] == 2) return json(['code'=>0,'msg'=>'您的公司正在审核中']);
+
+        if ($user['license_status'] == 4) return json(['code'=>0,'msg'=>'您的公司审核尚未通过']);
+
         $post = $request->post();
 
         $rules = [
@@ -151,17 +157,38 @@ class Shopping extends Base
                 ->where(['info.city_id' => $get['area_id']]);
         }
 
-        $res = $handler->where(['shopping.user_id' => $user['id']])->group('shopping.cinema_id')
-            ->field('shopping.cinema_id,shopping.sum_unit,shopping.start_time,shopping.end_time')
-            ->limit((int)$startPage, (int)$length)->select();
+        $res = $handler->where(['shopping.user_id' => $user['id']])->group('shopping.cinema_id,shopping.start_time,shopping.end_time')
+//            ->field('shopping.cinema_id,shopping.sum_unit,shopping.start_time,shopping.end_time')
+            ->field('shopping.cinema_id,shopping.start_time,shopping.end_time,cinema_name')
+            ->limit((int)$startPage, (int)$length)->select()->toarray();
 
+        $result = [];
         foreach ($res as $k => $v) {
+            $result[$k]['cinema_name'] = $v['cinema_name'];
+            $result[$k]['start_time'] = date("Y-m-d",$v['start_time']);
+            $result[$k]['end_time'] = date("Y-m-d",$v['end_time']);
             $temp = $model->where(['cinema_id' => $v['cinema_id']])
                 ->group('product_id')
-                ->field('product_name,count(product_id) sum,sum_unit')->select();
-            $res[$k]['product'] = $temp;
+                ->field('product_name,count(product_id) sum,sum_unit,screen_id,screen_name,cate_id,cate_name,product_id')->select()->toarray();
+
+            $cateInit = 0;
+            $cateInitArr = [];
+            foreach ($temp as $tempKey => $tempValue){
+                if(empty($cateInitArr[$tempValue['cate_id']])){
+                    $cateInitArr[$tempValue['cate_id']] =$cateInit;
+                    $cateInit++;
+                }
+                $result[$k]['cate'][$cateInitArr[$tempValue['cate_id']]]['cate_name'] = $tempValue['cate_name'];
+                $result[$k]['cate'][$cateInitArr[$tempValue['cate_id']]]['product']['product_id'] = $tempValue['product_id'];
+                $result[$k]['cate'][$cateInitArr[$tempValue['cate_id']]]['product']['product_name'] = $tempValue['product_name'];
+                $result[$k]['cate'][$cateInitArr[$tempValue['cate_id']]]['product']['sum'] = $tempValue['sum'];
+                $result[$k]['cate'][$cateInitArr[$tempValue['cate_id']]]['product']['sum_unit'] = $tempValue['sum_unit'];
+                $result[$k]['cate'][$cateInitArr[$tempValue['cate_id']]]['product']['screen_name'] = $tempValue['screen_name'];
+
+            }
+
         }
-        return json(['code' => 1, 'msg' => $res]);
+        return json(['code' => 1, 'msg' => $result]);
 
 
     }

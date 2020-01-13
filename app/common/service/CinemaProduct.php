@@ -58,8 +58,10 @@ class CinemaProduct
             'price_json'        => $data['price_json' ],
             'price_month'       => $data['price_month'],
             'price_year'        => $data['price_year' ],
+            'price_everyday'        => $data['price_everyday' ],
             'price_discount_month'    => $data['price_discount_month'] ?? 0,
             'price_discount_year'    => $data['price_discount_year'] ?? 0,
+            'price_discount_everyday'    => $data['price_discount_everyday'] ?? 0,
             'status'            => 2,
             'create_time'       => time(),
         ];
@@ -83,10 +85,12 @@ class CinemaProduct
             'price_json'        => $data['price_json' ],
             'price_month'       => $data['price_month'],
             'price_year'        => $data['price_year' ],
+            'price_everyday'        => $data['price_everyday' ],
             'pic'               => $data['pic'],
             'roll_pic'          => $data['roll_pic'],
             'price_discount_month'    => $data['price_discount_month'] ?? 0,
             'price_discount_year'    => $data['price_discount_year'] ?? 0,
+            'price_discount_everyday'    => $data['price_discount_everyday'] ?? 0,
             'status'    => 2,
         ];
 
@@ -128,6 +132,20 @@ class CinemaProduct
     public function getEntity($entityId)
     {
         return (new \app\common\model\CinemaProduct())->where(['cinema_id'=>$this->groupCode])->find($entityId);
+    }
+
+    /**
+     * 前台展示的产品详情  未删除 上架状态
+     * @param $entityId
+     * @return array|\think\Model|null
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     * $data 10/1/2020 上午10:45
+     */
+    public function getDetails($entityId)
+    {
+        return (new \app\common\model\CinemaProduct())->where('delete_time',0)->where('status',1)->find($entityId);
     }
 
     public function getEntityList($page = null,$cateId = null,$screenId = null)
@@ -262,6 +280,50 @@ class CinemaProduct
 
         return $product;
 
+    }
+
+    /**
+     * @param $id           int    产品id
+     * @param $priceJson    string 产品每日价格
+     * $data 10/1/2020 下午12:41
+     */
+    public function productCalendar($id,$priceJson)
+    {
+        $productDayStatus = (new CinemaProductStatus())->where('entity_id',$id)->column('status','date');
+        $priceDay = json_decode($priceJson,true);
+        foreach ($priceDay as $key=>$value){
+            $priceDay[$key]['status'] = '';
+            $times = strtotime($value['date']);
+            if(isset($productDayStatus[$times])){
+                if($productDayStatus[$times] == 1 || $productDayStatus[$times] == 2){
+                    $priceDay[$key]['status'] = '暂无档期';
+                }
+            }
+        }
+
+        return $priceDay;
+    }
+
+    /**
+     * 根据 影厅id 修改产品的 影厅名称
+     * @param $screenId             int     影厅id
+     * @param $screenName           string  影厅名称
+     * @return CinemaProductModel
+     * $data 10/1/2020 下午3:55
+     */
+    public function updateByScreenId($screenId,$screenName){
+        return (new CinemaProductModel())->where('screen_id',$screenId)->update(['screen_name'=>$screenName]);
+    }
+
+    /**
+     * 根据 影院id 修改产品的 影院名称
+     * @param $cinemaId     int   是manager表的group_code
+     * @param $cinemaName
+     * @return CinemaProductModel
+     * $data 10/1/2020 下午4:28
+     */
+    public function updateByCinemaId($cinemaId,$cinemaName){
+        return (new CinemaProductModel())->where('cinema_id',$cinemaId)->update(['cinema_name'=>$cinemaName]);
     }
 
 }

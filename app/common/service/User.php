@@ -103,7 +103,7 @@ class User
             'license_pic_of_top' => $data['license_pic_of_top'],
             'license_pic_of_under' => $data['license_pic_of_under'],
             'ent_license_name'     => $data['ent_license_name'],
-            'ent_license_property_type'  => $data['ent_license_property_type'],
+//            'ent_license_property_type'  => $data['ent_license_property_type'],  //暂时是前台传来这个值是字符串 直接用
             'ent_license_bus_license' => $data['ent_license_bus_license'],
         ];
 
@@ -115,7 +115,8 @@ class User
         $auth['ent_county'] = $data['ent_county'];
 //        $auth['license_type_str'] = $cateService->get($data['license_type'])['name'];
         $auth['license_type_str'] = '居民身份证';   //这里用户只有居民身份证证件
-        $auth['ent_license_property_type_str'] = $cateService->get($data['ent_license_property_type'])['name'];
+//        $auth['ent_license_property_type_str'] = $cateService->get($data['ent_license_property_type'])['name'];
+        $auth['ent_license_property_type_str'] = $data['ent_license_property_type'];   //特殊情况  先传字符串 保存，正常是传id，然后上面查出来然后 保存（后台有此设置公司性质的选项功能）
 
         $auth['license_status'] = 2;
 

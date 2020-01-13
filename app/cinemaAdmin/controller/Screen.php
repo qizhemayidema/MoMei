@@ -6,6 +6,8 @@ namespace app\cinemaAdmin\controller;
 use app\common\tool\Session;
 use think\facade\Validate;
 use app\common\service\CinemaScreen as Service;
+use app\common\service\CinemaProduct as CinemaProductServer;
+use app\common\service\UserShopping as UserShoppingServer;
 use think\facade\View;
 use think\Request;
 
@@ -82,6 +84,8 @@ class Screen extends Base
             '__token__' => 'token',
         ]);
 
+        //先查询出此id原来的数据  若果修改了影厅名称那么联动的产品表,购物车表中存储的影厅名成也需要跟着变化
+        $data = (new Service())->get($post['id']);
 
         try{
 
@@ -93,6 +97,11 @@ class Screen extends Base
             $post['cinema_id'] = $user['group_code'];
 
             (new Service())->update($post['id'],$post);
+
+            if($data['name']!=$post['name']){  //这里是修改了影厅名称 修改购物车表和产品表
+                $screenNameResult = (new CinemaProductServer())->updateByScreenId($post['id'],$post['name']);  //产品表
+                $shoppingResult = (new UserShoppingServer())->updateByScreenId($post['id'],$post['name']);  //购物车表
+            }
 
         }catch (\Exception $e){
             return json(['code'=>0,'msg'=>$e->getMessage()]);

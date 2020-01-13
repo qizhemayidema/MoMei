@@ -11,6 +11,7 @@ use think\Request;
 
 class CUserLicensePropertyCate extends Base
 {
+    //后台的认证公司性质类型
     public function index()
     {
         try{

@@ -126,7 +126,7 @@ class Search
 
         $handler = $handler->field('attr.attr_value');
 
-        $handler = $handler->field('info.province,info.city_id,info.city,info.county,info.address,info.pics info_pics,info.email info_email,info.name cinema_name,info.master_user_id');
+        $handler = $handler->field('info.province,info.city_id,info.city,info.county,info.address,info.pics info_pics,info.email info_email,info.name cinema_name,info.master_user_id,info.service_phone');
 
         $handler = $handler->field('info.bus_area,info.seat_sum,info.watch_mv_sum,info.screen_sum');
 
@@ -225,6 +225,7 @@ class Search
                 'screen_sum' => $v['screen_sum'],
                 'seat_sum'  => $v['seat_sum'],
                 'watch_mv_sum' => $v['watch_mv_sum'],
+                'phone' => $v['service_phone'], //客服电话
             ];
             //组装城市数据 无key  可能有重复数据
             $cityTemp[] = [

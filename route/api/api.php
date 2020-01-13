@@ -16,6 +16,8 @@ Route::group('/',function(){
     Route::group('product',function(){
         //获取产品分类
         Route::get('cate','Product/getCate');
+        //获取产品详情
+        Route::get('details','Product/details');
     });
 
     //影院相关

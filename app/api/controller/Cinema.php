@@ -128,6 +128,7 @@ class Cinema
         $selectAroundList = (new CategoryObjHave((new \app\common\typeCode\cateObjHave\Cinema())))->getListAll($cinemaEarByTypeCode)->toArray();
 
         //组装级别   周边区域
+        $result = ['code'=>1,'msg'=>'success','data'=>[]];
         foreach ($dataList as $key=>$value){
             $cinemaLevel = [];
             $rim = [];
@@ -154,14 +155,17 @@ class Cinema
                 }
             }
 
-            $dataList[$key]['level'] = $cinemaLevel;
-            $dataList[$key]['rim'] = $rim;
+            $result['data'][$key]['level'] = $cinemaLevel;
+            $result['data'][$key]['rim'] = $rim;
+            $result['data'][$key]['province'] = $value['province'];
+            $result['data'][$key]['city'] = $value['city'];
+            $result['data'][$key]['county'] = $value['county'];
+            $result['data'][$key]['desc'] = $value['desc'];
+            $result['data'][$key]['desc'] = $value['desc'];
+            $result['data'][$key]['id'] = $value['id'];
         }
 
-
-        echo "<pre>";
-        print_r($dataList);
-        echo "</pre>";
+        return json($result);
 
     }
 }

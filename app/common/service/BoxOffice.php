@@ -149,4 +149,15 @@ class BoxOffice
 
         return $result;
     }
+
+    /**
+     * 根据 影院id 修改产品的 影院名称
+     * @param $cinemaId    int   是manager表的group_code
+     * @param $cinemaName
+     * @return BoxOfficeStatisticsModel
+     * $data 10/1/2020 下午4:33
+     */
+    public function updateByCinemaId($cinemaId,$cinemaName){
+        return (new BoxOfficeStatisticsModel())->where('cinema_id',$cinemaId)->update(['cinema_name'=>$cinemaName]);
+    }
 }

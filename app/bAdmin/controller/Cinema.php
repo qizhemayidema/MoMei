@@ -15,6 +15,9 @@ use app\common\typeCode\manager\Yuan;
 use app\common\typeCode\cate\CinemaNearby;
 use think\exception\ValidateException;
 use app\common\service\Manager as Service;
+use app\common\service\CinemaProduct as CinemaProductServer;
+use app\common\service\BoxOffice as BoxOfficeServer;
+use app\common\service\UserShopping as UserShoppingModel;
 use think\Request;
 use think\facade\View;
 use think\Validate;
@@ -617,12 +620,14 @@ class Cinema extends Base
 
             $service = new Service((new \app\common\typeCode\manager\Cinema()));
 
+
             if($service->existsUsername($post['username'],$post['id']))
             {
                 throw new ValidateException('账户已存在');
             }
 
             $cinemaData = (new \app\common\service\Manager((new \app\common\typeCode\manager\Cinema())))->get($post['id']);
+
 
             $province = explode('-',$post['province']);
             $city = explode('-',$post['city']);
@@ -638,6 +643,14 @@ class Cinema extends Base
             $oldUser = $service->get($post['id']);
 //            return json(['code'=>0]);
             $service->update($post['id'],$post);
+
+            //查询该影院的基础信息   对比有没有修改影院名称   若修改了 则需要去修改产品表，票房统计表，购物车表存储的影院名称
+            $managerInfoData = $service->getInfo($cinemaData['info_id']);
+            if($managerInfoData['name']!=$post['name']){  //修改产品表，票房统计表，购物车表存储的影院名称
+                (new CinemaProductServer())->updateByCinemaId($cinemaData['group_code'],$post['name']);   //产品表
+                (new BoxOfficeServer())->updateByCinemaId($cinemaData['group_code'],$post['name']);   //票房统计表
+                (new UserShoppingModel())->updateByCinemaId($cinemaData['group_code'],$post['name']);   //票房统计表
+            }
 
             $service->updateInfo($oldUser['info_id'],$post);
 

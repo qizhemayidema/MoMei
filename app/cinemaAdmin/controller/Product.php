@@ -19,6 +19,7 @@ use think\facade\Validate;
 use think\facade\View;
 use app\common\tool\Session;
 use think\Request;
+use app\common\service\UserShopping as UserShoppingServer;
 
 class Product extends Base
 {
@@ -78,9 +79,11 @@ class Product extends Base
             'screen_id|影厅' => 'require',
             'price_month|包月价格' => 'require|float|max:10',
             'price_year|包年价格'   => 'require|float|max:10',
+            'price_everyday|日均价格'   => 'require|float|max:10',
             'price_json|每日价格'   => 'require',
             'price_discount_month|月优惠价格' => 'require|float|max:10',
             'price_discount_year|年优惠价格' => 'require|float|max:10',
+            'price_discount_everyday|日均优惠价格' => 'require|float|max:10',
             'pic|封面图'           => 'require|max:255',
             'roll_pic|轮播图'      => 'require',
             'desc'          => 'require',
@@ -157,9 +160,11 @@ class Product extends Base
                 'entity_name'  => $post['entity_name'],
                 'price_json' => $post['price_json'],
                 'price_month' => $post['price_month'],
+                'price_everyday' => $post['price_everyday'],
                 'price_year' => $post['price_year'],
                 'price_discount_month'    => $post['price_discount_month'],
                 'price_discount_year'    => $post['price_discount_year'],
+                'price_discount_everyday'    => $post['price_discount_everyday'],
                 'desc'       => $post['desc'],
             ];
 
@@ -265,12 +270,14 @@ class Product extends Base
             'screen_id|影厅' => 'require',
             'price_month|包月价格' => 'require|float|max:10',
             'price_year|包年价格'   => 'require|float|max:10',
+            'price_everyday|日均价格'   => 'require|float|max:10',
             'price_json|每日价格'   => 'require',
             'entity_name|名称'       => 'require|max:30',
             'desc|介绍'       => 'require',
             'cate_id|分类' => 'require',
             'price_discount_month|月优惠价格' => 'require|float|max:10',
             'price_discount_year|年优惠价格' => 'require|float|max:10',
+            'price_discount_everyday|日均优惠价格' => 'require|float|max:10',
             'pic|封面图'           => 'require|max:255',
             'roll_pic|轮播图'      => 'require',
             'desc'          => 'require',
@@ -299,6 +306,7 @@ class Product extends Base
             if (!$validate->check($post)) throw new ValidateException($validate->getError());
 
             $data = $service->getEntity($post['id']);
+            $oldEntityName = $data['entity_name'];   //修改前的产品名称
             if ($data['status'] == 1) throw new ValidateException('请将产品下架后再编辑');
 
             if (count(explode(',',$post['roll_pic'])) > 8 ){
@@ -348,13 +356,20 @@ class Product extends Base
                 'cate_name' => $cateName,
                 'price_json'        => $post['price_json' ],
                 'price_month'       => $post['price_month'],
+                'price_everyday'       => $post['price_everyday'],
                 'price_year'        => $post['price_year' ],
                 'price_discount_month'    => $post['price_discount_month'],
                 'price_discount_year'    => $post['price_discount_year'],
+                'price_discount_everyday'    => $post['price_discount_everyday'],
                 'pic'       => $post['pic'],
                 'roll_pic'  => $post['roll_pic'],
                 'status'    => 2,
             ];
+
+            if($post['entity_name']!=$oldEntityName)  //如果修改了产品的名称 那么购物车中该产品的实体名称也得变化
+            {
+                (new UserShoppingServer())->updateByProductId($post['id'],$post['entity_name']);
+            }
 
             $service = (new CinemaProduct($this->user['group_code']));
 
