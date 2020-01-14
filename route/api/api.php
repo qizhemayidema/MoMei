@@ -30,6 +30,14 @@ Route::group('/',function(){
         Route::get('info','Cinema/getInfo');
         //获取某个影院的产品分类
         Route::get('cate','Cinema/getProductCate');
+        //根据影院的产品分类获得的产品
+        Route::get('product','Cinema/getProduct');
+    });
+
+    //院线 影投相关
+    Route::group('theatreChain',function (){
+        //获取影院列表
+        Route::get('/','TheatreChain/getList');
     });
 
     //搜索相关

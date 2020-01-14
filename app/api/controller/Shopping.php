@@ -4,6 +4,7 @@ declare (strict_types=1);
 namespace app\api\controller;
 
 use app\common\model\UserShopping;
+use app\common\service\UserShopping as  UserShoppingServer;
 use app\common\service\CinemaProduct;
 use app\common\service\Manager;
 use app\common\service\ProductRule;
@@ -69,30 +70,34 @@ class Shopping extends Base
 
                 if (!$rule) throw new ValidateException('产品不存在,请刷新后重试');
 
-                $insert[] = [
-                    'user_id' => $user['id'],
-                    'cinema_id' => $product['cinema_id'],
-                    'screen_id' => $product['screen_id'],
-                    'product_id' => $product['id'],
-                    'cate_id' => $product['cate_id'],
-                    'cinema_name' => $product['cinema_name'],
-                    'screen_name' => $product['screen_name'],
-                    'product_name' => $product['entity_name'],
-                    'cate_name' => $product['cate_name'],
-                    'sum_unit' => $rule['sum_unit'],
-                    'start_time' => $startTime,
-                    'end_time' => $endTime,
-                    'create_time' => time(),
-                ];
+                //查询该产品 该时间段在购物城中有没有   没有则添加  有则不添加
+                $isCart = (new UserShoppingServer())->getDataByIdTimes($user['id'],$product['id'],$startTime,$endTime);
+                if(empty($isCart)){
+                    $insert[] = [
+                        'user_id' => $user['id'],
+                        'cinema_id' => $product['cinema_id'],
+                        'screen_id' => $product['screen_id'],
+                        'product_id' => $product['id'],
+                        'cate_id' => $product['cate_id'],
+                        'cinema_name' => $product['cinema_name'],
+                        'screen_name' => $product['screen_name'],
+                        'product_name' => $product['entity_name'],
+                        'cate_name' => $product['cate_name'],
+                        'sum_unit' => $rule['sum_unit'],
+                        'start_time' => $startTime,
+                        'end_time' => $endTime,
+                        'create_time' => time(),
+                    ];
+                }
 
             }
 
             $shopping->insertAll($insert);
 
         } catch (ValidateException $e) {
-            return join(['code' => 0, 'msg' => $e->getError()]);
+            return json(['code' => 0, 'msg' => $e->getError()]);
         } catch (\Exception $e) {
-            return join(['code' => 0, 'msg' => $e->getMessage()]);
+            return json(['code' => 0, 'msg' => $e->getMessage()]);
         }
 
         return json(['code' => 1, 'msg' => 'success']);
@@ -111,8 +116,6 @@ class Shopping extends Base
             'type',  // shopping or cinema
             'ids',
         ];
-
-        return json($delete);
 
         //检查用户是否拥有互动权限
         $check = $this->checkUserWriteAuth($user);
@@ -159,31 +162,38 @@ class Shopping extends Base
 
         $res = $handler->where(['shopping.user_id' => $user['id']])->group('shopping.cinema_id,shopping.start_time,shopping.end_time')
 //            ->field('shopping.cinema_id,shopping.sum_unit,shopping.start_time,shopping.end_time')
-            ->field('shopping.cinema_id,shopping.start_time,shopping.end_time,cinema_name')
+            ->field('shopping.cinema_id,shopping.start_time,shopping.end_time,cinema_name,user_id')
             ->limit((int)$startPage, (int)$length)->select()->toarray();
 
         $result = [];
         foreach ($res as $k => $v) {
             $result[$k]['cinema_name'] = $v['cinema_name'];
+            $result[$k]['cinema_id'] = $v['cinema_id'];
             $result[$k]['start_time'] = date("Y-m-d",$v['start_time']);
             $result[$k]['end_time'] = date("Y-m-d",$v['end_time']);
             $temp = $model->where(['cinema_id' => $v['cinema_id']])
+                ->where('user_id',$v['user_id'])
+                ->where('start_time',$v['start_time'])
+                ->where('end_time',$v['end_time'])
                 ->group('product_id')
-                ->field('product_name,count(product_id) sum,sum_unit,screen_id,screen_name,cate_id,cate_name,product_id')->select()->toarray();
+                ->field('id,product_name,count(product_id) sum,sum_unit,screen_id,screen_name,cate_id,cate_name,product_id')->select()->toarray();
 
             $cateInit = 0;
+            $productInit = 0;
             $cateInitArr = [];
             foreach ($temp as $tempKey => $tempValue){
-                if(empty($cateInitArr[$tempValue['cate_id']])){
+                if(!isset($cateInitArr[$tempValue['cate_id']])){
                     $cateInitArr[$tempValue['cate_id']] =$cateInit;
                     $cateInit++;
+                    $productInit = 0;
                 }
                 $result[$k]['cate'][$cateInitArr[$tempValue['cate_id']]]['cate_name'] = $tempValue['cate_name'];
-                $result[$k]['cate'][$cateInitArr[$tempValue['cate_id']]]['product']['product_id'] = $tempValue['product_id'];
-                $result[$k]['cate'][$cateInitArr[$tempValue['cate_id']]]['product']['product_name'] = $tempValue['product_name'];
-                $result[$k]['cate'][$cateInitArr[$tempValue['cate_id']]]['product']['sum'] = $tempValue['sum'];
-                $result[$k]['cate'][$cateInitArr[$tempValue['cate_id']]]['product']['sum_unit'] = $tempValue['sum_unit'];
-                $result[$k]['cate'][$cateInitArr[$tempValue['cate_id']]]['product']['screen_name'] = $tempValue['screen_name'];
+                $result[$k]['cate'][$cateInitArr[$tempValue['cate_id']]]['product'][$productInit]['cart_id'] = $tempValue['id'];    //购物车的该产品的主键id
+                $result[$k]['cate'][$cateInitArr[$tempValue['cate_id']]]['product'][$productInit]['product_name'] = $tempValue['product_name'];
+//                $result[$k]['cate'][$cateInitArr[$tempValue['cate_id']]]['product'][$productInit]['sum'] = $tempValue['sum'];
+//                $result[$k]['cate'][$cateInitArr[$tempValue['cate_id']]]['product'][$productInit]['sum_unit'] = $tempValue['sum_unit'];
+                $result[$k]['cate'][$cateInitArr[$tempValue['cate_id']]]['product'][$productInit]['screen_name'] = $tempValue['screen_name'];
+                $productInit++;
 
             }
 

@@ -76,7 +76,7 @@ class Manager
 
     public function setTypes($type)
     {
-        $this->types[] = $type;
+        $this->types = $type;
 
         return $this;
     }

@@ -326,4 +326,6 @@ class CinemaProduct
         return (new CinemaProductModel())->where('cinema_id',$cinemaId)->update(['cinema_name'=>$cinemaName]);
     }
 
+
+
 }

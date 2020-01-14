@@ -65,4 +65,9 @@ class CinemaScreen
             'delete_time' => time(),
         ]);
     }
+
+    public function getDataByCinemaId($ids)
+    {
+        return (new \app\common\model\CinemaScreen())->whereIn('id',$ids)->select()->toArray();
+    }
 }

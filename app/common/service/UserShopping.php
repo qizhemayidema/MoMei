@@ -34,4 +34,23 @@ class UserShopping
     {
         return (new UserShoppingModel())->where('product_id',$productId)->update(['product_name'=>$productName]);
     }
+
+    /**
+     * 查询某个用户 购物车中某个时间段有没有有该产品
+     * @param $uid
+     * @param $productId
+     * @param $startTime
+     * @param $endTime
+     * @return array|\think\Model|null
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     * $data 13/1/2020 上午11:39
+     */
+    public function getDataByIdTimes($uid,$productId,$startTime,$endTime)
+    {
+        $handler = new UserShoppingModel();
+        return  $handler->where('user_id',$uid)->where('product_id',$productId)->where('start_time',$startTime)->where('end_time',$endTime)->find();
+
+    }
 }
