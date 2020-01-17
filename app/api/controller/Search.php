@@ -265,7 +265,17 @@ class Search
                             $cityTemp[$k]['cinema'][$k1]['cate'][$k2]['screen'][$k3]['product'] =array_merge(array_unique($productTemp[$v1['id']][$v2['id']][$v3['id']],SORT_REGULAR));
                         }
                     }else{
-                        $cityTemp[$k]['cinema'][$k1]['cate'][$k2]['product'] = array_merge(array_unique($productTemp[$v1['id']][$v2['id']][0],SORT_REGULAR));
+                        if(isset($productTemp[$v1['id']][$v2['id']][0])){
+                            $cityTemp[$k]['cinema'][$k1]['cate'][$k2]['product'] = array_merge(array_unique($productTemp[$v1['id']][$v2['id']][0],SORT_REGULAR));  //之前只有这一行
+                        }else{
+                            $newProductArr = [];
+                            foreach ($productTemp[$v1['id']][$v2['id']] as $pKey=>$pValue){
+                                foreach ($pValue as $ppKey=>$ppValue){
+                                    $newProductArr[] = $ppValue;
+                                }
+                            }
+                            $cityTemp[$k]['cinema'][$k1]['cate'][$k2]['product'] = array_merge(array_unique($newProductArr,SORT_REGULAR));
+                        }
                     }
                 }
             }

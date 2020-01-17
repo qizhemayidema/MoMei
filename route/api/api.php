@@ -88,6 +88,17 @@ Route::group('/',function(){
             //获取购物车列表
             Route::get('/','Shopping/getList');
         });
+
+        Route::group('collect',function (){
+            Route::group('cinema',function (){
+                //查询收藏店铺的列表
+                Route::get('/','Collect/getCollectCinemaList');
+                //收藏店铺
+                Route::post('/','Collect/collectCinema');
+                //删除收藏店铺
+                Route::delete('/','Collect/deleteCollectCinema');
+            });
+        });
     });
 
 

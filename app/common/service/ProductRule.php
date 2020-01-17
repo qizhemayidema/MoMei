@@ -9,6 +9,7 @@
 namespace app\common\service;
 
 
+use app\common\model\CinemaProductField as CinemaProductFieldModel;
 use app\common\model\ProductRule as ProductRuleModel;
 use app\common\model\ProductField;
 use app\common\typeCode\ProductFieldImpl;
@@ -125,6 +126,8 @@ class ProductRule
 
         foreach ($data as $key => $value){
              $level->where(['id'=>$value['id'],'product_rule_id'=>$ruleId])->update(['name'=>$value['name']]);
+
+            (new CinemaProductFieldModel())->where('product_field_id',$value['id'])->update(['name'=>$value['name']]);  //这里联动修改
         }
     }
 
