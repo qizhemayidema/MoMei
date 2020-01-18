@@ -146,7 +146,7 @@ class Collect extends Base
         try{
             $user = $this->userInfo;
 
-            $cinemaId = $request->delete('cinema_id'); //实则传过来的也是group_code
+            $cinemaId = $request->post('cinema_id'); //实则传过来的也是group_code
 
             if(!$cinemaId) throw new \Exception('参数错误');
 

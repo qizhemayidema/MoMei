@@ -108,9 +108,11 @@ class Shopping extends Base
     //删除多个购物车中的商品
     public function delete(Request $request)
     {
+
         $user = $this->userInfo;
 
-        $delete = $request->delete();
+        $delete = $request->post();
+
 
         $rule = [
             'type',  // shopping or cinema

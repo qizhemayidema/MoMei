@@ -84,7 +84,7 @@ Route::group('/',function(){
             //添加商品到购物车
             Route::post('/','Shopping/add');
             //从购物车删除商品
-            Route::delete('/','Shopping/delete');
+            Route::post('remove','Shopping/delete');
             //获取购物车列表
             Route::get('/','Shopping/getList');
         });
@@ -96,7 +96,7 @@ Route::group('/',function(){
                 //收藏店铺
                 Route::post('/','Collect/collectCinema');
                 //删除收藏店铺
-                Route::delete('/','Collect/deleteCollectCinema');
+                Route::post('remove','Collect/deleteCollectCinema');
             });
         });
     });
