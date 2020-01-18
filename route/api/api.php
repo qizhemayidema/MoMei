@@ -101,6 +101,11 @@ Route::group('/',function(){
         });
     });
 
+    Route::group('order',function()
+    {
+        Route::post('/','Order/makeNewOrder');
+    });
+
 
     Route::post('login','User/login');
 

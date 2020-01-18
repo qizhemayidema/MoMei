@@ -40,6 +40,8 @@ class Manager
 
     private $where = [];
 
+    private $whereIn = [];
+
     public function __construct(?ManagerImpl $managerImpl = null)
     {
         $this->managerImpl = $managerImpl;
@@ -98,6 +100,14 @@ class Manager
     public function getShowType()
     {
         return $this->showType;
+    }
+
+    public function setWhereIn($field,$value)
+    {
+        $this->whereIn[0] = $field;
+        $this->whereIn[1] = $value;
+
+        return $this;
     }
 
     /**
@@ -159,6 +169,8 @@ class Manager
         $handler = $this->order ? $handler->order($alias.'.'.$this->order[0],$alias.'.'.$this->order[1]) : $handler;
 
         $handler = $this->where ? $handler->where($this->where[0].'.'.$this->where[1],$this->where[2]) : $handler;
+
+        $handler = $this->whereIn ? $handler->whereIn($this->whereIn[0],$this->whereIn[1]) : $handler;
 
         return $this->pageLength ? $handler->paginate(['list_rows'=>$this->pageLength,'query'=>request()->param()]) : $handler->select();
     }
@@ -352,5 +364,4 @@ class Manager
 
         return $ManagerInfoModel->count('id');
     }
-
 }

@@ -7,7 +7,7 @@ namespace app\common\model;
 use app\common\model\impl\BasicImpl;
 use think\Model;
 
-class Order extends Model implements BasicImpl
+class Ordervice extends Model implements BasicImpl
 {
     public function get($id)
     {
@@ -17,7 +17,7 @@ class Order extends Model implements BasicImpl
     public function add(array $data): int
     {
         // TODO: Implement add() method.
-        return $this->insert($data);
+        return  $this->insert();
     }
 
     public function modify($id, $data)
@@ -35,8 +35,9 @@ class Order extends Model implements BasicImpl
         // TODO: Implement softDelete() method.
     }
 
-    public function addId(array $data): int
+    public function addAll($data)
     {
-        return $this->insertGetId($data);
+        return $this->insertAll($data);
     }
+
 }

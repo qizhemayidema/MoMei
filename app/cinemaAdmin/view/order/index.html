@@ -1,0 +1,64 @@
+{include file="common/source"}
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                </div>
+                <div class="ibox-content">
+                    <div class="example">
+
+                        <table class="table table-bordered table-hover text-center fz13">
+                            <thead>
+                            <tr class="text-center">
+                                <th style="text-align: center;">订单号</th>
+                                <th style="text-align: center;">企业名称</th>
+                                <th style="text-align: center;">订单金额</th>
+                                <th style="text-align: center;">订单状态</th>
+                                <th style="text-align: center;">业务开始时间</th>
+                                <th style="text-align: center;">业务结束时间</th>
+                                <th style="text-align: center;">订单创建时间</th>
+                                <th style="text-align: center;width:180px;">操作</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {foreach $orderData as $key => $value}
+                            <tr>
+                                <td style="text-align: center;">{$value.order_sn}</td>
+                                <td>{$value.user_name}</td>
+                                <td>{$value.price}</td>
+                                <td>
+                                    {if condition="$value.status eq 0"}
+                                        订单关闭
+                                    {elseif condition="$value.status eq 1"}
+                                        预订单
+                                    {elseif condition="$value.status eq 2"}
+                                        正式订单
+                                    {elseif condition="$value.status eq 3"}
+                                        订单完成
+                                    {/if}
+                                </td>
+                                <td>{$value.yw_start_time|date='Y-m-d'}</td>
+                                <td>{$value.yw_end_time|date='Y-m-d'}</td>
+                                <td>{$value.create_time}</td>
+                                <td>
+                                    <button onclick="window.location.href='{:url('edit',['id'=>$value.id])}'" class="btn btn-info btn-xs" type="button"><i class="fa fa-paste"></i> 编辑</button>
+                                </td>
+                            </tr>
+                            {/foreach}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div style="text-align: center">
+                        {$orderData|raw}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script>
+
+</script>

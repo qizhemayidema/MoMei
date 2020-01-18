@@ -1,0 +1,177 @@
+{include file="common/source"}
+<link href="__STATIC__/css/plugins/blueimp/css/blueimp-gallery.min.css" rel="stylesheet">
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox-title">
+                <h5>编辑订单 <small></small></h5>
+
+            </div>
+            <div class="ibox-content">
+                <form action="" class="form-horizontal">
+                    {:token_field()}
+                    <input type="hidden" name="id" value="{$data.0.id}">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">订单号：</label>
+                            <div class="col-sm-9">
+                                <p class="form-control-static">{$data.0.order_sn}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">企业名称：</label>
+                            <div class="col-sm-9">
+                                <p class="form-control-static">{$data.0.user_name}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">公司电话：</label>
+                            <div class="col-sm-9">
+                                <p class="form-control-static">{$data.0.user_tel}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">公司地址：</label>
+                            <div class="col-sm-9">
+                                <p class="form-control-static">{$data.0.user_province}  {$data.0.user_city}  {$data.0.user_county}  {$data.0.user_address}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">联系人姓名：</label>
+                            <div class="col-sm-9">
+                                <p class="form-control-static">{$data.0.user_contact}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">联系人电话：</label>
+                            <div class="col-sm-9">
+                                <p class="form-control-static">{$data.0.user_contact_tel}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">营业执照：</label>
+                            <div class="col-sm-9">
+                                <p class="form-control-static">
+                                <a href="{$data.0.user_bus_license}" title="图片" data-gallery=""><img src="{$data.0.user_bus_license}"  style="max-height: 450px;"></a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">业务开始时间：</label>
+                            <div class="col-sm-9">
+                                <p class="form-control-static">{$data.0.yw_start_time|date='Y-m-d'}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">业务结束时间：</label>
+                            <div class="col-sm-9">
+                                <p class="form-control-static">{$data.0.yw_end_time|date='Y-m-d'}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">产品：</label>
+                            <div class="col-sm-9">
+                                <table class="table table-bordered table-hover text-center fz13">
+                                    <thead>
+                                    <tr class="text-center">
+                                        <th style="text-align: center;">产品名称</th>
+                                        <th style="text-align: center;">日均价格</th>
+                                        <th style="text-align: center;">包月价格</th>
+                                        <th style="text-align: center;">包年价格</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {foreach $data as $key => $value}
+                                    <tr>
+                                        <td style="text-align: center;">{$value.v_product_name}</td>
+                                        <td>{$value.v_price_everyday}</td>
+                                        <td>{$value.v_price_month}</td>
+                                        <td>{$value.v_price_year}</td>
+                                    </tr>
+                                    {/foreach}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                    <div class="form-group">
+                        <div class="col-sm-4 col-sm-offset-2">
+                            <button class="btn btn-primary" type="button"  onclick="save()">保存内容</button>
+                            <button class="btn btn-white" type="button" onclick="javascript:history.go(-1)">取消</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+</body>
+<div id="blueimp-gallery" class="blueimp-gallery">
+    <div class="slides"></div>
+    <h3 class="title"></h3>
+    <a class="prev">‹</a>
+    <a class="next">›</a>
+    <a class="close">×</a>
+    <a class="play-pause"></a>
+    <ol class="indicator"></ol>
+</div>
+<script src="__STATIC__/js/plugins/blueimp/jquery.blueimp-gallery.min.js"></script>
+
+<script>
+
+    var save = function () {
+        var formData = new FormData($('form')[0]);
+
+        $.ajax({
+            url: "{:url('update')}",
+            type: 'post',
+            dataType: 'json',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (data) {
+                if (data.code == 0) {
+                    layer.msg(data.msg, {icon: 5})
+                } else {
+                    layer.msg('添加成功', {icon: 1});
+                    setTimeout(function () {
+                        window.location.href = "{:url('index')}";
+                    }, 600)
+                }
+            }
+        })
+    }
+</script>

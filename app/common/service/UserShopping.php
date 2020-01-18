@@ -53,4 +53,33 @@ class UserShopping
         return  $handler->where('user_id',$uid)->where('product_id',$productId)->where('start_time',$startTime)->where('end_time',$endTime)->find();
 
     }
+
+    /**
+     * 查询出购物车中的一部分产品信息
+     * @param $uid
+     * @param $cartIds
+     * @return \think\Collection
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     * $data 18/1/2020 上午10:30
+     */
+    public function getDataByInIds($uid,$cartIds)
+    {
+        $handler = new UserShoppingModel();
+        return $handler->where('user_id',$uid)->whereIn('id',$cartIds)->select()->toArray();
+    }
+
+    /**
+     * 删除购物车的商品
+     * @param $uid
+     * @param $ids
+     * @return bool
+     * @throws \Exception
+     * $data 18/1/2020 下午2:27
+     */
+    public function deleteByIds($uid,$ids)
+    {
+        return (new UserShoppingModel())->where(['user_id' => $uid])->whereIn('id', $ids)->delete();
+    }
 }

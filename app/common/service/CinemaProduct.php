@@ -298,6 +298,8 @@ class CinemaProduct
                 if($productDayStatus[$times] == 1 || $productDayStatus[$times] == 2){
                     $priceDay[$key]['status'] = '暂无档期';
                 }
+            }else{
+                $priceDay[$key]['status'] = '暂无档期';
             }
         }
 
@@ -326,6 +328,21 @@ class CinemaProduct
         return (new CinemaProductModel())->where('cinema_id',$cinemaId)->update(['cinema_name'=>$cinemaName]);
     }
 
+    /**
+     * 查询出一部分的产品
+     * @param $ids
+     * @return mixed
+     * $data 18/1/2020 下午12:23
+     */
+    public function getListByInIds($ids)
+    {
+        $handler = (new CinemaProductModel());
 
+        $handler =  $handler->receptionShowData();
+
+        $handler =  $handler->whereIn('id',$ids);
+
+        return  $handler->select()->toArray();
+    }
 
 }
