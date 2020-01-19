@@ -79,4 +79,28 @@ class Order
 
         return $handler->select()->toArray();
     }
+
+    public function get($id)
+    {
+        return (new OrderModel())->get($id);
+    }
+
+    public function updateData($data,$selfId=false)
+    {
+        $id = $data['id'];
+        $updata = [
+            'agreement_code' =>$data['agreement_code'],
+            'agreement' =>$data['agreement'],
+            'pay_type' =>$data['pay_type'],
+            'money_type' =>$data['money_type'],
+            'other_price' =>$data['other_price'],
+            'all_price' =>$data['all_price'],
+            'price' =>$data['price'],
+        ];
+        $handler = new OrderModel();
+
+        $handler = $selfId ? $handler->where('cinema_id',$selfId) : $handler;
+
+        return $handler->where('id',$id)->update($updata);
+    }
 }

@@ -203,4 +203,19 @@ class Category
 
         return $result;
     }
+
+    /**
+     * 获取产品类别的规则
+     * @return mixed
+     * $data 19/1/2020 上午9:42
+     */
+    public function getCateProductRule()
+    {
+        $cateModel = new CateModel();
+
+        $productCateTypeCode = (new ProductCateTypeCode());
+
+        return $cateModel->alias('cate')->join('product_rule rule','cate.id = rule.cate_id')->field('cate.id,cate.name,rule.is_screen')
+            ->where('cate.type',$productCateTypeCode->getCateType())->select()->toArray();
+    }
 }

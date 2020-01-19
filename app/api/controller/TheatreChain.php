@@ -15,7 +15,7 @@ class TheatreChain
     public function getList()
     {
         $server = (new Manager());
-        $data = $server->setTypes([2,3])->getInfoList()->toArray();
+        $data = $server->setTypeString('2,3')->getInfoList()->toArray();
 
         $result = [];
         foreach ($data as $value){

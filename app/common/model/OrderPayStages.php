@@ -1,5 +1,10 @@
 <?php
-
+/**
+ * Created by : PhpStorm
+ * User: fk
+ * Date: 19/1/2020
+ * Time: 下午3:29
+ */
 
 namespace app\common\model;
 
@@ -7,18 +12,16 @@ namespace app\common\model;
 use app\common\model\impl\BasicImpl;
 use think\Model;
 
-class Order extends Model implements BasicImpl
+class OrderPayStages extends Model implements BasicImpl
 {
     public function get($id)
     {
         // TODO: Implement get() method.
-        return $this->where('id',$id)->find();
     }
 
     public function add(array $data): int
     {
         // TODO: Implement add() method.
-        return $this->insert($data);
     }
 
     public function modify($id, $data)
@@ -36,8 +39,9 @@ class Order extends Model implements BasicImpl
         // TODO: Implement softDelete() method.
     }
 
-    public function addId(array $data): int
+    public function addAll($data)
     {
-        return $this->insertGetId($data);
+        return $this->insertAll($data);
     }
+
 }

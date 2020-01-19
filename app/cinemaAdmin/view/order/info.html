@@ -65,8 +65,6 @@
             </div>
             <div class="ibox-content">
                 <form action="" class="form-horizontal">
-                    {:token_field()}
-                    <input type="hidden" name="id" value="{$data.0.o_id}">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label class="col-sm-2 control-label">订单号：</label>
@@ -145,7 +143,7 @@
                             <label class="col-sm-2 control-label">营业执照：</label>
                             <div class="col-sm-9">
                                 <p class="form-control-static">
-                                <a href="{$data.0.user_bus_license}" title="图片" data-gallery=""><img src="{$data.0.user_bus_license}"  style="max-height: 450px;"></a>
+                                    <a href="{$data.0.user_bus_license}" title="图片" data-gallery=""><img src="{$data.0.user_bus_license}"  style="max-height: 450px;"></a>
                                 </p>
                             </div>
                         </div>
@@ -210,7 +208,7 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">合同编号：</label>
                             <div class="col-sm-9">
-                                <input type="text" name="agreement_code" class="form-control" placeholder="请输入合同编号" >
+                                <p class="form-control-static">{$data.0.agreement_code}</p>
                             </div>
                         </div>
                     </div>
@@ -219,10 +217,9 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">合同附件：</label>
                             <div class="col-sm-9">
-                                <a href="javascript:;" class="file webuploader-pick" >选择附件
-                                    <input type="file"  id="pic" class="btn btn-w-m btn-primary" >
+                                <a href="javascript:;" class="file webuploader-pick" >下载附件
+
                                 </a>
-                                <span style="display: block" id="look"></span>
                             </div>
                         </div>
                     </div>
@@ -231,31 +228,48 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">是否额外费用：</label>
                             <div class="col-sm-9">
-                                <!-- 1  是没有额外费用   2 有额外费用-->
-                                <input type="hidden" id="extra" name="extra" value="1">
-                                <input type="checkbox"  class="js-switch_3" />
+                                <p class="form-control-static">
+                                    {if !empty($otherPayRes)}
+                                    有
+                                    {else}
+                                    无
+                                    {/if}
+                                </p>
                             </div>
                         </div>
                     </div>
 
-                    <div id="level" class="form-group" style="display: none">
-                        <label class="col-sm-2 control-label"><a class="btn btn-info" onclick="add_extra()">添加额外费用</a></label>
-                        <div class="col-sm-8" id="extra_list" style="margin-top: 7px;">
-                            <div class="extra_lv">
-                                <input name="extra_name[]" placeholder="费用名称" style="display:inline;width:45%;margin-bottom: 20px;" required  type="text" class="form-control">
-                                <input name="extra_price[]" placeholder="费用金额" style="display:inline;width:45%;margin-bottom: 20px;" required  type="text" class="form-control">
-                                <a href="javascript:void(0);" onclick="close_extra(this)">
-                                    <i class="glyphicon glyphicon-remove"></i>
-                                </a>
+                    {if !empty($otherPayRes)}
+                    <div class="col-md-12">
+                        <div class="form-group" >
+                            <label class="col-sm-2 control-label">额外费用：</label>
+                            <div class="col-sm-9">
+                                <table class="table table-bordered table-hover text-center fz13">
+                                    <thead>
+                                    <tr class="text-center">
+                                        <th style="text-align: center;">费用名称</th>
+                                        <th style="text-align: center;">费用金额</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {foreach $otherPayRes as $otherPayResKey=>$otherPayResValue}
+                                    <tr>
+                                        <td style="text-align: center;">{$otherPayResValue.name}</td>
+                                        <td style="text-align: center;">{$otherPayResValue.price}</td>
+                                    </tr>
+                                    {/foreach}
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
+                    {/if}
 
                     <div class="col-md-12">
                         <div class="form-group">
                             <label class="col-sm-2 control-label">产品总金额：</label>
                             <div class="col-sm-9">
-                                <input type="text" name="all_price" class="form-control" placeholder="全部的产品价格" >
+                                <p class="form-control-static">{$data.0.all_price}</p>
                             </div>
                         </div>
                     </div>
@@ -264,7 +278,7 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">订单总金额：</label>
                             <div class="col-sm-9">
-                                <input type="text" name="price" class="form-control" placeholder="全部的产品价格+额外费用" >
+                                <p class="form-control-static">{$data.0.price}</p>
                             </div>
                         </div>
                     </div>
@@ -273,12 +287,13 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">支付类型：</label>
                             <div class="col-sm-9">
-                                <div class="radio i-checks">
-                                    <label style="padding-left: 0;">
-                                        <input type="radio" value="1" name="pay_type"> <i></i> 线下</label>
-                                    <label>
-                                    <input type="radio"  value="2" name="pay_type"> <i></i> 线上</label>
-                                </div>
+                                <p class="form-control-static">
+                                    {if condition="$data.0.pay_type eq 1"}
+                                    线下
+                                    {elseif condition="$data.0.pay_type eq 2"}
+                                    线上
+                                    {/if}
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -287,47 +302,54 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">付款类型：</label>
                             <div class="col-sm-9">
-                                <div class="radio i-checks" id="polling-radio-wrap">
-                                    <label style="padding-left: 0;">
-                                        <input type="radio" value="1" class="i-checks" name="money_type"> <i></i> 全款</label>
-                                    <label>
-                                    <input type="radio"  value="2" class="i-checks" name="money_type"> <i></i> 分期</label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div id="periods" class="form-group" style="display: none">
-                        <label class="col-sm-2 control-label">
-                            <a class="btn btn-info" onclick="add_periods()" >添加期数</a>
-                            <br>
-                            <small class="text-navy">右边是从第一期开始依次往下</small>
-                        </label>
-                        <div class="col-sm-8" id="periods_list" style="margin-top: 7px;">
-                            <div class="periods_lv">
-                                <input name="periods_time[]" placeholder="应付时间" id="hello" autocomplete="off" class="laydate-icon form-control layer-date form-control yf_time" style="display:inline;width:45%;margin-bottom: 20px; margin-top: -8px; height: 32px;">
-                                <input name="periods_price[]" placeholder="应付金额" style="display:inline;width:45%;margin-bottom: 20px;" required  type="text" class="form-control">
-                                <a href="javascript:void(0);" onclick="close_periods(this)">
-                                    <i class="glyphicon glyphicon-remove"></i>
-                                </a>
+                                <p class="form-control-static">
+                                    {if condition="$data.0.money_type eq 1"}
+                                    全款
+                                    {elseif condition="$data.0.money_type eq 2"}
+                                    分期
+                                    {/if}
+                                </p>
                             </div>
                         </div>
                     </div>
 
 
+                    {if condition="$data.0.money_type eq 2"}
 
-                    <div class="form-group">
-                        <div class="col-sm-4 col-sm-offset-2">
-                            <button class="btn btn-primary" type="button"  onclick="save()">保存内容</button>
-                            <button class="btn btn-white" type="button" onclick="javascript:history.go(-1)">取消</button>
+                        <div class="form-group" >
+                            <label class="col-sm-2 control-label">
+                                期数：
+                            </label>
+
+                            <div class="col-sm-9">
+                                <table class="table table-bordered table-hover text-center fz13">
+                                    <thead>
+                                    <tr class="text-center">
+                                        <th style="text-align: center;">期数</th>
+                                        <th style="text-align: center;">应付时间</th>
+                                        <th style="text-align: center;">应付金额</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {foreach $stagesRes as $stagesResKey=>$stagesResValue}
+                                    <tr>
+                                        <td style="text-align: center;">第{$stagesResValue.number}期</td>
+                                        <td style="text-align: center;">{$stagesResValue.pay_time|date='Y-m-d'}</td>
+                                        <td style="text-align: center;">{$stagesResValue.pay_price}</td>
+                                    </tr>
+                                    {/foreach}
+                                    </tbody>
+                                </table>
+                            </div>
+
                         </div>
-                    </div>
+
+                    {/if}
 
 
 
                 </form>
             </div>
-
         </div>
     </div>
 </div>
@@ -353,41 +375,7 @@
 <!-- Chosen -->
 <script src="__STATIC__/js/plugins/chosen/chosen.jquery.js"></script>
 
-<!-- JSKnob -->
-<script src="__STATIC__/js/plugins/jsKnob/jquery.knob.js"></script>
 
-<!-- Input Mask-->
-<script src="__STATIC__/js/plugins/jasny/jasny-bootstrap.min.js"></script>
-
-<!-- Data picker -->
-<script src="__STATIC__/js/plugins/datapicker/bootstrap-datepicker.js"></script>
-
-<!-- Prettyfile -->
-<script src="__STATIC__/js/plugins/prettyfile/bootstrap-prettyfile.js"></script>
-
-<!-- NouSlider -->
-<script src="__STATIC__/js/plugins/nouslider/jquery.nouislider.min.js"></script>
-
-<!-- Switchery -->
-<script src="__STATIC__/js/plugins/switchery/switchery.js"></script>
-
-<!-- IonRangeSlider -->
-<script src="__STATIC__/js/plugins/ionRangeSlider/ion.rangeSlider.min.js"></script>
-
-<!-- iCheck -->
-<script src="__STATIC__/js/plugins/iCheck/icheck.min.js"></script>
-
-<!-- MENU -->
-<script src="__STATIC__/js/plugins/metisMenu/jquery.metisMenu.js"></script>
-
-<!-- Color picker -->
-<script src="__STATIC__/js/plugins/colorpicker/bootstrap-colorpicker.min.js"></script>
-
-<!-- Clock picker -->
-<script src="__STATIC__/js/plugins/clockpicker/clockpicker.js"></script>
-
-<!-- Image cropper -->
-<script src="__STATIC__/js/plugins/cropper/cropper.min.js"></script>
 
 <script src="__STATIC__/js/demo/form-advanced-demo.js"></script>
 
@@ -405,163 +393,4 @@
         });
     });
 </script>
-<!--时间插件-->
-<script src="__STATIC__/js/plugins/layer/laydate/laydate.js"></script>
-<script src="__STATIC__/js/plugins/layui/2.5.4/layui.js"></script>
-<script>
-    // 时间插件
-    function layda()
-    {
-        layui.use('laydate',function () {
-            var laydate = layui.laydate;
-            $('.yf_time').each(function(){
-                laydate.render({
-                    elem: this,
-                    trigger: 'click'
-                });
-            });
-        })
-    }
-    layda();
 
-
-
-    //日期范围限制
-    var start = {
-        elem: '#start',
-        format: 'YYYY/MM/DD hh:mm:ss',
-        min: laydate.now(), //设定最小日期为当前日期
-        max: '2099-06-16 23:59:59', //最大日期
-        istime: true,
-        istoday: false,
-        choose: function (datas) {
-            end.min = datas; //开始日选好后，重置结束日的最小日期
-            end.start = datas //将结束日的初始值设定为开始日
-        }
-    };
-    var end = {
-        elem: '#end',
-        format: 'YYYY/MM/DD hh:mm:ss',
-        min: laydate.now(),
-        max: '2099-06-16 23:59:59',
-        istime: true,
-        istoday: false,
-        choose: function (datas) {
-            start.max = datas; //结束日选好后，重置开始日的最大日期
-            changeSearch();
-        }
-    };
-    laydate(start);
-    laydate(end);
-</script>
-<script>
-
-    // 头像缩略图
-    $('#pic').change(function() {
-        //获取到file的文件
-        var docObj = document.getElementById("pic");
-        //获取到预览框的文件
-        var imgObjPreview = document.getElementById("look");
-        //获取到文件名和类型s
-        if(docObj.files && docObj.files[0]) {
-            //console.log(docObj.files)
-            //火狐7以上版本不能用上面的getAsDataURL()方式获取，需要一下方式
-            // imgObjPreview.src = window.URL.createObjectURL(docObj.files[0]['name']);
-            $("#look").text(docObj.files[0]['name']);
-        }
-        return true;
-    });
-
-    var save = function () {
-        var formData = new FormData($('form')[0]);
-        var  pic = document.getElementById("pic").files[0];
-        formData.append('pic',pic);
-        $.ajax({
-            url: "{:url('update')}",
-            type: 'post',
-            dataType: 'json',
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function (data) {
-                console.log(data);
-                if (data.code == 0) {
-                    layer.msg(data.msg, {icon: 5})
-                } else {
-                    layer.msg('保存成功', {icon: 1});
-                    setTimeout(function () {
-                        window.location.href = "{:url('index')}";
-                    }, 600)
-                }
-            }
-        })
-    }
-
-    $(".js-switch_3").change(function () {
-        var val = $("#extra").val();
-        if(val==1){
-            $("#level").show();
-            $("#extra").val('2');
-        }else{
-            $("#level").hide();
-            $("#extra").val('1');
-        }
-    })
-
-    // 添加额外费用
-    var add_extra = function(){
-
-        var html = '<div class="extra_lv">' +
-            '                        <input name="extra_name[]" placeholder="费用名称" style="display:inline;width:45%;margin-bottom: 20px;" value="" required  type="text" class="form-control">' +
-            '                        <input name="extra_price[]" placeholder="费用金额" style="display:inline;width:45%;margin-bottom: 20px;" value="" required  type="text" class="form-control">' +
-            '                        <a href="javascript:void(0);" onclick="close_extra(this)">' +
-            '                                <i class="glyphicon glyphicon-remove"></i>' +
-            '                            </a>' +
-            '                    </div>'
-
-        $('#extra_list').append(html)
-        return false;
-    }
-    var close_extra = function(_this){
-        $(_this).parents('.extra_lv').remove();
-    }
-
-    //选择付款类型
-    $('#polling-radio-wrap input.i-checks').on('ifClicked',function(event){     //格式
-        var _this =event.target;   //1.js中事件是会冒泡的，所以this是可以变化的，但event.target不会变化，它永远指向触发事件的DOM元素本身；2.this和event.target都是dom对象，使用jQuey中的方法可以将他们转换为jquery对象：$(this)和$(event.target).
-
-        var val = $(_this).val();     //value 的值
-        if(val==1){  //全款
-            $("#periods").hide();
-        }else if(val==2){  //分期
-            $("#periods").show();
-
-        }
-    });
-
-    // 添加分期
-    var add_periods = function(){
-
-        var $elements = $('#periods .periods_lv');
-        var len = $elements.length;
-        if(len>=3){
-            layer.msg('暂时最多可以分3期');
-            return false;
-        }
-
-        var html = '<div class="periods_lv" >' +
-            '                        <input name="periods_time[]" placeholder="应付时间" id="hello" autocomplete="off" class="laydate-icon form-control layer-date form-control yf_time" style="display:inline;width:45%;margin-bottom: 20px; margin-top: -8px; height: 32px;">' +
-            '                        <input name="periods_price[]" placeholder="应付金额" style="display:inline;width:45%;margin-bottom: 20px;" value="" required  type="text" class="form-control">' +
-            '                        <a href="javascript:void(0);" onclick="close_periods(this)">' +
-            '                                <i class="glyphicon glyphicon-remove"></i>' +
-            '                            </a>' +
-            '                    </div>'
-
-        $('#periods_list').append(html)
-        layda();
-        return false;
-    }
-    var close_periods = function(_this){
-        $(_this).parents('.periods_lv').remove();
-    }
-</script>

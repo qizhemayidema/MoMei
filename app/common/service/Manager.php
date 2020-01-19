@@ -36,7 +36,9 @@ class Manager
     private $groupCode = 0;
 
     //如果展示多个type的数据 可传入这个数组 如果数组中有值 则不会采用managerImpl中的值
-    private $types = [];
+    private $types = [];    //这个有问题 不能穿多个type数据 要用下面啊的
+
+    private $typeString = '';
 
     private $where = [];
 
@@ -78,7 +80,14 @@ class Manager
 
     public function setTypes($type)
     {
-        $this->types = $type;
+        $this->types[] = $type;
+
+        return $this;
+    }
+
+    public function setTypeString($type)
+    {
+        $this->typeString = $type;
 
         return $this;
     }
@@ -130,7 +139,9 @@ class Manager
 
         if (!empty($this->types)){
             $handler = $handler->whereIn($alias.'.type',$this->types);
-        }else{
+        }elseif (!empty($this->typeString)){
+            $handler = $handler->whereIn($alias.'.type',$this->typeString);
+        } else{
             $handler = $this->managerImpl ? $handler->where([$alias.'.type'=>$this->managerImpl->getManagerType()]) : $handler;
         }
 
@@ -157,7 +168,9 @@ class Manager
 
         if (!empty($this->types)){
             $handler = $handler->whereIn($alias.'.type',$this->types);
-        }else{
+        }elseif (!empty($this->typeString)){
+            $handler = $handler->whereIn($alias.'.type',$this->typeString);
+        } else{
             $handler = $this->managerImpl ? $handler->where([$alias.'.type'=>$this->managerImpl->getManagerType()]) : $handler;
         }
 

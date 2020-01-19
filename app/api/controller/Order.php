@@ -12,6 +12,7 @@ use app\common\service\Order as OrderServer;
 use app\common\service\CinemaProduct as CinemaProductServer;
 use app\common\service\Ordervice as OrderviceServer;
 use app\common\service\CinemaProductStatus as CinemaProductStatusServer;
+use app\common\service\Category as CategoryServer;
 class Order extends Base
 {
     public function makeNewOrder(Request $request)
@@ -53,6 +54,12 @@ class Order extends Base
             $productDataInfo = (new CinemaProductServer())->getListByInIds(array_column($cartData,'product_id'));   //查询全部的要下单的产品在产品表中的数据
 
             $productDataInfoKeyId = array_column($productDataInfo,NULL,'id');
+
+            $CategoryServer = new CategoryServer();
+
+            $cateProductRuleRes = $CategoryServer->getCateProductRule();  //获取全部产品类别的规则
+
+            $cateProductRuleResKeyId = array_column($cateProductRuleRes,NULL,'id');
 
             $OrderServer = new OrderServer();
             foreach ($productData as $productDataKey=>$productDataValue){
@@ -109,10 +116,23 @@ class Order extends Base
                         $productId = $selfCart['product_id'];
                         $productIds.=$productId.",";
                         $productSelfData = $productDataInfoKeyId[$selfCart['product_id']];         //购物车产品对应的产品表的数据
+
+                        //判断下单时候  得到该产品的规则 产品是否影厅内
+                        $v_screen_id = 0;
+                        $v_screen_name = '';
+                        //是影厅内的
+                        if(isset($cateProductRuleResKeyId[$productSelfData['cate_id']]) && !empty($cateProductRuleResKeyId[$productSelfData['cate_id']]) &&  $cateProductRuleResKeyId[$productSelfData['cate_id']]['is_screen']==1){
+                            $v_screen_id = $productSelfData['screen_id'];
+                            $v_screen_name = $productSelfData['screen_name'];
+                        }
+
+
                         $addOrdervice[] = [
                             'o_id'=>$orderId,
                             'v_product_id'=>$productId,
                             'v_product_name'=>$productSelfData['entity_name'],
+                            'v_screen_id'=>$v_screen_id,
+                            'v_screen_name'=>$v_screen_name,
                             'v_product_json'=>json_encode($productSelfData),
                             'v_price_json'=>$productSelfData['price_json'],
                             'v_price_month'=>$productSelfData['price_month'],
@@ -151,8 +171,9 @@ class Order extends Base
     }
 
     public function getOrderSn() {
+        $time =  (string)time();
         /* 选择一个随机的方案 */
         $yCode = array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 't', 'U', 'V', 'W', 'X', 'Y', 'Z');
-        return $yCode[intval(date('Y')) - 2016] . strtoupper(dechex(date('m'))) . date('d') . 'A' . substr(time(), -5) . substr(microtime(), 2, 5) . sprintf('%02d', rand(0, 99));
+        return $yCode[intval(date('Y')) - 2016] . strtoupper(dechex(date('m'))) . date('d') . 'A' . substr($time,0, -5) . substr(microtime(), 2, 5) . sprintf('%02d', rand(0, 99));
     }
 }
