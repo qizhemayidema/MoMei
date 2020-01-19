@@ -217,7 +217,7 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">合同附件：</label>
                             <div class="col-sm-9">
-                                <a href="javascript:;" class="file webuploader-pick" >下载附件
+                                <a href="合同附件" download="{$data.0.agreement}"  class="file webuploader-pick" >下载附件
 
                                 </a>
                             </div>
@@ -346,7 +346,11 @@
 
                     {/if}
 
-
+                    <div class="form-group">
+                        <div class="col-sm-4 col-sm-offset-2">
+                            <button class="btn btn-white" type="button" onclick="javascript:history.go(-1)">取消</button>
+                        </div>
+                    </div>
 
                 </form>
             </div>
