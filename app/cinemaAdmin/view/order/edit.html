@@ -260,14 +260,14 @@
                         </div>
                     </div>
 
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label">订单总金额：</label>
-                            <div class="col-sm-9">
-                                <input type="text" name="price" class="form-control" placeholder="全部的产品价格+额外费用" >
-                            </div>
-                        </div>
-                    </div>
+<!--                    <div class="col-md-12">-->
+<!--                        <div class="form-group">-->
+<!--                            <label class="col-sm-2 control-label">订单总金额：</label>-->
+<!--                            <div class="col-sm-9">-->
+<!--                                <input type="text" name="price" class="form-control" placeholder="全部的产品价格+额外费用" >-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
 
                     <div class="col-md-12">
                         <div class="form-group">
@@ -306,7 +306,7 @@
                         <div class="col-sm-8" id="periods_list" style="margin-top: 7px;">
                             <div class="periods_lv">
                                 <input name="periods_time[]" placeholder="应付时间" id="hello" autocomplete="off" class="laydate-icon form-control layer-date form-control yf_time" style="display:inline;width:45%;margin-bottom: 20px; margin-top: -8px; height: 32px;">
-                                <input name="periods_price[]" placeholder="应付金额" style="display:inline;width:45%;margin-bottom: 20px;" required  type="text" class="form-control">
+                                <input name="periods_price_bl[]" placeholder="应付金额百分比" style="display:inline;width:45%;margin-bottom: 20px;" required  type="text" class="form-control">%
                                 <a href="javascript:void(0);" onclick="close_periods(this)">
                                     <i class="glyphicon glyphicon-remove"></i>
                                 </a>
@@ -551,7 +551,7 @@
 
         var html = '<div class="periods_lv" >' +
             '                        <input name="periods_time[]" placeholder="应付时间" id="hello" autocomplete="off" class="laydate-icon form-control layer-date form-control yf_time" style="display:inline;width:45%;margin-bottom: 20px; margin-top: -8px; height: 32px;">' +
-            '                        <input name="periods_price[]" placeholder="应付金额" style="display:inline;width:45%;margin-bottom: 20px;" value="" required  type="text" class="form-control">' +
+            '                        <input name="periods_price_bl[]" placeholder="应付金额百分比" style="display:inline;width:45%;margin-bottom: 20px;" value="" required  type="text" class="form-control">%' +
             '                        <a href="javascript:void(0);" onclick="close_periods(this)">' +
             '                                <i class="glyphicon glyphicon-remove"></i>' +
             '                            </a>' +

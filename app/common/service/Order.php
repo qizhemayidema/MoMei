@@ -96,6 +96,7 @@ class Order
             'other_price' =>$data['other_price'],
             'all_price' =>$data['all_price'],
             'price' =>$data['price'],
+            'status'=>2,
         ];
         $handler = new OrderModel();
 

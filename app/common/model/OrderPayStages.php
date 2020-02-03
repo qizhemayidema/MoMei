@@ -17,6 +17,7 @@ class OrderPayStages extends Model implements BasicImpl
     public function get($id)
     {
         // TODO: Implement get() method.
+        return $this->where('id',$id)->find();
     }
 
     public function add(array $data): int
@@ -27,6 +28,7 @@ class OrderPayStages extends Model implements BasicImpl
     public function modify($id, $data)
     {
         // TODO: Implement modify() method.
+        return $this->where('id',$id)->update($data);
     }
 
     public function rm($id)

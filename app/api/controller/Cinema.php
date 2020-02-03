@@ -44,8 +44,13 @@ class Cinema
 
         if(empty($info)) return json(['code'=>0,'msg'=>'影院不存在']);
 
+        //查询收藏了该影院的全部用户
+        $collectUids =(new UserRecordServer)->setObjectId($cinemaId)->getList((new CollectDesc()));
+        $uidsRes = array_column($collectUids,'user_id');
+
         $return = [
             'cinema_id' => $cinemaId,
+            'collect_uids' => $uidsRes,
             'pics' => explode(',',$info['pics']),
             'name' => $info['name'],
             'desc' => $info['desc'],

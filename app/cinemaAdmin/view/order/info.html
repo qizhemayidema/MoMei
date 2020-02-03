@@ -327,7 +327,11 @@
                                     <tr class="text-center">
                                         <th style="text-align: center;">期数</th>
                                         <th style="text-align: center;">应付时间</th>
+                                        <th style="text-align: center;">应付金额百分比</th>
                                         <th style="text-align: center;">应付金额</th>
+                                        <th style="text-align: center;">支付方式</th>
+                                        <th style="text-align: center;">支付状态</th>
+                                        <th style="text-align: center;">操作</th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -335,7 +339,30 @@
                                     <tr>
                                         <td style="text-align: center;">第{$stagesResValue.number}期</td>
                                         <td style="text-align: center;">{$stagesResValue.pay_time|date='Y-m-d'}</td>
+                                        <td style="text-align: center;">{$stagesResValue.pay_price_bl}%</td>
                                         <td style="text-align: center;">{$stagesResValue.pay_price}</td>
+                                        <td style="text-align: center;">
+                                            {if condition="$stagesResValue.pay_type eq 1"}
+                                            线下
+                                            {elseif condition="$stagesResValue.pay_type eq 2"}
+                                            线上
+                                            {else}
+                                            暂无
+                                            {/if}
+                                        </td><td style="text-align: center;">
+                                            {if condition="$stagesResValue.status eq 0"}
+                                            未支付
+                                            {elseif condition="$stagesResValue.status eq 1"}
+                                            已支付
+                                            {/if}
+                                        </td>
+                                        <td style="text-align: center;">
+                                        {if condition="$stagesResValue.status eq 0"}
+                                        {if condition="$stagesResValue.pay_type eq 1 ||  $stagesResValue.pay_type eq 2 "}
+                                        <button class="btn btn-primary" type="button" onclick="affirmPay('{$stagesResValue.id}')">确认本期支付</button>
+                                        {/if}
+                                        {/if}
+                                        </td>
                                     </tr>
                                     {/foreach}
                                     </tbody>
@@ -396,5 +423,37 @@
             radioClass: 'iradio_square-green',
         });
     });
+    
+    function affirmPay(id) {
+        layer.confirm('您确定要保存嘛？',
+            {
+                title:'温馨提示',
+                btn: ['确定','取消'] //按钮
+            }, function(){
+                layer.load(1, {shade: false});
+                $.ajax({
+                    url:"{:url('affirmPay')}",
+                    type: 'post',
+                    dataType: 'json',
+                    data: {
+                        'id':id
+                    },
+                    success:function (res) {
+                        if(res.code==1){
+                            window.location.reload();
+                        }else{
+                            layer.msg(res.msg)
+                        }
+                    }
+                })
+            }, function(){
+                // layer.msg('也可以这样', {
+                //     time: 20000, //20s后自动关闭
+                //     btn: ['明白了', '知道了']
+                // });
+            });
+        return false;
+
+    }
 </script>
 

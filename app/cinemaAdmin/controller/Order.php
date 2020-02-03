@@ -57,7 +57,7 @@ class Order extends Base
                 'agreement_code|合同编号'=>'require',
                 'extra|额外费用'=>'require',
                 'all_price|产品总金额'=>'require',
-                'agreement_code|订单总金额'=>'require',
+//                'price|订单总金额'=>'require',
                 'pay_type|支付类型'=>'require',
                 'money_type|付款类型'=>'require',
 //                '__token__'     => 'token',
@@ -78,7 +78,7 @@ class Order extends Base
             $data['agreement'] = $picUrl['msg'];
 
             //额外费用数据生成
-            $other_price = 0;
+            $other_price = 0;   //额外费用
             if($data['extra']==2){  //有额外费用
                 $extraName = $data['extra_name'];
                 $extraPrice = $data['extra_price'];
@@ -103,27 +103,47 @@ class Order extends Base
                 if($otherRes!=count($extraName)) throw new \Exception('额外费用生成失败');
             }
 
+            $orderSumPrice = $other_price+$data['all_price'];  // 订单总金额
+            $data['price'] = $orderSumPrice;
+
             //分期的期数数据
             if($data['money_type']==2){  //分期
                 $periodsTime = $data['periods_time'];
-                $periodsPrice = $data['periods_price'];
+                $periodsPriceBl = $data['periods_price_bl'];   //是百分比
 
                 $periodsPriceAll = 0;
+                $periodsPriceBlAll = 0;
                 $orderPeriodsAddData = [];
                 for($b=0;$b<count($periodsTime);$b++){
-                    if(!isset($periodsTime[$b]) || !isset($periodsPrice[$b]) || $periodsTime[$b]=='' || $periodsPrice[$b]=='' ){
+                    if(!isset($periodsTime[$b]) || !isset($periodsPriceBl[$b]) || $periodsTime[$b]=='' || $periodsPriceBl[$b]=='' ){
                         throw new \Exception('请把期数数据输入完整');
                     }
+
+                    $regex = "/^\d*(\.){0,2}(\d){0,2}$/";
+                    if(!preg_match($regex,$periodsPriceBl[$b])){
+                        throw new \Exception('应付金额百分比不需要带%，并且小数点后只能保留2位');
+                    }
+
+                    if( (count($periodsTime)-1)==$b ){ //是最后一期  价格就是最后剩下的
+                        $periodsPrice = $orderSumPrice - $periodsPriceAll;
+                    }else{
+                        $periodsPrice = ceil($orderSumPrice * ($periodsPriceBl[$b]/100)); //向上取整
+                    }
+
+
                     $orderPeriodsAddData[] = [
                         'order_id' => $orderData['id'],
                         'order_code' => $orderData['order_sn'],
                         'agreement_code' => $data['agreement_code'],
                         'number' => $b+1,
-                        'pay_price' => $periodsPrice[$b],
+                        'pay_price_bl' => $periodsPriceBl[$b],
+                        'pay_price' => $periodsPrice,
                         'pay_time' => strtotime($periodsTime[$b]),
                     ];
-                    $periodsPriceAll+=$periodsPrice[$b];
+                    $periodsPriceAll+=$periodsPrice;
+                    $periodsPriceBlAll+=$periodsPriceBl[$b];
                 }
+                if($periodsPriceBlAll!=100) throw new \Exception('请确认应付金额百分比和为100');
                 if($periodsPriceAll!=$data['price']) throw new \Exception('订单总金额和分期后支付的金额不一致');
                 //增加分期表的数据
                 $orderPeriodsAddDataRes = (new OrderPayStagesServer())->addAll($orderPeriodsAddData);
@@ -171,5 +191,16 @@ class Order extends Base
         View::assign('stagesRes',$stagesRes);
 
         return view();
+    }
+
+    public function affirmPay(Request $request)
+    {
+        if($request->isPost()){
+            $id = $request->post('id');
+            $result = (new OrderPayStagesServer())->update($id,['status'=>1]);
+            if(!$result) return json(['code'=>0,'msg'=>'操作失败']);
+
+            return json(['code'=>1,'msg'=>'success']);
+        }
     }
 }

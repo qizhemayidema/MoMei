@@ -1,0 +1,108 @@
+{include file="common/source"}
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>分期订单支付当时申请 <small>列表</small></h5>
+                </div>
+                <div class="ibox-content">
+                    <div class="example">
+
+                        <table class="table table-bordered table-hover text-center fz13">
+                            <thead>
+                            <tr class="text-center">
+                                <th style="text-align: center;">订单号</th>
+                                <th style="text-align: center;">期数</th>
+                                <th style="text-align: center;">应付时间</th>
+                                <th style="text-align: center;">应付金额百分比</th>
+                                <th style="text-align: center;">应付金额</th>
+                                <th style="text-align: center;">申请方式</th>
+                                <th style="text-align: center;">申请时间</th>
+                                <th style="text-align: center;width:180px;">操作</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {foreach $data as $key => $value}
+                            <tr>
+                                <td>{$value.order_code}</td>
+                                <td>第{$value.number}期</td>
+                                <td>{$value.pay_time|date='Y-m-d'}</td>
+                                <td>{$value.pay_price_bl}%</td>
+                                <td>{$value.pay_price}</td>
+                                <td>
+                                    {if condition="$value.apply_pay_type eq 2"}
+                                    线下支付
+                                    {elseif condition="$value.apply_pay_type eq 3"}
+                                    线上支付
+                                    {/if}
+                                </td>
+                                <td>{$value.apply_time|date='Y-m-d'}</td>
+                                <td>
+                                    <button onclick="chk('{$value.id}',1)" class="btn  btn-success" type="button"> 同意</button>
+                                    <button onclick="chk('{$value.id}',2)" class="btn  btn-danger" type="button"> 拒绝</button>
+
+                                </td>
+                            </tr>
+                            {/foreach}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div style="text-align: center">
+                        {$data|raw}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script>
+    $(function () {
+        layer.config({
+            extend: 'extend/layer.ext.js'
+        });
+    })
+    function chk(id,str) {
+        if(str==1){  //同意
+            $.ajax({
+                url:"{:url('disposeApply')}",
+                type: 'post',
+                dataType: 'json',
+                data: {
+                    id: id,
+                    status: str,
+                },
+                success:function (res) {
+                    if(res.code==1){
+                        window.location.href = "{:url('index')}";
+                    }else{
+                        layer.msg(res.msg);
+                    }
+                }
+            })
+        }else{
+            layer.prompt({title: '请输入拒绝原由', formType:2}, function(pass, index){
+                layer.close(index);
+                $.ajax({
+                    url:"{:url('disposeApply')}",
+                    type: 'post',
+                    dataType: 'json',
+                    data: {
+                        id: id,
+                        status: str,
+                        content:pass,
+                    },
+                    success:function (res) {
+                        if(res.code==1){
+                            window.location.href = "{:url('index')}";
+                        }else{
+                            layer.msg(res.msg);
+                        }
+                    }
+                })
+            });
+        }
+    }
+</script>

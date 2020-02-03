@@ -12,6 +12,8 @@ class UserRecord
 
     private $pageLength = null;
 
+    private $objectId = false;
+
     public function setUserId($value)
     {
         $this->userId = $value;
@@ -25,6 +27,13 @@ class UserRecord
         return $this;
     }
 
+    public function setObjectId($value)
+    {
+        $this->objectId = $value;
+
+        return $this;
+    }
+
     public function getList(UserRecordImpl $obj)
     {
         $handler = new UserRecordModel();
@@ -32,6 +41,8 @@ class UserRecord
         $handler = $handler->where('type',$obj->getType());
 
         $handler = $this->userId ? $handler->where('user_id',$this->userId) : $handler;
+
+        $handler = $this->objectId ? $handler->where('object_id',$this->objectId) : $handler;
 
         return $this->pageLength ? $handler->paginate(['list_rows'=>$this->pageLength,'query'=>request()->param()]) : $handler->select()->toArray();
     }
